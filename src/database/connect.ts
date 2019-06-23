@@ -1,6 +1,6 @@
 import * as Sequelize from "sequelize";
 const seq = new Sequelize.Sequelize(
-  process.env.DB || "esb",
+  process.env.DB || "nngame",
   process.env.DBUSERNAME || "postgres",
   process.env.DBPASSWORD || "postgres",
   {

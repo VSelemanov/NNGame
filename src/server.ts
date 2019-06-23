@@ -5,6 +5,7 @@ import Inert from "inert";
 import Boom from "boom";
 import Sequelize from "sequelize";
 import HapiSwagger from "hapi-swagger";
+import Vision from "vision";
 // db
 import db from "./database";
 import dbConnect from "./database/connect";
@@ -57,6 +58,7 @@ class Server {
       await this._server.register([
         AuthBearer,
         Inert,
+        Vision,
         {
           plugin: HapiSwagger,
           options: this.swaggerOptions

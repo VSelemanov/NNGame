@@ -59,8 +59,10 @@
     "inert": "^5.1.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
+    "pg": "^7.11.0",
     "sequelize": "^4.43.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "vision": "^5.4.4"
   },
   "nyc": {
     "include": [
