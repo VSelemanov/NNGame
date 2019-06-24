@@ -5,7 +5,8 @@ export interface IGameRoomBase {
   theme: string | null;
   adminId: string;
   teams: string[];
-  GameStatus: any;
+  roomNumber: number;
+  gameStatus: any;
 }
 
 export interface IGameRoom extends IGameRoomBase, Document {}

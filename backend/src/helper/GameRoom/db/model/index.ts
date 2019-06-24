@@ -11,6 +11,11 @@ const GameRoomSchema = new Schema(
     adminId: {
       type: String,
       required: true
+    },
+    roomNumber: {
+      type: Number,
+      required: true,
+      unique: true
     }
   },
   {

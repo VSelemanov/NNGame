@@ -21,6 +21,7 @@ Given("сервер стартовал", function() {
 
 Given("база данных пуста", async function() {
   await utils.truncateCollection(server.Admin.collection);
+  await utils.truncateCollection(server.GameRoom.collection);
 });
 
 Then("сервер должен вернуть статус {int}", function(code) {

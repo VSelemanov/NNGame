@@ -8,8 +8,11 @@ import { IGameRoomBase } from "../../src/helper/GameRoom/interfaces";
 import { ErrorMessages } from "../../src/helper/Admin/constants";
 import { setResponse } from "./lib/response";
 import { expect } from "chai";
+import methods from "../../src/helper/GameRoom";
 
-When("я администратор создает новую игровую комнату", async function() {
+let roomNumber;
+
+When("администратор создает новую игровую комнату", async function() {
   const admin = await getAdmin("admin");
   if (!admin) {
     throw new Error(ErrorMessages.NOT_FOUND);
@@ -32,4 +35,12 @@ When("я администратор создает новую игровую к�
 Then("в списке комнат должна появиться новая комната", async function() {
   const res = await server.GameRoom.find({});
   expect(res).length.greaterThan(0);
+});
+
+When("я хочу получить номер следующей комнаты", async function() {
+  roomNumber = await methods.getNextRoomNumber();
+});
+
+Then("в ответе должен быть {int}", function(expRoomNumber) {
+  expect(roomNumber).to.eql(expRoomNumber);
 });
