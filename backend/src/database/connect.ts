@@ -1,14 +1,16 @@
-import * as Sequelize from "sequelize";
-const seq = new Sequelize.Sequelize(
-  process.env.DB || "nngame",
-  process.env.DBUSERNAME || "postgres",
-  process.env.DBPASSWORD || "postgres",
-  {
-    host: process.env.DBHOST || "localhost",
-    port: parseInt(process.env.DBPORT || "5432", 10),
-    dialect: "postgres",
-    logging: false
-  }
-);
+import { connection } from "mongoose";
+import mongoose from "mongoose";
+const db = connection;
 
-export default seq;
+export default async function() {
+  mongoose.connect("mongodb://localhost:27017/GameNN", {
+    useNewUrlParser: true
+  });
+
+  db.on("error", console.error.bind(console, "connection error:"));
+  db.once("open", function() {
+    // создать коллекции и т.п.
+    console.log("Success connection");
+  });
+  return db;
+}

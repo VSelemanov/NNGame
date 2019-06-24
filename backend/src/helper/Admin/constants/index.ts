@@ -1,0 +1,7 @@
+export const EntityName = "Admin";
+
+export const routePath = "admin";
+
+export enum ErrorMessages {
+  NOT_FOUND = "Admin not found"
+}

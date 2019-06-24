@@ -3,42 +3,49 @@ import * as AuthBearer from "hapi-auth-bearer-token";
 import Handlebars from "handlebars";
 import Inert from "inert";
 import Boom from "boom";
-import Sequelize from "sequelize";
 import HapiSwagger from "hapi-swagger";
 import Vision from "vision";
 // db
-import db from "./database";
+import AdminModel from "./helper/Admin/db/model";
+import GameRoomModel from "./helper/GameRoom/db/model";
+// import db from "./database";
 import dbConnect from "./database/connect";
 // routes
 import Routes from "./routes/index";
 // strategies
 import Auth from "./strategies/Auth";
-import { mainURI } from "./constants";
+import { APIRoute } from "./constants";
+import { Connection, Model, Document, MongooseDocument } from "mongoose";
+import { IAdmin } from "./helper/Admin/interfaces";
+import { IGameRoom } from "./helper/GameRoom/interfaces";
 // utils
 // interfaces
 
 class Server {
   private _httpServerPort: number;
-  private _dbConnect: Sequelize.Sequelize;
+  private _dbConnect: Connection;
   private swaggerOptions = {
     info: {
       title: "REST API NNGame",
       version: process.env.VERSION || "v1"
     },
 
-    jsonPath: `${mainURI}/swagger.json`,
-    swaggerUIPath: `${mainURI}/swaggerui/`,
-    documentationPath: `${mainURI}/documentation`,
+    jsonPath: `${APIRoute}/swagger.json`,
+    swaggerUIPath: `${APIRoute}/swaggerui/`,
+    documentationPath: `${APIRoute}/documentation`,
     cors: true,
     grouping: "tags",
     tagsGroupingFilter: (tag: string) => tag !== "api"
   };
 
+  private _Admin: Model<IAdmin> = AdminModel;
+  private _GameRoom: Model<IGameRoom> = GameRoomModel;
+
   public _server: Hapi.Server;
 
-  constructor(props: { port: number; dbConnect: Sequelize.Sequelize }) {
+  constructor(props: { port: number /*dbConnect: Connection*/ }) {
     this._httpServerPort = props.port;
-    this._dbConnect = props.dbConnect;
+    // this._dbConnect = props.dbConnect;
   }
 
   public async createServer() {
@@ -85,14 +92,14 @@ class Server {
   }
 
   private async connectToDb() {
-    try {
-      await this._dbConnect.authenticate();
+    const db = await dbConnect();
+    this._dbConnect = db;
+    /*try {
       console.log("Success connect to DB");
-      await this.defineAndsyncModel(this._dbConnect);
     } catch (error) {
       console.error("Error connect to DB", error);
       console.log(error);
-    }
+    }*/
   }
 
   private async dbStop() {
@@ -101,16 +108,6 @@ class Server {
     } catch (error) {
       console.error("DB Stop error", error);
     }
-  }
-
-  private async defineAndsyncModel(connect: Sequelize.Sequelize) {
-    const response = db(connect);
-    // this._Measure = response.Measure;
-
-    await this._dbConnect.sync({
-      // force: true
-    });
-    return;
   }
 
   public generateHttpError(data) {
@@ -157,12 +154,15 @@ class Server {
   get server() {
     return this._server;
   }
-  // get Measure() {
-  //   return this._Measure;
-  // }
+  get Admin() {
+    return this._Admin;
+  }
+  get GameRoom() {
+    return this._GameRoom;
+  }
 }
 
 export const server = new Server({
-  port: parseInt(process.env.PORT || "3000", 10),
-  dbConnect
+  port: parseInt(process.env.PORT || "3000", 10)
+  // dbConnect: dbConnect()
 });
