@@ -21,6 +21,10 @@ const GameRoomSchema = new Schema(
       isActive: {
         type: Boolean,
         default: true
+      },
+      teams: {
+        type: Array,
+        default: []
       }
     }
   },

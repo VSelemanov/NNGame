@@ -68,6 +68,10 @@ When("я отправляю запрос на вход в комнату", async
 Then("в ответе есть текущее состояние игры с игровым токеном", function() {
   const response = getResponse().result;
   expect(response).have.property("gameToken");
-  console.log(response.gameToken);
   expect(response).have.property("gameStatus");
+});
+
+Then("в текущем состоянии игры появилась команда", function() {
+  const response = getResponse().result;
+  expect(response.gameStatus.teams).length.greaterThan(0);
 });

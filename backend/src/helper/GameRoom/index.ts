@@ -39,6 +39,13 @@ const methods = {
       if (!GameRoom) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
+      if (
+        !GameRoom.gameStatus.teams.includes(teamId) &&
+        GameRoom.gameStatus.teams.length < 3
+      ) {
+        GameRoom.gameStatus.teams.push(teamId);
+        await GameRoom.save();
+      }
       return {
         // _id: GameRoom._id,
         gameStatus: GameRoom.gameStatus,

@@ -17,7 +17,10 @@ const routes: ServerRoute[] = [
   {
     path: `${APIRoute}/${routePath}/{roomNumber}/${paths.connect}`,
     method: HTTPMethods.get,
-    handler: GameRoomCtrl.connect
+    handler: GameRoomCtrl.connect,
+    options: {
+      auth: "team-auth"
+    }
   }
 ];
 
