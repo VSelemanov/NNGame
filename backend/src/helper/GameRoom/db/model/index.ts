@@ -16,6 +16,12 @@ const GameRoomSchema = new Schema(
       type: Number,
       required: true,
       unique: true
+    },
+    gameStatus: {
+      isActive: {
+        type: Boolean,
+        default: true
+      }
     }
   },
   {

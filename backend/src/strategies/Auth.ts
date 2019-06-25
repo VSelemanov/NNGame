@@ -4,13 +4,12 @@ import jwt from "jsonwebtoken";
 const Auth = {
   // Валидация запросов для системных событий
   AppAuth: async (request, token: string, h) => {
-    // console.log(process.env.APP_TOKEN);
-    // if (process.env.APP_STATUS === "dev") {
-    //   return { isValid: true, credentials: {} };
-    // }
-    // const credentials = {};
-    // const isValid = token === process.env.APP_TOKEN;
-    // return { isValid, credentials };
+    return { isValid: true, credentials: {} };
+  },
+  TeamAuth: async (request, token: string, h) => {
+    return { isValid: true, credentials: { teamId: "test" } };
+  },
+  GameRoomAuth: async (request, token: string, h) => {
     return { isValid: true, credentials: {} };
   }
 };

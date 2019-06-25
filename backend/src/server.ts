@@ -83,6 +83,14 @@ class Server {
         validate: Auth.AppAuth
       });
 
+      this._server.auth.strategy("team-auth", "bearer-access-token", {
+        validate: Auth.TeamAuth
+      });
+
+      this._server.auth.strategy("game-room-auth", "bearer-access-token", {
+        validate: Auth.GameRoomAuth
+      });
+
       this._server.auth.default("app-auth");
 
       this._server.route(Routes);
