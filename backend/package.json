@@ -1,16 +1,16 @@
 {
   "name": "esb",
   "version": "0.0.1",
-  "description": "ESB module",
+  "description": "NNGame",
   "main": "./src/index.ts",
-  "repository": "https://glab.lad24.ru/lad/unoto",
+  "repository": "",
   "config": {
-    "registry": "rlab.lad24.ru/lad/unoto/unoto-esb"
+    "registry": ""
   },
   "scripts": {
-    "test": "rm -rf ./coverage && rm -rf ./.nyc_output && NODE_PATH=../../../:./node_modules nyc cucumber-js --require-module ts-node/register --require 'features/**/*.ts'",
-    "testbug": "NODE_PATH=../../../:./node_modules cucumber-js --require-module ts-node/register --require 'features/**/*.ts' --tags @bug",
-    "testnew": "NODE_PATH=../../../:./node_modules cucumber-js --require-module ts-node/register --require 'features/**/*.ts' --tags @new",
+    "test": "rm -rf ./coverage && rm -rf ./.nyc_output && NODE_PATH=../../../:./node_modules nyc cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts'",
+    "testbug": "NODE_PATH=../../../:./node_modules cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts' --tags @bug",
+    "testnew": "NODE_PATH=../../../:./node_modules cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts' --tags @new",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "start": "npm run lint && npm run format && clear && NODE_PATH=../../../ ts-node -r dotenv/config ./src/index.ts",

@@ -3,12 +3,14 @@ import { getAdmin } from "./lib";
 import { server } from "../../src/server";
 import { APIRoute, HTTPMethods } from "../../src/constants";
 import { routePath, paths } from "../../src/helper/GameRoom/constants";
+
 import { Authorization } from "./constants";
 import { IGameRoomBase } from "../../src/helper/GameRoom/interfaces";
 import { ErrorMessages } from "../../src/helper/GameRoom/constants";
 import { setResponse, getResponse } from "./lib/response";
 import { expect } from "chai";
 import methods from "../../src/helper/GameRoom";
+import { getLogin } from "./default";
 
 let roomNumber;
 
@@ -48,22 +50,26 @@ Then("в ответе должен быть {int}", function(expRoomNumber) {
   expect(roomNumber).to.eql(expRoomNumber);
 });
 
-When("я отправляю запрос на вход в комнату", async function() {
-  const GameRoom = await server.GameRoom.findOne();
-  if (!GameRoom) {
-    throw new Error(ErrorMessages.NOT_FOUND);
-  }
-
-  const res = await server.server.inject({
-    url: `${APIRoute}/${routePath}/${GameRoom.roomNumber}/${paths.connect}?`,
-    method: HTTPMethods.get,
-    headers: {
-      Authorization
+When(
+  "я отправляю запрос на вход в комнату от лица команды {string}",
+  async function(TeamName) {
+    const GameRoom = await server.GameRoom.findOne();
+    if (!GameRoom) {
+      throw new Error(ErrorMessages.NOT_FOUND);
     }
-  });
+    const token = await getLogin(TeamName);
 
-  setResponse(res);
-});
+    const res = await server.server.inject({
+      url: `${APIRoute}/${routePath}/${GameRoom.roomNumber}/${paths.connect}`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    setResponse(res);
+  }
+);
 
 Then("в ответе есть текущее состояние игры с игровым токеном", function() {
   const response = getResponse().result;

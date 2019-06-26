@@ -54,7 +54,7 @@ const methods = {
             gameRoomId: GameRoom._id,
             teamId
           },
-          "123",
+          process.env.SECRET_KEY || "nngame",
           { algorithm: "HS256" }
         )
       };

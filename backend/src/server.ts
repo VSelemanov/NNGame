@@ -8,6 +8,7 @@ import Vision from "vision";
 // db
 import AdminModel from "./helper/Admin/db/model";
 import GameRoomModel from "./helper/GameRoom/db/model";
+import TeamModel from "./helper/Team/db/model";
 // import db from "./database";
 import dbConnect from "./database/connect";
 // routes
@@ -18,6 +19,7 @@ import { APIRoute } from "./constants";
 import { Connection, Model, Document, MongooseDocument } from "mongoose";
 import { IAdmin } from "./helper/Admin/interfaces";
 import { IGameRoom } from "./helper/GameRoom/interfaces";
+import { ITeam } from "./helper/Team/interfaces";
 // utils
 // interfaces
 
@@ -40,6 +42,7 @@ class Server {
 
   private _Admin: Model<IAdmin> = AdminModel;
   private _GameRoom: Model<IGameRoom> = GameRoomModel;
+  private _Team: Model<ITeam> = TeamModel;
 
   public _server: Hapi.Server;
 
@@ -81,6 +84,10 @@ class Server {
 
       this._server.auth.strategy("app-auth", "bearer-access-token", {
         validate: Auth.AppAuth
+      });
+
+      this._server.auth.strategy("admin-auth", "bearer-access-token", {
+        validate: Auth.AdminAuth
       });
 
       this._server.auth.strategy("team-auth", "bearer-access-token", {
@@ -167,6 +174,9 @@ class Server {
   }
   get GameRoom() {
     return this._GameRoom;
+  }
+  get Team() {
+    return this._Team;
   }
 }
 
