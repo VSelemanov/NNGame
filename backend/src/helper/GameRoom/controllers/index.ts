@@ -42,7 +42,6 @@ const ctrl = {
       const { roomId } = req.params;
       const { teamId, isAdmin } = req.auth.credentials;
 
-      console.log({ teamId, isAdmin, roomId });
       return await methods.connect(roomId, teamId, isAdmin);
     },
     {
@@ -57,6 +56,19 @@ const ctrl = {
     ): Promise<IGameRoom> => {
       const { gameRoomId } = req.auth.credentials;
       return await methods.getGameStatus(gameRoomId);
+    },
+    {
+      logMessage: `${EntityName} connect request`,
+      isRequest: true
+    }
+  ),
+  start: trycatcher(
+    async (
+      req: IDecoratedRequest<{}, {}, { gameRoomId: string }>,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId } = req.params;
+      return await methods.start(gameRoomId);
     },
     {
       logMessage: `${EntityName} connect request`,

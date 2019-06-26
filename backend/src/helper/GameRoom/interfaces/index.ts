@@ -3,7 +3,11 @@ import { Document } from "mongoose";
 
 interface IGameStatus {
   isActive: boolean;
+  isStarted: boolean;
   teams: string[];
+  part1: any[];
+  part2: any[];
+  map: any[];
 }
 
 export interface IGameRoomBase {

@@ -3,7 +3,7 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import GameRoomCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
-import { create, read, connect, gameStatus } from "../docs";
+import { create, read, connect, gameStatus, start } from "../docs";
 
 const routes: ServerRoute[] = [
   {
@@ -40,6 +40,15 @@ const routes: ServerRoute[] = [
     options: {
       ...gameStatus,
       auth: "game-room-auth"
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/{gameRoomId}/${paths.start}`,
+    method: HTTPMethods.get,
+    handler: GameRoomCtrl.start,
+    options: {
+      ...start,
+      auth: "admin-auth"
     }
   }
 ];

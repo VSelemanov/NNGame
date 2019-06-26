@@ -82,6 +82,25 @@ const methods = {
     }
   ),
 
+  start: trycatcher(
+    async (roomId: string) => {
+      const GameRoom = await server.GameRoom.findOneAndUpdate(
+        { _id: roomId },
+        {
+          "gameStatus.isStarted": true
+        },
+        { new: true }
+      );
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+      return { gameStatus: GameRoom.gameStatus };
+    },
+    {
+      logMessage: `${EntityName} get status`
+    }
+  ),
+
   getNextRoomNumber: trycatcher(
     async (): Promise<number> => {
       const LastGameRoom = await server.GameRoom.findOne()

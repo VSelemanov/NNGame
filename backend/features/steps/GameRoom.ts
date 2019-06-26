@@ -139,3 +139,33 @@ Then("в ответе есть текущее состояние игры", func
 
   expect(res).have.property("gameStatus");
 });
+
+When(
+  "администратор l={string} p={string} делает запрос на запуск игры",
+  async function(name, password) {
+    const GameRoom = await server.GameRoom.findOne();
+    if (!GameRoom) {
+      throw new Error(ErrorMessages.NOT_FOUND);
+    }
+
+    const token = await getAdminLogin(name, password);
+
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoom._id}/${GameRoomPaths.start}`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then("в ответе состояние игры с флагом запущенной игры", async function() {
+  const res = getResponse().result;
+
+  expect(res).have.property("gameStatus");
+  expect(res.gameStatus).have.property("isStarted");
+  expect(res.gameStatus.isStarted).to.eql(true);
+});
