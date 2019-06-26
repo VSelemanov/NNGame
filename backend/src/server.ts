@@ -87,11 +87,13 @@ class Server {
       });
 
       this._server.auth.strategy("admin-auth", "bearer-access-token", {
-        validate: Auth.AdminAuth
+        validate: Auth.AdminAuth,
+        allowChaining: true
       });
 
       this._server.auth.strategy("team-auth", "bearer-access-token", {
-        validate: Auth.TeamAuth
+        validate: Auth.TeamAuth,
+        allowChaining: true
       });
 
       this._server.auth.strategy("game-room-auth", "bearer-access-token", {

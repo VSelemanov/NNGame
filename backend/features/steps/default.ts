@@ -5,13 +5,16 @@ import utils from "../../src/utils";
 import { getResponse } from "./lib/response";
 import { APIRoute, HTTPMethods } from "../../src/constants";
 import { routePath as TeamRoutePath } from "../../src/helper/Team/constants";
+import { routePath as AdminRoutePath } from "../../src/helper/Admin/constants";
 import { routePath as GameRoomRoutePath } from "../../src/helper/GameRoom/constants";
 import { paths as TeamPaths } from "../../src/helper/Team/constants";
+import { paths as AdminPaths } from "../../src/helper/Admin/constants";
 import {
   paths as GameRoomPaths,
   ErrorMessages
 } from "../../src/helper/GameRoom/constants";
 import { Authorization } from "./constants";
+import { IAdminBase } from "../../src/helper/Admin/interfaces";
 
 let ServerStarted = false;
 
@@ -26,6 +29,24 @@ export async function getLogin(name: string): Promise<string> {
   return res.result as any;
 }
 
+export async function getAdminLogin(
+  name: string,
+  password: string
+): Promise<string> {
+  const res = await server.server.inject({
+    url: `${APIRoute}/${AdminRoutePath}/${AdminPaths.login}`,
+    method: HTTPMethods.post,
+    headers: {
+      Authorization
+    },
+    payload: {
+      name,
+      password
+    } as IAdminBase
+  });
+  return res.result as any;
+}
+
 export async function getGameToken(teamName: string): Promise<string> {
   const GameRoom = await server.GameRoom.findOne();
   if (!GameRoom) {
@@ -34,7 +55,7 @@ export async function getGameToken(teamName: string): Promise<string> {
   const token = await getLogin(teamName);
 
   const res = await server.server.inject({
-    url: `${APIRoute}/${GameRoomRoutePath}/${GameRoom.roomNumber}/${
+    url: `${APIRoute}/${GameRoomRoutePath}/${GameRoom._id}/${
       GameRoomPaths.connect
     }`,
     method: HTTPMethods.get,

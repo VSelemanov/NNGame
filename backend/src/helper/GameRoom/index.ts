@@ -34,29 +34,36 @@ const methods = {
   ),
 
   connect: trycatcher(
-    async (roomNumber: number, teamId: string) => {
-      const GameRoom = await server.GameRoom.findOne({ roomNumber });
+    async (roomId: string, teamId: string | undefined, isAdmin: boolean) => {
+      const GameRoom = await server.GameRoom.findOne({ _id: roomId });
       if (!GameRoom) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
       if (
+        !isAdmin &&
+        teamId &&
         !GameRoom.gameStatus.teams.includes(teamId) &&
         GameRoom.gameStatus.teams.length < 3
       ) {
         GameRoom.gameStatus.teams.push(teamId);
         await GameRoom.save();
       }
-      return {
-        gameStatus: GameRoom.gameStatus,
-        gameToken: jwt.sign(
+
+      const result: any = {
+        gameStatus: GameRoom.gameStatus
+      };
+      if (!isAdmin) {
+        result.gameToken = jwt.sign(
           {
             gameRoomId: GameRoom._id,
             teamId
           },
           process.env.SECRET_KEY || "nngame",
           { algorithm: "HS256" }
-        )
-      };
+        );
+      }
+
+      return result;
     },
     {
       logMessage: `${EntityName} connect method`

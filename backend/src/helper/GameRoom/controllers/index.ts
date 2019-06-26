@@ -34,14 +34,16 @@ const ctrl = {
       req: IDecoratedRequest<
         {},
         {},
-        { roomNumber: number },
-        { teamId: string }
+        { roomId: string },
+        { teamId: string | undefined; isAdmin: boolean }
       >,
       h
     ): Promise<IGameRoom> => {
-      const { roomNumber } = req.params;
-      const { teamId } = req.auth.credentials;
-      return await methods.connect(roomNumber, teamId);
+      const { roomId } = req.params;
+      const { teamId, isAdmin } = req.auth.credentials;
+
+      console.log({ teamId, isAdmin, roomId });
+      return await methods.connect(roomId, teamId, isAdmin);
     },
     {
       logMessage: `${EntityName} connect request`,

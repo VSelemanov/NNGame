@@ -12,18 +12,36 @@ const Auth = {
     };
   },
   AdminAuth: async (request, token: string, h) => {
-    return { isValid: true, credentials: {} };
-  },
-  TeamAuth: async (request, token: string, h) => {
     const tokenData: any = jwt.verify(
       token,
-      process.env.SECRET_KEY || "nngame",
+      process.env.ADMIN_KEY || "nngame",
       {
         algorithms: ["HS256"]
       }
     );
 
-    return { isValid: true, credentials: { teamId: tokenData._id } };
+    return { isValid: true, credentials: { ...tokenData, isAdmin: true } };
+  },
+  TeamAuth: async (request, token: string, h) => {
+    try {
+      const tokenData: any = jwt.verify(
+        token,
+        process.env.SECRET_KEY || "nngame",
+        {
+          algorithms: ["HS256"]
+        }
+      );
+      return {
+        isValid: true,
+        credentials: { teamId: tokenData._id, isAdmin: false }
+      };
+    } catch (error) {
+      return {
+        isValid: false,
+        credentials: {}
+      };
+    }
+    return "ok";
   },
   GameRoomAuth: async (request, token: string, h) => {
     const tokenData: any = jwt.verify(

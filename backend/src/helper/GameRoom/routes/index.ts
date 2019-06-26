@@ -3,23 +3,34 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import GameRoomCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
+import { create, read, connect, gameStatus } from "../docs";
+
 const routes: ServerRoute[] = [
   {
     path: `${APIRoute}/${routePath}`,
     method: HTTPMethods.post,
-    handler: GameRoomCtrl.create
+    handler: GameRoomCtrl.create,
+    options: {
+      ...create
+    }
   },
   {
     path: `${APIRoute}/${routePath}`,
     method: HTTPMethods.get,
-    handler: GameRoomCtrl.read
+    handler: GameRoomCtrl.read,
+    options: {
+      ...read
+    }
   },
   {
-    path: `${APIRoute}/${routePath}/{roomNumber}/${paths.connect}`,
+    path: `${APIRoute}/${routePath}/{roomId}/${paths.connect}`,
     method: HTTPMethods.get,
     handler: GameRoomCtrl.connect,
     options: {
-      auth: "team-auth"
+      ...connect,
+      auth: {
+        strategies: ["team-auth", "admin-auth"]
+      }
     }
   },
   {
@@ -27,6 +38,7 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.get,
     handler: GameRoomCtrl.getGameStatus,
     options: {
+      ...gameStatus,
       auth: "game-room-auth"
     }
   }
