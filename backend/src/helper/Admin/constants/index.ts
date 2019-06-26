@@ -5,3 +5,7 @@ export const routePath = "admin";
 export enum ErrorMessages {
   NOT_FOUND = "Admin not found"
 }
+
+export enum paths {
+  login = "login"
+}

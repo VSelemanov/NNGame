@@ -13,6 +13,15 @@ const ctrl = {
     {
       logMessage: `${EntityName} create request`
     }
+  ),
+  login: trycatcher(
+    async (req: IDecoratedRequest<IAdminBase>, h) => {
+      const AdminData: IAdminBase = req.payload;
+      return await methods.login(AdminData);
+    },
+    {
+      logMessage: `${EntityName} create request`
+    }
   )
 };
 
