@@ -42,7 +42,6 @@ const Auth = {
     if (!GameRoom) {
       return { isValid: false, credentials: {} };
     }
-
     return { isValid: true, credentials: { gameRoomId, teamId } };
   }
 };

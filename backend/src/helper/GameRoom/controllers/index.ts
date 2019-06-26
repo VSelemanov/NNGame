@@ -25,7 +25,8 @@ const ctrl = {
       );
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} create request`,
+      isRequest: true
     }
   ),
   connect: trycatcher(
@@ -43,7 +44,21 @@ const ctrl = {
       return await methods.connect(roomNumber, teamId);
     },
     {
-      logMessage: `${EntityName} connect request`
+      logMessage: `${EntityName} connect request`,
+      isRequest: true
+    }
+  ),
+  getGameStatus: trycatcher(
+    async (
+      req: IDecoratedRequest<{}, {}, {}, { gameRoomId: string }>,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId } = req.auth.credentials;
+      return await methods.getGameStatus(gameRoomId);
+    },
+    {
+      logMessage: `${EntityName} connect request`,
+      isRequest: true
     }
   )
 };

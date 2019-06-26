@@ -21,9 +21,9 @@ const methods = {
   ),
   read: trycatcher(
     async (isActive: boolean | null): Promise<IGameRoom[]> => {
-      const where: any = {};
+      let where: any = {};
       if (isActive !== null) {
-        where.gameStatus.isActive = isActive;
+        where = { "gameStatus.isActive": isActive };
       }
       const res = await server.GameRoom.find(where);
       return res;
@@ -47,7 +47,6 @@ const methods = {
         await GameRoom.save();
       }
       return {
-        // _id: GameRoom._id,
         gameStatus: GameRoom.gameStatus,
         gameToken: jwt.sign(
           {
@@ -63,6 +62,19 @@ const methods = {
       logMessage: `${EntityName} connect method`
     }
   ),
+  getGameStatus: trycatcher(
+    async (roomId: string) => {
+      const GameRoom = await server.GameRoom.findById(roomId);
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+      return { gameStatus: GameRoom.gameStatus };
+    },
+    {
+      logMessage: `${EntityName} get status`
+    }
+  ),
+
   getNextRoomNumber: trycatcher(
     async (): Promise<number> => {
       const LastGameRoom = await server.GameRoom.findOne()

@@ -3,7 +3,8 @@ export const EntityName = "GameRoom";
 export const routePath = "gameroom";
 
 export enum paths {
-  connect = "connect"
+  connect = "connect",
+  gameStatus = "gamestatus"
 }
 
 export enum ErrorMessages {

@@ -10,7 +10,7 @@ import { ErrorMessages } from "../../src/helper/GameRoom/constants";
 import { setResponse, getResponse } from "./lib/response";
 import { expect } from "chai";
 import methods from "../../src/helper/GameRoom";
-import { getLogin } from "./default";
+import { getLogin, getGameToken } from "./default";
 
 let roomNumber;
 
@@ -37,7 +37,7 @@ When("администратор создает новую игровую ком
 Then(
   "в списке комнат должна появиться новая активная комната",
   async function() {
-    const res = await server.GameRoom.find({ gameStatus: { isActive: true } });
+    const res = await server.GameRoom.find({ "gameStatus.isActive": true });
     expect(res).length.greaterThan(0);
   }
 );
@@ -80,4 +80,27 @@ Then("в ответе есть текущее состояние игры с и�
 Then("в текущем состоянии игры появилась команда", function() {
   const response = getResponse().result;
   expect(response.gameStatus.teams).length.greaterThan(0);
+});
+
+When(
+  "я делаю запрос на получение статуса комнаты от команды {string}",
+  async function(teamName: string) {
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      url: `${APIRoute}/${routePath}/${paths.gameStatus}`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then("в ответе должен быть объект с полем состояния игры", async function() {
+  const res = getResponse().result;
+
+  expect(res).have.property("gameStatus");
 });
