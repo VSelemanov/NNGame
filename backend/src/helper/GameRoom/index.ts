@@ -1,8 +1,11 @@
 import trycatcher from "../../utils/trycatcher";
-import { IGameRoomBase, IGameRoom } from "./interfaces";
+import { IGameRoomBase, IGameRoom, IGameStatus } from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
 import jwt from "jsonwebtoken";
+import QuestionMethods from "../Question";
+import { IQuestionGetRandom } from "../Question/interfaces";
+import { ErrorMessages as TeamErrorMessages } from "../Team/constants";
 
 const methods = {
   create: trycatcher(
@@ -25,6 +28,8 @@ const methods = {
       if (isActive !== null) {
         where = { "gameStatus.isActive": isActive };
       }
+
+      console.log({ where });
       const res = await server.GameRoom.find(where);
       return res;
     },
@@ -42,10 +47,14 @@ const methods = {
       if (
         !isAdmin &&
         teamId &&
-        !GameRoom.gameStatus.teams.includes(teamId) &&
+        GameRoom.gameStatus.teams.filter(r => r._id === teamId).length === 0 &&
         GameRoom.gameStatus.teams.length < 3
       ) {
-        GameRoom.gameStatus.teams.push(teamId);
+        const Team = await server.Team.findOne({ _id: teamId });
+        if (!Team) {
+          throw new Error(TeamErrorMessages.NOT_FOUND);
+        }
+        GameRoom.gameStatus.teams.push(Team);
         await GameRoom.save();
       }
 
@@ -80,6 +89,27 @@ const methods = {
     },
     {
       logMessage: `${EntityName} get status`
+    }
+  ),
+  showQuestion: trycatcher(
+    async (roomId: string, isNumeric: boolean): Promise<IGameStatus> => {
+      const GameRoom = await server.GameRoom.findOne({ _id: roomId });
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+      const Question = await QuestionMethods.random({
+        isNumeric
+      } as IQuestionGetRandom);
+      GameRoom.gameStatus.part1.push({
+        question: Question,
+        results: [],
+        timerStarted: false
+      });
+      await GameRoom.save();
+      return GameRoom.gameStatus;
+    },
+    {
+      logMessage: `${EntityName} show question`
     }
   ),
 

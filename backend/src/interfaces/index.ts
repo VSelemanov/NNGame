@@ -13,3 +13,9 @@ export interface IBaseFlds {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IMapZone {
+  nearby: string[];
+  isStartBase: boolean;
+  teamId: string;
+}

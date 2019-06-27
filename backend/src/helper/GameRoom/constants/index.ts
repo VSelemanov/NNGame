@@ -5,7 +5,9 @@ export const routePath = "gameroom";
 export enum paths {
   connect = "connect",
   gameStatus = "gamestatus",
-  start = "start"
+  start = "start",
+  showQuestion = "question",
+  timerStart = "timerstart"
 }
 
 export enum ErrorMessages {

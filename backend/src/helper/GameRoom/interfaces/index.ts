@@ -1,13 +1,30 @@
-import { IBaseFlds } from "../../../interfaces";
+import { IBaseFlds, IMapZone } from "../../../interfaces";
 import { Document } from "mongoose";
+import { IQuestion } from "../../Question/interfaces";
+import { ITeam } from "../../Team/interfaces";
 
-interface IGameStatus {
+export interface ITeamResponsePart1 {
+  teamId: string;
+  response: number;
+  timer: number;
+  allowZones: number;
+}
+
+export interface IStepPart1 {
+  question: IQuestion;
+  timerStarted: boolean;
+  results: ITeamResponsePart1[];
+}
+
+export interface IGameStatus {
   isActive: boolean;
   isStarted: boolean;
-  teams: string[];
-  part1: any[];
+  teams: ITeam[];
+  part1: IStepPart1[];
   part2: any[];
-  map: any[];
+  gameMap: {
+    [key: string]: IMapZone;
+  };
 }
 
 export interface IGameRoomBase {

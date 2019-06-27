@@ -3,7 +3,7 @@ import { baseFlds } from "../../../../constants";
 import { IQuestion } from "../../interfaces";
 import uuid = require("uuid");
 
-const QuestionSchema = new Schema(
+export const QuestionSchema = new Schema(
   {
     ...baseFlds,
     title: {

@@ -15,3 +15,8 @@ export interface IQuestionBase {
 }
 
 export interface IQuestion extends IQuestionBase, Document {}
+
+export interface IQuestionGetRandom {
+  isNumeric?: boolean;
+  theme?: string;
+}

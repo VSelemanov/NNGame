@@ -3,7 +3,14 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import GameRoomCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
-import { create, read, connect, gameStatus, start } from "../docs";
+import {
+  create,
+  read,
+  connect,
+  gameStatus,
+  start,
+  showQuestion
+} from "../docs";
 import Joi, { validate } from "joi";
 
 const routes: ServerRoute[] = [
@@ -59,7 +66,21 @@ const routes: ServerRoute[] = [
     options: {
       ...gameStatus,
       auth: {
-        strategies: ["team-auth", "admin-auth"]
+        strategies: ["game-room-auth", "admin-auth"]
+      }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.showQuestion}`,
+    method: HTTPMethods.get,
+    handler: GameRoomCtrl.showQuestion,
+    options: {
+      ...showQuestion,
+      auth: "admin-auth",
+      validate: {
+        query: Joi.object({
+          isNumeric: Joi.bool().required()
+        })
       }
     }
   },

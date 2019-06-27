@@ -1,6 +1,8 @@
 import { Schema, Model, model, Document } from "mongoose";
-import { baseFlds } from "../../../../constants";
+import { baseFlds, GameMap } from "../../../../constants";
 import { IGameRoom } from "../../interfaces";
+import { QuestionSchema } from "../../../Question/db/model";
+import uuid = require("uuid");
 
 const GameRoomSchema = new Schema(
   {
@@ -26,6 +28,46 @@ const GameRoomSchema = new Schema(
         type: Boolean,
         default: false
       },
+      gameMap: {
+        type: Object,
+        required: true,
+        default: GameMap
+      },
+      part1: [
+        {
+          _id: {
+            type: String,
+            default: uuid.v4
+          },
+          question: QuestionSchema,
+          timerStarted: {
+            type: Boolean,
+            required: true,
+            default: false
+          },
+          results: [
+            {
+              teamId: {
+                type: String,
+                required: true
+              },
+              response: {
+                type: Number,
+                required: true
+              },
+              timer: {
+                type: Number,
+                required: true
+              },
+              allowZones: {
+                type: Number,
+                required: true,
+                default: 0
+              }
+            }
+          ]
+        }
+      ],
       teams: {
         type: Array,
         default: []

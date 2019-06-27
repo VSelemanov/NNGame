@@ -37,7 +37,19 @@ export const connect = {
 };
 
 export const gameStatus = {
-  description: "Создать игровую комнату",
+  description: "Получить статус игровой комнаты",
+  /*notes:
+      "Параметры: projectId - для получения списка, bimObjectId - для получения информации по объекту",*/
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};
+
+export const showQuestion = {
+  description: "Запустить вопрос",
   /*notes:
       "Параметры: projectId - для получения списка, bimObjectId - для получения информации по объекту",*/
   tags: ["api", routePath],

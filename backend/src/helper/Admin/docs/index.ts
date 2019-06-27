@@ -2,8 +2,7 @@ import { routePath } from "../constants";
 
 export const create = {
   description: "Создать администратора",
-  /*notes:
-      "Параметры: projectId - для получения списка, bimObjectId - для получения информации по объекту",*/
+  notes: "Авторизация через AppToken",
   tags: ["api", routePath],
   plugins: {
     "hapi-swagger": {

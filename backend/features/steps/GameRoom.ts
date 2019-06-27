@@ -12,7 +12,11 @@ import {
 } from "../../src/helper/Admin/constants";
 
 import { Authorization } from "./constants";
-import { IGameRoomBase } from "../../src/helper/GameRoom/interfaces";
+import {
+  IGameRoomBase,
+  IGameStatus,
+  IGameRoom
+} from "../../src/helper/GameRoom/interfaces";
 import { ErrorMessages } from "../../src/helper/GameRoom/constants";
 import { setResponse, getResponse } from "./lib/response";
 import { expect } from "chai";
@@ -46,6 +50,9 @@ Then(
   async function() {
     const res = await server.GameRoom.find({ "gameStatus.isActive": true });
     expect(res).length.greaterThan(0);
+    expect(res[0].gameStatus).have.property("part1");
+    expect(res[0].gameStatus).have.property("gameMap");
+    expect(Object.keys(res[0].gameStatus.gameMap).length).to.eql(15);
   }
 );
 
@@ -184,3 +191,57 @@ When(
     });
   }
 );
+
+When(
+  "администратор l={string} p={string} делает запрос на показ вопроса",
+  async function(name, password) {
+    const token = await getAdminLogin(name, password);
+
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${
+        GameRoomPaths.showQuestion
+      }?isNumeric=true`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в ответе состояние игры с первым вопросом и флагом скрыть ответы",
+  async function() {
+    const gameStatus: IGameStatus = getResponse().result;
+
+    expect(gameStatus).have.property("part1");
+    expect(gameStatus.part1).length.greaterThan(0);
+    expect(gameStatus.part1[0]).have.property("question");
+    expect(gameStatus.part1[0].question).have.property("_id");
+    expect(gameStatus.part1[0]).have.property("timerStarted");
+    expect(gameStatus.part1[0].timerStarted).to.eql(false);
+    expect(gameStatus.part1[0].results.length).to.eql(0);
+  }
+);
+
+When("я делаю запрос получения списка комнат", async function() {
+  // const token = await getAdminLogin("admin", "admin");
+
+  const res = await server.server.inject({
+    url: `${APIRoute}/${GameRoomPath}`,
+    method: HTTPMethods.get,
+    headers: {
+      Authorization
+    }
+  });
+
+  setResponse(res);
+});
+
+Then("в ответе должна быть комната", async function() {
+  const res: IGameRoom = getResponse().result;
+
+  expect(res).length.greaterThan(0, "GameRooms are empty");
+});

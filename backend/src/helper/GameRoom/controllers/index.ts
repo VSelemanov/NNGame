@@ -21,7 +21,7 @@ const ctrl = {
     ): Promise<IGameRoom> => {
       const { isActive } = req.query;
       return await methods.read(
-        isActive === "undefined" ? null : isActive === "true"
+        isActive === undefined || isActive === "" ? null : isActive === "true"
       );
     },
     {
@@ -56,6 +56,25 @@ const ctrl = {
     ): Promise<IGameRoom> => {
       const { gameRoomId } = req.auth.credentials;
       return await methods.getGameStatus(gameRoomId);
+    },
+    {
+      logMessage: `${EntityName} connect request`,
+      isRequest: true
+    }
+  ),
+  showQuestion: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        {},
+        { isNumeric: boolean },
+        {},
+        { gameRoomId: string }
+      >,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId } = req.auth.credentials;
+      const { isNumeric } = req.query;
+      return await methods.showQuestion(gameRoomId, isNumeric);
     },
     {
       logMessage: `${EntityName} connect request`,
