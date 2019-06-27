@@ -20,11 +20,10 @@ let ServerStarted = false;
 
 export async function getLogin(name: string): Promise<string> {
   const res = await server.server.inject({
-    url: `${APIRoute}/${TeamRoutePath}/${TeamPaths.login}?name=${name}`,
-    method: HTTPMethods.get,
-    headers: {
-      Authorization
-    }
+    url: `${APIRoute}/${TeamRoutePath}/${TeamPaths.login}`,
+    method: HTTPMethods.post,
+    payload: { name },
+    headers: { Authorization }
   });
   return res.result as any;
 }

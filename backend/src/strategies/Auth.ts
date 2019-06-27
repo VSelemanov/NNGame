@@ -2,6 +2,7 @@ import trycatcher from "../utils/trycatcher";
 import jwt from "jsonwebtoken";
 import methods from "../helper/GameRoom";
 import { IGameRoom } from "../helper/GameRoom/interfaces";
+import GameRoomMethods from "../helper/GameRoom";
 
 const Auth = {
   // Валидация запросов для системных событий
@@ -20,7 +21,12 @@ const Auth = {
       }
     );
 
-    return { isValid: true, credentials: { ...tokenData, isAdmin: true } };
+    const GameRoom: IGameRoom[] = await GameRoomMethods.read(true);
+
+    return {
+      isValid: true,
+      credentials: { ...tokenData, isAdmin: true, gameRoomId: GameRoom[0]._id }
+    };
   },
   TeamAuth: async (request, token: string, h) => {
     try {

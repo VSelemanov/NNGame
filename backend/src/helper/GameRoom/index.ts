@@ -56,6 +56,7 @@ const methods = {
         result.gameToken = jwt.sign(
           {
             gameRoomId: GameRoom._id,
+            isAdmin,
             teamId
           },
           process.env.SECRET_KEY || "nngame",

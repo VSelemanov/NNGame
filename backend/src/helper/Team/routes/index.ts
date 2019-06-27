@@ -4,6 +4,7 @@ import TeamCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
 import { login, create } from "../docs";
+import Joi from "joi";
 
 const routes: ServerRoute[] = [
   {
@@ -11,15 +12,25 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.post,
     handler: TeamCtrl.create,
     options: {
-      ...create
+      ...create,
+      validate: {
+        payload: Joi.object({
+          name: Joi.string().required()
+        })
+      }
     }
   },
   {
     path: `${APIRoute}/${routePath}/${paths.login}`,
-    method: HTTPMethods.get,
+    method: HTTPMethods.post,
     handler: TeamCtrl.login,
     options: {
-      ...login
+      ...login,
+      validate: {
+        payload: Joi.object({
+          name: Joi.string().required()
+        })
+      }
     }
   }
 ];

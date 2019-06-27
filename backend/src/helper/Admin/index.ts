@@ -21,9 +21,13 @@ const methods = {
       if (!Admin) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
-      return jwt.sign({ _id: Admin._id }, process.env.ADMIN_KEY || "nngame", {
-        algorithm: "HS256"
-      });
+      return jwt.sign(
+        { _id: Admin._id, isAdmin: true },
+        process.env.ADMIN_KEY || "nngame",
+        {
+          algorithm: "HS256"
+        }
+      );
     },
     {
       logMessage: `${EntityName} login method`

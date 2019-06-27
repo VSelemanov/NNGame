@@ -169,3 +169,18 @@ Then("в ответе состояние игры с флагом запущен
   expect(res.gameStatus).have.property("isStarted");
   expect(res.gameStatus.isStarted).to.eql(true);
 });
+
+When(
+  "я делаю запрос на получение статуса комнаты от лица администратора l={string} p={string}",
+  async function(name: string, password: string) {
+    const token = await getAdminLogin(name, password);
+
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.gameStatus}`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+);

@@ -4,6 +4,7 @@ import GameRoomCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
 import { create, read, connect, gameStatus, start } from "../docs";
+import Joi, { validate } from "joi";
 
 const routes: ServerRoute[] = [
   {
@@ -11,7 +12,15 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.post,
     handler: GameRoomCtrl.create,
     options: {
-      ...create
+      ...create,
+      validate: {
+        payload: Joi.object({
+          theme: Joi.string()
+            .required()
+            .allow(null),
+          adminId: Joi.string().required()
+        })
+      }
     }
   },
   {
@@ -19,7 +28,12 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.get,
     handler: GameRoomCtrl.read,
     options: {
-      ...read
+      ...read,
+      validate: {
+        query: Joi.object({
+          isActive: Joi.boolean()
+        })
+      }
     }
   },
   {
@@ -30,6 +44,11 @@ const routes: ServerRoute[] = [
       ...connect,
       auth: {
         strategies: ["team-auth", "admin-auth"]
+      },
+      validate: {
+        params: Joi.object({
+          roomId: Joi.string().required()
+        })
       }
     }
   },
@@ -39,7 +58,9 @@ const routes: ServerRoute[] = [
     handler: GameRoomCtrl.getGameStatus,
     options: {
       ...gameStatus,
-      auth: "game-room-auth"
+      auth: {
+        strategies: ["team-auth", "admin-auth"]
+      }
     }
   },
   {
@@ -48,7 +69,12 @@ const routes: ServerRoute[] = [
     handler: GameRoomCtrl.start,
     options: {
       ...start,
-      auth: "admin-auth"
+      auth: "admin-auth",
+      validate: {
+        params: Joi.object({
+          roomId: Joi.string().required()
+        })
+      }
     }
   }
 ];

@@ -32,11 +32,10 @@ Then("в списке команд должна быть команда {string}
 
 When("я делаю запрос на авторизацию команды {string}", async function(name) {
   const res = await server.server.inject({
-    url: `${APIRoute}/${routePath}/${paths.login}?name=${name}`,
-    method: HTTPMethods.get,
-    headers: {
-      Authorization
-    }
+    url: `${APIRoute}/${routePath}/${paths.login}`,
+    method: HTTPMethods.post,
+    payload: { name },
+    headers: { Authorization }
   });
 
   setResponse(res);

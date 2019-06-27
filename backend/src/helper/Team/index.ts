@@ -22,7 +22,7 @@ const methods = {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
       const token = jwt.sign(
-        { _id: Team.id },
+        { _id: Team.id, isAdmin: false },
         process.env.SECRET_KEY || "nngame",
         {
           algorithm: "HS256"

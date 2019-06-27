@@ -15,8 +15,8 @@ const ctrl = {
     }
   ),
   login: trycatcher(
-    async (req: IDecoratedRequest<{}, { name: string }>, h) => {
-      const { name } = req.query;
+    async (req: IDecoratedRequest<{ name: string }>, h) => {
+      const { name } = req.payload;
       return await methods.login(name);
     },
     {

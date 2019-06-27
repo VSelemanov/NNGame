@@ -3,6 +3,7 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import AdminCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 import { login, create } from "../docs";
+import Joi from "joi";
 
 const routes: ServerRoute[] = [
   {
@@ -10,7 +11,13 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.post,
     handler: AdminCtrl.create,
     options: {
-      ...create
+      ...create,
+      validate: {
+        payload: Joi.object({
+          name: Joi.string().required(),
+          password: Joi.string().required()
+        })
+      }
     }
   },
   {
@@ -18,7 +25,13 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.post,
     handler: AdminCtrl.login,
     options: {
-      ...login
+      ...login,
+      validate: {
+        payload: Joi.object({
+          name: Joi.string().required(),
+          password: Joi.string().required()
+        })
+      }
     }
   }
 ];
