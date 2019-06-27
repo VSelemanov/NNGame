@@ -9,5 +9,6 @@ export enum paths {
 }
 
 export enum ErrorMessages {
-  NOT_FOUND = "GameRoom not found"
+  NOT_FOUND = "GameRoom not found",
+  NOT_FULL = "GameRoom not full"
 }

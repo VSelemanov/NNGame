@@ -64,11 +64,11 @@ const ctrl = {
   ),
   start: trycatcher(
     async (
-      req: IDecoratedRequest<{}, {}, { gameRoomId: string }>,
+      req: IDecoratedRequest<{}, {}, { roomId: string }>,
       h
     ): Promise<IGameRoom> => {
-      const { gameRoomId } = req.params;
-      return await methods.start(gameRoomId);
+      const { roomId } = req.params;
+      return await methods.start(roomId);
     },
     {
       logMessage: `${EntityName} connect request`,

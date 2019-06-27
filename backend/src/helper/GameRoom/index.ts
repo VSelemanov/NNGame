@@ -84,17 +84,17 @@ const methods = {
 
   start: trycatcher(
     async (roomId: string) => {
-      const GameRoom = await server.GameRoom.findOneAndUpdate(
-        { _id: roomId },
-        {
-          "gameStatus.isStarted": true
-        },
-        { new: true }
-      );
+      const GameRoom = await server.GameRoom.findOne({ _id: roomId });
       if (!GameRoom) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
-      return { gameStatus: GameRoom.gameStatus };
+      let response: any = ErrorMessages.NOT_FULL;
+      if (GameRoom.gameStatus.teams.length === 3) {
+        GameRoom.gameStatus.isStarted = true;
+        await GameRoom.save();
+        response = { gameStatus: GameRoom.gameStatus };
+      }
+      return response;
     },
     {
       logMessage: `${EntityName} get status`

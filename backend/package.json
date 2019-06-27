@@ -5,7 +5,7 @@
   "main": "./src/index.ts",
   "repository": "",
   "config": {
-    "registry": ""
+    "registry": "vselemanov/nngame"
   },
   "scripts": {
     "test": "rm -rf ./coverage && rm -rf ./.nyc_output && NODE_PATH=../../../:./node_modules nyc cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts'",
@@ -15,7 +15,7 @@
     "lint": "tslint -p tsconfig.json",
     "start": "npm run lint && npm run format && clear && NODE_PATH=../../../ ts-node -r dotenv/config ./src/index.ts",
     "build": "NODE_PATH=../../../ ./node_modules/.bin/tsc",
-    "buildContainer": "MY_KEY=$(cat ~/.ssh/id_rsa) && semver -i $(cat version.num) > version.num && docker build --build-arg SSH_KEY=\"$MY_KEY\" -t $npm_package_config_registry:$(cat version.num) .",
+    "buildContainer": "semver -i $(cat version.num) > version.num && docker build -t $npm_package_config_registry:$(cat version.num) .",
     "pushContainer": "docker push $npm_package_config_registry:$(cat version.num)",
     "deploy": "npm run buildContainer && npm run pushContainer",
     "comp-ts": "tsc -w front/ts/*.ts"

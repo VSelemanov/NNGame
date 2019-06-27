@@ -83,6 +83,7 @@ Given("база данных пуста", async function() {
   await utils.truncateCollection(server.Admin.collection);
   await utils.truncateCollection(server.GameRoom.collection);
   await utils.truncateCollection(server.Team.collection);
+  await utils.truncateCollection(server.Question.collection);
 });
 
 Then("сервер должен вернуть статус {int}", function(code) {

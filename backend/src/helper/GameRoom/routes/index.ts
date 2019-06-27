@@ -43,7 +43,7 @@ const routes: ServerRoute[] = [
     }
   },
   {
-    path: `${APIRoute}/${routePath}/{gameRoomId}/${paths.start}`,
+    path: `${APIRoute}/${routePath}/{roomId}/${paths.start}`,
     method: HTTPMethods.get,
     handler: GameRoomCtrl.start,
     options: {

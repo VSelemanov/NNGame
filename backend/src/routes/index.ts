@@ -4,6 +4,7 @@ import Boom from "boom";
 import AdminRoutes from "../helper/Admin/routes";
 import GameRoomRoutes from "../helper/GameRoom/routes";
 import TeamRoutes from "../helper/Team/routes";
+import QuestionRoutes from "../helper/Question/routes";
 // interfaces
 import { ServerRoute } from "hapi";
 // controllers
@@ -20,7 +21,8 @@ const Routes: ServerRoute[] = [
   },
   ...AdminRoutes,
   ...GameRoomRoutes,
-  ...TeamRoutes
+  ...TeamRoutes,
+  ...QuestionRoutes
 ];
 
 export default Routes;
