@@ -1,0 +1,110 @@
+.modal_back{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background: rgba(41, 31, 16, 0.5);
+  backdrop-filter: blur(40px);
+}
+.main{
+  height: 100%;
+  width: 80%;
+  background: url('../../img/keboard_bg.svg') no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input {
+  display: flex;
+  justify-content: center;
+  height: auto;
+  background: url('../../img/commandNameInput.svg') no-repeat;
+  width: 90%;
+  min-height: 420px;
+
+  & input {
+    margin-top: 2%;
+    width: 85%;
+    height: auto;
+    max-height: 140px;
+    font-family: 'Preslav', sans-serif;
+    border: none;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 80px;
+    line-height: 126px;
+    text-align: center;
+    color: #7b6442;
+  }
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  width: 65%;
+}
+.progress_bar{
+  background: url('../../img/progress_bar_bg.svg') no-repeat;
+  height: auto;
+  width: 90%;
+  max-width: 28px;
+  display: flex;
+  justify-content: center;
+}
+.keyboard {
+  height: auto;
+  width: 90%;
+  max-width: 620px;
+}
+.progress_cover{
+  border-radius: 5px;
+  margin-top: 10px;
+  height: 90%;
+  width: 16px;
+  background: #EA6237;
+}
+.progress_bar .progress_cover {
+  background-color: #FCBC51; 
+  background-image: linear-gradient(
+        45deg, rgb(252,163,17) 25%, 
+        transparent 25%, transparent 50%, 
+        rgb(252,163,17) 50%, rgb(252,163,17) 75%,
+        transparent 75%, transparent); 
+  animation: regressAnimation 6s;
+}
+//1280*680
+@keyframes regressAnimation {
+  from { height: 90% }
+  to   { height: 0 }
+}
+@media (max-height: 680px), (max-width: 1280px) {
+  .question_text{
+    max-width: 600px;
+    height: 150px;
+    font-size: 32px;
+    & p{
+      margin: 5px;
+      text-align: center;
+    }
+  }
+  .input {
+    min-height: 120px;
+    & input {
+      max-height: 80px;
+      font-size: 70px;
+      line-height: 70px;
+    }
+  }
+  .progress_bar{
+    height: auto;
+    width: 90%;
+    max-width: 28px;
+  }
+  .keyboard {
+    height: auto;
+    width: 90%;
+    max-width: 620px;
+  }
+}

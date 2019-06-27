@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'PT-serif';
+  src: url('./fonts/pt-serif.ttf');
+}
+@font-face {
+  font-family: 'Preslav';
+  src: url('./fonts/preslav.otf');
+}
+body {
+  margin: 0;
+  font-family: 'PT-serif',sans-serif;
+  background: radial-gradient(981.73px at 64.39% 56.84%, rgba(227, 188, 134, 0.6) 0%, rgba(206, 169, 117, 0.6) 56.37%, rgba(161, 112, 54, 0.6) 100%), #FDE2A3;
+}
+html, body, #root, .main-content, .App {
+  height: 100%;
+  width: 100%;
+}
