@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 const db = connection;
 
 export default async function() {
-  mongoose.connect("mongodb://localhost:27017/GameNN", {
-    useNewUrlParser: true
+  mongoose.connect(process.env.DB_HOST || "mongodb://localhost:27017", {
+    useNewUrlParser: true,
+    dbName: "nngame"
   });
 
   db.on("error", console.error.bind(console, "connection error:"));
