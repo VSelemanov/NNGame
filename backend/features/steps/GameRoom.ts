@@ -19,10 +19,12 @@ import {
   ITeamResponse
 } from "../../src/helper/GameRoom/interfaces";
 import { ErrorMessages } from "../../src/helper/GameRoom/constants";
+import { ErrorMessages as TeamErrorMessages } from "../../src/helper/Team/constants";
 import { setResponse, getResponse } from "./lib/response";
 import { expect } from "chai";
 import methods from "../../src/helper/GameRoom";
 import { getLogin, getGameToken, getAdminLogin } from "./default";
+import { gameStatus } from "../../src/helper/GameRoom/docs";
 
 let roomNumber;
 
@@ -116,6 +118,43 @@ Then("в текущем состоянии игры появилась кома�
   const response: IGameRoom = getResponse().result;
   expect(response.gameStatus.teams.team1).have.property("_id");
 });
+
+When(
+  "я делаю запрос на присваивание зоны {string} командой {string}",
+  async function(zoneName, teamName) {
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.map}/${
+        GameRoomPaths.zone
+      }`,
+      method: HTTPMethods.post,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      payload: {
+        zoneName
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в состоянии игры на карте зона {string} закрашивается цветом команды {string}",
+  async function(zoneName: string, teamName: string) {
+    const gameStatus: IGameStatus = getResponse().result;
+    const Team = await server.Team.findOne({ name: teamName });
+    if (!Team) {
+      throw new Error(TeamErrorMessages.NOT_FOUND);
+    }
+
+    expect(gameStatus).have.property("gameMap");
+    expect(gameStatus.gameMap).have.property(zoneName);
+    expect(gameStatus.gameMap[zoneName].teamId).to.eql(Team._id);
+  }
+);
 
 When(
   "я делаю запрос на получение статуса комнаты от команды {string}",

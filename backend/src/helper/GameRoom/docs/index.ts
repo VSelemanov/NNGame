@@ -95,3 +95,15 @@ export const teamResponse = {
     }
   }
 };
+
+export const zoneCapture = {
+  description: "Присваивание зоны командой",
+  /*notes:
+      "Параметры: projectId - для получения списка, bimObjectId - для получения информации по объекту",*/
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};

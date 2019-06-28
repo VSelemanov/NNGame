@@ -11,7 +11,8 @@ import {
   start,
   showQuestion,
   startQuestion,
-  teamResponse
+  teamResponse,
+  zoneCapture
 } from "../docs";
 import Joi, { validate } from "joi";
 
@@ -97,6 +98,20 @@ const routes: ServerRoute[] = [
         payload: Joi.object({
           response: Joi.number().required(),
           timer: Joi.number().required()
+        })
+      }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.map}/${paths.zone}`,
+    method: HTTPMethods.post,
+    handler: GameRoomCtrl.zoneCapture,
+    options: {
+      ...zoneCapture,
+      auth: "game-room-auth",
+      validate: {
+        payload: Joi.object({
+          zoneName: Joi.string().required()
         })
       }
     }

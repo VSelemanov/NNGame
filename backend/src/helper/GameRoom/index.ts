@@ -3,7 +3,8 @@ import {
   IGameRoomBase,
   IGameRoom,
   IGameStatus,
-  ITeamResponse
+  ITeamResponse,
+  IMap
 } from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
@@ -192,6 +193,36 @@ const methods = {
       logMessage: `${EntityName} get status`
     }
   ),
+
+  zoneCapture: trycatcher(
+    async (roomId: string, teamId: string, zoneName: string) => {
+      const GameRoom = await server.GameRoom.findOne({ _id: roomId });
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+
+      const gameMap = GameRoom.gameStatus.gameMap;
+      const hasBase = methods.findBaseOnMap(gameMap, teamId);
+
+      gameMap[zoneName].isStartBase = !hasBase;
+      GameRoom.markModified(`gameStatus.gameMap.${zoneName}.isStartBase`);
+      gameMap[zoneName].teamId = teamId;
+      GameRoom.markModified(`gameStatus.gameMap.${zoneName}.teamId`);
+
+      await GameRoom.save();
+
+      return GameRoom.gameStatus;
+    },
+    {
+      logMessage: `${EntityName} get status`
+    }
+  ),
+  findBaseOnMap: (gameMap: IMap, teamId: string): boolean => {
+    for (const zoneName of Object.keys(gameMap)) {
+      if (gameMap[zoneName].teamId === teamId) return true;
+    }
+    return false;
+  },
 
   getNextRoomNumber: trycatcher(
     async (): Promise<number> => {

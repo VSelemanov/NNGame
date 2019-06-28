@@ -16,6 +16,10 @@ export interface IStepPart1 {
   results: ITeamResponse[];
 }
 
+export interface IMap {
+  [key: string]: IMapZone;
+}
+
 export interface IGameStatus {
   isActive: boolean;
   isStarted: boolean;
@@ -26,9 +30,7 @@ export interface IGameStatus {
   };
   part1: IStepPart1[];
   part2: any[];
-  gameMap: {
-    [key: string]: IMapZone;
-  };
+  gameMap: IMap;
 }
 
 export interface IGameRoomBase {

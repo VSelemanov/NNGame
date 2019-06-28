@@ -5,6 +5,24 @@ import { QuestionSchema } from "../../../Question/db/model";
 import { TeamSchema } from "../../../Team/db/model";
 import uuid = require("uuid");
 
+const MapZoneSchema = new Schema({
+  nearby: {
+    type: Array,
+    required: true,
+    default: []
+  },
+  isStartBase: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  teamId: {
+    type: String,
+    required: true,
+    default: ""
+  }
+});
+
 const GameRoomSchema = new Schema(
   {
     ...baseFlds,
@@ -32,6 +50,7 @@ const GameRoomSchema = new Schema(
       gameMap: {
         type: Object,
         required: true,
+        ["test"]: {},
         default: GameMap
       },
       part1: [

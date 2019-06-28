@@ -129,6 +129,25 @@ const ctrl = {
       logMessage: `${EntityName} team response request`,
       isRequest: true
     }
+  ),
+  zoneCapture: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        { zoneName: string },
+        {},
+        {},
+        { gameRoomId: string; teamId: string }
+      >,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId, teamId } = req.auth.credentials;
+      const { zoneName } = req.payload;
+      return await methods.zoneCapture(gameRoomId, teamId, zoneName);
+    },
+    {
+      logMessage: `${EntityName} team response request`,
+      isRequest: true
+    }
   )
 };
 
