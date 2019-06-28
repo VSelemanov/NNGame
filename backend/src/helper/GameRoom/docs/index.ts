@@ -60,6 +60,18 @@ export const showQuestion = {
   }
 };
 
+export const startQuestion = {
+  description: "Запустить таймер и дать возможность ответить игрокам",
+  notes:
+    "Показываем таймер и поле ввода / варианты ответов для игроков или для админа показываем ответы команд",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};
+
 export const start = {
   description: "Запуск игры",
   /*notes:

@@ -2,6 +2,7 @@ import { Schema, Model, model, Document } from "mongoose";
 import { baseFlds, GameMap } from "../../../../constants";
 import { IGameRoom } from "../../interfaces";
 import { QuestionSchema } from "../../../Question/db/model";
+import { TeamSchema } from "../../../Team/db/model";
 import uuid = require("uuid");
 
 const GameRoomSchema = new Schema(
@@ -40,7 +41,7 @@ const GameRoomSchema = new Schema(
             default: uuid.v4
           },
           question: QuestionSchema,
-          timerStarted: {
+          isTimerStarted: {
             type: Boolean,
             required: true,
             default: false
@@ -69,8 +70,9 @@ const GameRoomSchema = new Schema(
         }
       ],
       teams: {
-        type: Array,
-        default: []
+        team1: TeamSchema,
+        team2: TeamSchema,
+        team3: TeamSchema
       }
     }
   },

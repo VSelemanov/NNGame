@@ -81,6 +81,19 @@ const ctrl = {
       isRequest: true
     }
   ),
+  startQuestion: trycatcher(
+    async (
+      req: IDecoratedRequest<{}, {}, {}, { gameRoomId: string }>,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId } = req.auth.credentials;
+      return await methods.startQuestion(gameRoomId);
+    },
+    {
+      logMessage: `${EntityName} connect request`,
+      isRequest: true
+    }
+  ),
   start: trycatcher(
     async (
       req: IDecoratedRequest<{}, {}, { roomId: string }>,

@@ -6,8 +6,7 @@ export enum paths {
   connect = "connect",
   gameStatus = "gamestatus",
   start = "start",
-  showQuestion = "question",
-  timerStart = "timerstart"
+  showQuestion = "question"
 }
 
 export enum ErrorMessages {

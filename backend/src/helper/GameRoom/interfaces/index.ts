@@ -12,14 +12,18 @@ export interface ITeamResponsePart1 {
 
 export interface IStepPart1 {
   question: IQuestion;
-  timerStarted: boolean;
+  isTimerStarted: boolean;
   results: ITeamResponsePart1[];
 }
 
 export interface IGameStatus {
   isActive: boolean;
   isStarted: boolean;
-  teams: ITeam[];
+  teams: {
+    team1: ITeam | null;
+    team2: ITeam | null;
+    team3: ITeam | null;
+  };
   part1: IStepPart1[];
   part2: any[];
   gameMap: {

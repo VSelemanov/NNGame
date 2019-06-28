@@ -29,7 +29,6 @@ const methods = {
         where = { "gameStatus.isActive": isActive };
       }
 
-      console.log({ where });
       const res = await server.GameRoom.find(where);
       return res;
     },
@@ -38,23 +37,37 @@ const methods = {
     }
   ),
 
+  fillcheck: (gameStatus: IGameStatus): string[] => {
+    const result: string[] = [];
+    for (const teamKey of Object.keys(gameStatus.teams)) {
+      if (gameStatus.teams[teamKey] === undefined && teamKey !== "$init") {
+        result.push(teamKey);
+      }
+    }
+    return result;
+  },
+
   connect: trycatcher(
     async (roomId: string, teamId: string | undefined, isAdmin: boolean) => {
       const GameRoom = await server.GameRoom.findOne({ _id: roomId });
       if (!GameRoom) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
+
+      const fillChecked = methods.fillcheck(GameRoom.gameStatus);
+
       if (
         !isAdmin &&
         teamId &&
-        GameRoom.gameStatus.teams.filter(r => r._id === teamId).length === 0 &&
-        GameRoom.gameStatus.teams.length < 3
+        fillChecked.length > 0
+        // GameRoom.gameStatus.teams.filter(r => r._id === teamId).length === 0 &&
+        // GameRoom.gameStatus.teams.length < 3
       ) {
         const Team = await server.Team.findOne({ _id: teamId });
         if (!Team) {
           throw new Error(TeamErrorMessages.NOT_FOUND);
         }
-        GameRoom.gameStatus.teams.push(Team);
+        GameRoom.gameStatus.teams[fillChecked[0]] = Team;
         await GameRoom.save();
       }
 
@@ -85,7 +98,7 @@ const methods = {
       if (!GameRoom) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
-      return { gameStatus: GameRoom.gameStatus };
+      return GameRoom.gameStatus;
     },
     {
       logMessage: `${EntityName} get status`
@@ -103,13 +116,29 @@ const methods = {
       GameRoom.gameStatus.part1.push({
         question: Question,
         results: [],
-        timerStarted: false
+        isTimerStarted: false
       });
       await GameRoom.save();
       return GameRoom.gameStatus;
     },
     {
       logMessage: `${EntityName} show question`
+    }
+  ),
+  startQuestion: trycatcher(
+    async (roomId: string) => {
+      const GameRoom = await server.GameRoom.findById(roomId);
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+      GameRoom.gameStatus.part1[
+        GameRoom.gameStatus.part1.length - 1
+      ].isTimerStarted = true;
+      await GameRoom.save();
+      return GameRoom.gameStatus;
+    },
+    {
+      logMessage: `${EntityName} start question`
     }
   ),
 
@@ -120,7 +149,7 @@ const methods = {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
       let response: any = ErrorMessages.NOT_FULL;
-      if (GameRoom.gameStatus.teams.length === 3) {
+      if (methods.fillcheck(GameRoom.gameStatus).length === 0) {
         GameRoom.gameStatus.isStarted = true;
         await GameRoom.save();
         response = { gameStatus: GameRoom.gameStatus };

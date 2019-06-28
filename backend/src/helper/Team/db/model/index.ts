@@ -2,7 +2,7 @@ import { Schema, Model, model, Document } from "mongoose";
 import { baseFlds } from "../../../../constants";
 import { ITeam } from "../../interfaces";
 
-const TeamSchema = new Schema(
+export const TeamSchema = new Schema(
   {
     ...baseFlds,
     name: {
@@ -16,4 +16,5 @@ const TeamSchema = new Schema(
     versionKey: false
   }
 );
+
 export default model<ITeam>("Team", TeamSchema);

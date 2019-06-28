@@ -86,7 +86,8 @@ class Server {
       });
 
       this._server.auth.strategy("app-auth", "bearer-access-token", {
-        validate: Auth.AppAuth
+        validate: Auth.AppAuth,
+        allowChaining: true
       });
 
       this._server.auth.strategy("admin-auth", "bearer-access-token", {
@@ -100,7 +101,8 @@ class Server {
       });
 
       this._server.auth.strategy("game-room-auth", "bearer-access-token", {
-        validate: Auth.GameRoomAuth
+        validate: Auth.GameRoomAuth,
+        allowChaining: true
       });
 
       this._server.auth.default("app-auth");

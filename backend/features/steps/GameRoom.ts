@@ -56,6 +56,24 @@ Then(
   }
 );
 
+When("я делаю запрос получения списка комнат", async function() {
+  const res = await server.server.inject({
+    url: `${APIRoute}/${GameRoomPath}?isActive=true`,
+    method: HTTPMethods.get,
+    headers: {
+      Authorization
+    }
+  });
+
+  setResponse(res);
+});
+
+Then("в ответе должна быть комната", async function() {
+  const res: IGameRoom[] = getResponse().result;
+
+  expect(res).length.greaterThan(0, "GameRooms are empty");
+});
+
 When("я хочу получить номер следующей комнаты", async function() {
   roomNumber = await methods.getNextRoomNumber();
 });
@@ -94,8 +112,8 @@ Then("в ответе есть текущее состояние игры с и�
 });
 
 Then("в текущем состоянии игры появилась команда", function() {
-  const response = getResponse().result;
-  expect(response.gameStatus.teams).length.greaterThan(0);
+  const response: IGameRoom = getResponse().result;
+  expect(response.gameStatus.teams.team1).have.property("_id");
 });
 
 When(
@@ -117,7 +135,9 @@ When(
 Then("в ответе должен быть объект с полем состояния игры", async function() {
   const res = getResponse().result;
 
-  expect(res).have.property("gameStatus");
+  expect(res).have.property("gameMap");
+  expect(res).have.property("isActive");
+  expect(res).have.property("isStarted");
 });
 
 When(
@@ -189,6 +209,8 @@ When(
         Authorization: `Bearer ${token}`
       }
     });
+
+    setResponse(res);
   }
 );
 
@@ -220,26 +242,42 @@ Then(
     expect(gameStatus.part1).length.greaterThan(0);
     expect(gameStatus.part1[0]).have.property("question");
     expect(gameStatus.part1[0].question).have.property("_id");
-    expect(gameStatus.part1[0]).have.property("timerStarted");
-    expect(gameStatus.part1[0].timerStarted).to.eql(false);
+    expect(gameStatus.part1[0]).have.property("isTimerStarted");
+    expect(gameStatus.part1[0].isTimerStarted).to.eql(false);
     expect(gameStatus.part1[0].results.length).to.eql(0);
   }
 );
 
-When("я делаю запрос получения списка комнат", async function() {
-  const res = await server.server.inject({
-    url: `${APIRoute}/${GameRoomPath}?isActive=true`,
-    method: HTTPMethods.get,
-    headers: {
-      Authorization
-    }
-  });
+When(
+  "администратор l={string} p={string} дает возможность ответить на вопрос",
+  async function(name, password) {
+    const token = await getAdminLogin(name, password);
 
-  setResponse(res);
-});
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.showQuestion}/${
+        GameRoomPaths.start
+      }`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-Then("в ответе должна быть комната", async function() {
-  const res: IGameRoom[] = getResponse().result;
+    setResponse(res);
+  }
+);
 
-  expect(res).length.greaterThan(0, "GameRooms are empty");
-});
+Then(
+  "в ответе состояние игры с первым вопросом и флагом показать ответы",
+  async function() {
+    const gameStatus: IGameStatus = getResponse().result;
+
+    expect(gameStatus).have.property("part1");
+    expect(gameStatus.part1).length.greaterThan(0);
+    expect(gameStatus.part1[0]).have.property("question");
+    expect(gameStatus.part1[0].question).have.property("_id");
+    expect(gameStatus.part1[0]).have.property("isTimerStarted");
+    expect(gameStatus.part1[0].isTimerStarted).to.eql(true);
+    expect(gameStatus.part1[0].results.length).to.eql(0);
+  }
+);

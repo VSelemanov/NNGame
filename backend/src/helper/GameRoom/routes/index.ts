@@ -9,7 +9,8 @@ import {
   connect,
   gameStatus,
   start,
-  showQuestion
+  showQuestion,
+  startQuestion
 } from "../docs";
 import Joi, { validate } from "joi";
 
@@ -37,16 +38,6 @@ const routes: ServerRoute[] = [
     options: {
       ...read,
       validate: {
-        failAction: async (request, h, err) => {
-          // @ts-ignore
-          if (err.isJoi) {
-            // do something with error
-            // @ts-ignore
-            console.log(err.message);
-          }
-
-          throw err;
-        },
         query: Joi.object({
           isActive: Joi.bool()
         })
@@ -92,6 +83,15 @@ const routes: ServerRoute[] = [
           isNumeric: Joi.bool().required()
         })
       }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.showQuestion}/${paths.start}`,
+    method: HTTPMethods.get,
+    handler: GameRoomCtrl.startQuestion,
+    options: {
+      ...startQuestion,
+      auth: "admin-auth"
     }
   },
   {
