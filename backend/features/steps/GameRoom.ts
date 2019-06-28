@@ -15,7 +15,8 @@ import { Authorization } from "./constants";
 import {
   IGameRoomBase,
   IGameStatus,
-  IGameRoom
+  IGameRoom,
+  ITeamResponse
 } from "../../src/helper/GameRoom/interfaces";
 import { ErrorMessages } from "../../src/helper/GameRoom/constants";
 import { setResponse, getResponse } from "./lib/response";
@@ -281,3 +282,34 @@ Then(
     expect(gameStatus.part1[0].results.length).to.eql(0);
   }
 );
+
+When("команда {string} делает запрос на отправку ответа", async function(
+  teamName
+) {
+  const token = await getGameToken(teamName);
+
+  const res = await server.server.inject({
+    url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.showQuestion}/${
+      GameRoomPaths.response
+    }`,
+    method: HTTPMethods.post,
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    payload: {
+      response: 70,
+      timer: 6
+    }
+  });
+
+  setResponse(res);
+});
+
+Then("в ответе состояние игры с ответом на первый вопрос", function() {
+  const res: IGameStatus = getResponse().result;
+
+  expect(res).have.property("part1");
+  expect(res.part1).length.greaterThan(0);
+  expect(res.part1[0]).have.property("results");
+  expect(res.part1[0].results).length.greaterThan(0);
+});

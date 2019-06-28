@@ -48,6 +48,10 @@ const GameRoomSchema = new Schema(
           },
           results: [
             {
+              _id: {
+                type: String,
+                default: uuid.v4
+              },
               teamId: {
                 type: String,
                 required: true
@@ -57,12 +61,12 @@ const GameRoomSchema = new Schema(
                 required: true
               },
               timer: {
-                type: Number,
-                required: true
+                type: Number
+                // required: true
               },
               allowZones: {
                 type: Number,
-                required: true,
+                // required: true,
                 default: 0
               }
             }

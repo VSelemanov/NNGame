@@ -1,5 +1,10 @@
 import trycatcher from "../../utils/trycatcher";
-import { IGameRoomBase, IGameRoom, IGameStatus } from "./interfaces";
+import {
+  IGameRoomBase,
+  IGameRoom,
+  IGameStatus,
+  ITeamResponse
+} from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
 import jwt from "jsonwebtoken";
@@ -155,6 +160,33 @@ const methods = {
         response = { gameStatus: GameRoom.gameStatus };
       }
       return response;
+    },
+    {
+      logMessage: `${EntityName} get status`
+    }
+  ),
+
+  teamResponse: trycatcher(
+    async (roomId: string, teamResponse: ITeamResponse) => {
+      const GameRoom = await server.GameRoom.findOne({ _id: roomId });
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+
+      const partElement =
+        GameRoom.gameStatus.part1[GameRoom.gameStatus.part1.length - 1];
+
+      const resultsIncludes = partElement.results.filter(
+        result => result.teamId === teamResponse.teamId
+      );
+
+      if (resultsIncludes.length === 0) {
+        partElement.results.push(teamResponse);
+      }
+
+      await GameRoom.save();
+
+      return GameRoom.gameStatus;
     },
     {
       logMessage: `${EntityName} get status`

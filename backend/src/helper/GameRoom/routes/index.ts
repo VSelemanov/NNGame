@@ -10,7 +10,8 @@ import {
   gameStatus,
   start,
   showQuestion,
-  startQuestion
+  startQuestion,
+  teamResponse
 } from "../docs";
 import Joi, { validate } from "joi";
 
@@ -81,6 +82,21 @@ const routes: ServerRoute[] = [
       validate: {
         query: Joi.object({
           isNumeric: Joi.bool().required()
+        })
+      }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.showQuestion}/${paths.response}`,
+    method: HTTPMethods.post,
+    handler: GameRoomCtrl.teamResponse,
+    options: {
+      ...teamResponse,
+      auth: "game-room-auth",
+      validate: {
+        payload: Joi.object({
+          response: Joi.number().required(),
+          timer: Joi.number().required()
         })
       }
     }

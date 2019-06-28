@@ -3,17 +3,17 @@ import { Document } from "mongoose";
 import { IQuestion } from "../../Question/interfaces";
 import { ITeam } from "../../Team/interfaces";
 
-export interface ITeamResponsePart1 {
+export interface ITeamResponse {
   teamId: string;
   response: number;
-  timer: number;
-  allowZones: number;
+  timer?: number;
+  allowZones?: number;
 }
 
 export interface IStepPart1 {
   question: IQuestion;
   isTimerStarted: boolean;
-  results: ITeamResponsePart1[];
+  results: ITeamResponse[];
 }
 
 export interface IGameStatus {

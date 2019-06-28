@@ -25,7 +25,7 @@ const ctrl = {
       );
     },
     {
-      logMessage: `${EntityName} create request`,
+      logMessage: `${EntityName} read request`,
       isRequest: true
     }
   ),
@@ -58,7 +58,7 @@ const ctrl = {
       return await methods.getGameStatus(gameRoomId);
     },
     {
-      logMessage: `${EntityName} connect request`,
+      logMessage: `${EntityName} game status request`,
       isRequest: true
     }
   ),
@@ -77,7 +77,7 @@ const ctrl = {
       return await methods.showQuestion(gameRoomId, isNumeric);
     },
     {
-      logMessage: `${EntityName} connect request`,
+      logMessage: `${EntityName} show question request`,
       isRequest: true
     }
   ),
@@ -90,7 +90,7 @@ const ctrl = {
       return await methods.startQuestion(gameRoomId);
     },
     {
-      logMessage: `${EntityName} connect request`,
+      logMessage: `${EntityName} start question request`,
       isRequest: true
     }
   ),
@@ -103,7 +103,30 @@ const ctrl = {
       return await methods.start(roomId);
     },
     {
-      logMessage: `${EntityName} connect request`,
+      logMessage: `${EntityName} start request`,
+      isRequest: true
+    }
+  ),
+  teamResponse: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        { response: number; timer: number },
+        {},
+        {},
+        { gameRoomId: string; teamId: string }
+      >,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId, teamId } = req.auth.credentials;
+      const { response, timer } = req.payload;
+      return await methods.teamResponse(gameRoomId, {
+        teamId,
+        response,
+        timer
+      });
+    },
+    {
+      logMessage: `${EntityName} team response request`,
       isRequest: true
     }
   )
