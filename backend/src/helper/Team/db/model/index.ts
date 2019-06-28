@@ -9,6 +9,10 @@ export const TeamSchema = new Schema(
       type: String,
       required: true,
       unique: true
+    },
+    zones: {
+      type: Number,
+      default: 0
     }
   },
   {

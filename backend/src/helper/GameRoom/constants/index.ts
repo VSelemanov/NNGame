@@ -9,7 +9,8 @@ export enum paths {
   showQuestion = "question",
   response = "response",
   map = "map",
-  zone = "zone"
+  zone = "zone",
+  attack = "attack"
 }
 
 export enum ErrorMessages {

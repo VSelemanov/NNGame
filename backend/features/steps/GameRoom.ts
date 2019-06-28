@@ -1,4 +1,4 @@
-import { When, Then } from "cucumber";
+import { When, Then, Given } from "cucumber";
 import { getAdmin } from "./lib";
 import { server } from "../../src/server";
 import { APIRoute, HTTPMethods } from "../../src/constants";
@@ -322,27 +322,28 @@ Then(
   }
 );
 
-When("команда {string} делает запрос на отправку ответа", async function(
-  teamName
-) {
-  const token = await getGameToken(teamName);
+When(
+  "команда {string} делает запрос на отправку ответа r={int} t={int}",
+  async function(teamName, response, timer) {
+    const token = await getGameToken(teamName);
 
-  const res = await server.server.inject({
-    url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.showQuestion}/${
-      GameRoomPaths.response
-    }`,
-    method: HTTPMethods.post,
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
-    payload: {
-      response: 70,
-      timer: 6
-    }
-  });
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.showQuestion}/${
+        GameRoomPaths.response
+      }`,
+      method: HTTPMethods.post,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      payload: {
+        response,
+        timer
+      }
+    });
 
-  setResponse(res);
-});
+    setResponse(res);
+  }
+);
 
 Then("в ответе состояние игры с ответом на первый вопрос", function() {
   const res: IGameStatus = getResponse().result;
@@ -352,3 +353,131 @@ Then("в ответе состояние игры с ответом на пер�
   expect(res.part1[0]).have.property("results");
   expect(res.part1[0].results).length.greaterThan(0);
 });
+
+Then(
+  "в состоянии игры проставлены следующие количества возможных зон:",
+  async function(dataTable) {
+    const res: IGameStatus = getResponse().result;
+    for (const row of dataTable.hashes()) {
+      const Team = await server.Team.findOne({ name: row.TeamName });
+      if (!Team) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+      const TeamResult = res.part1[0].results.filter(
+        r => r.teamId === Team._id
+      );
+      if (TeamResult.length === 0) {
+        throw new Error("У команды нет результата");
+      }
+
+      expect(TeamResult[0].allowZones).to.eql(+row.allowZones);
+    }
+  }
+);
+
+Given("все зоны закрашены командами в следующем количестве:", async function(
+  dataTable
+) {
+  const GameRoom = await server.GameRoom.findOne();
+  let offset = 0;
+  if (!GameRoom) {
+    throw new Error(ErrorMessages.NOT_FOUND);
+  }
+  for (const row of dataTable.hashes()) {
+    const Team = await server.Team.findOne({ name: row.TeamName });
+    if (!Team) {
+      throw new Error(ErrorMessages.NOT_FOUND);
+    }
+    const zones = Object.keys(GameRoom.gameStatus.gameMap);
+    for (let i = offset; i < +row.Zones + offset; i++) {
+      await methods.zoneCapture(GameRoom._id, Team._id, zones[i]);
+    }
+    offset += +row.Zones;
+  }
+});
+
+When(
+  "происходит запрос статуса при полностью закрашенной карте",
+  async function() {
+    const token = await getGameToken("команда1");
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.gameStatus}`,
+      method: HTTPMethods.get,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then("в ответе счетчик туров изменяется на {int}", function(currentPart) {
+  const res: IGameStatus = getResponse().result;
+
+  expect(res.currentPart).to.eql(currentPart);
+});
+
+Then(
+  "в ответе сформирована очередь ходов в порядке {string} {string} {string}",
+  async function(team1: string, team3: string, team2: string) {
+    const res: IGameStatus = getResponse().result;
+    const teamNames: string[] = [team1, team3, team2];
+
+    expect(res).have.property("part2");
+
+    expect(res.part2).have.property("teamQueue");
+    expect(res.part2.teamQueue).length.greaterThan(
+      0,
+      "teamQueue array is empty"
+    );
+
+    for (let i = 0; i < 3; i++) {
+      expect(res.part2.teamQueue[i].name).to.eql(teamNames[i]);
+    }
+  }
+);
+
+When("{string} нападает из {string} на {string}", async function(
+  TeamName: string,
+  attackingZone: string,
+  deffenderZone: string
+) {
+  const token = await getGameToken(TeamName);
+
+  const res = await server.server.inject({
+    url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.attack}`,
+    method: HTTPMethods.post,
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    payload: {
+      attackingZone,
+      deffenderZone
+    }
+  });
+
+  setResponse(res);
+});
+
+Then("в ответе должен быть новый шаг во втором туре", async function() {
+  const res: IGameStatus = getResponse().result;
+
+  expect(res).have.property("part2");
+  expect(res.part2).have.property("steps");
+  expect(res.part2.steps).length.greaterThan(0);
+});
+
+Then(
+  "в шаге установлены все поля атакующегося и защищающегося",
+  async function() {
+    const res: IGameStatus = getResponse().result;
+    const step = res.part2.steps[0];
+
+    expect(step.attacking).not.empty;
+    expect(step.deffender).not.empty;
+    expect(step.attackingZone).not.empty;
+    expect(step.deffenderZone).not.empty;
+    expect(step.question).not.empty;
+  }
+);

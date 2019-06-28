@@ -148,6 +148,30 @@ const ctrl = {
       logMessage: `${EntityName} team response request`,
       isRequest: true
     }
+  ),
+  attack: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        { attackingZone: string; deffenderZone: string },
+        {},
+        {},
+        { gameRoomId: string; teamId: string }
+      >,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId, teamId } = req.auth.credentials;
+      const { attackingZone, deffenderZone } = req.payload;
+      return await methods.attack(
+        gameRoomId,
+        teamId,
+        attackingZone,
+        deffenderZone
+      );
+    },
+    {
+      logMessage: `${EntityName} team response request`,
+      isRequest: true
+    }
   )
 };
 

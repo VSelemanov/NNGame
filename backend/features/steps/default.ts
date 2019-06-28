@@ -15,6 +15,7 @@ import {
 } from "../../src/helper/GameRoom/constants";
 import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
+import methods from "../../src/helper/GameRoom";
 
 let ServerStarted = false;
 
@@ -51,18 +52,16 @@ export async function getGameToken(teamName: string): Promise<string> {
   if (!GameRoom) {
     throw new Error(ErrorMessages.NOT_FOUND);
   }
-  const token = await getLogin(teamName);
 
-  const res = await server.server.inject({
-    url: `${APIRoute}/${GameRoomRoutePath}/${GameRoom._id}/${
-      GameRoomPaths.connect
-    }`,
-    method: HTTPMethods.get,
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  return (res.result as any).gameToken;
+  const Team = await server.Team.findOne({ name: teamName });
+
+  if (!Team) {
+    throw new Error(ErrorMessages.NOT_FOUND);
+  }
+
+  // const token = await getLogin(teamName);
+
+  return methods.generateGameToken(GameRoom._id, false, Team._id);
 }
 
 BeforeAll(async () => {
