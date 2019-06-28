@@ -1,8 +1,13 @@
 import React from 'react';
 import style from './AuthAdmin.module.scss';
 import { authAdmin } from '../../toServer/requests';
+import { connect } from 'react-redux';
+import { mapStateToProps, mapDispatchToProps } from '../../exports';
+import store from '../../store';
+import { push } from 'connected-react-router';
+import { methodsCookie } from '../../exports_func';
 
-export default class AuthAdmin extends React.Component<any, any> {
+class AuthAdmin extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -15,9 +20,22 @@ export default class AuthAdmin extends React.Component<any, any> {
       [e.target.name]: e.target.value,
     });
   };
-
+  public parseJwt = (token: string) => {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+};
   public auth = () => {
-    authAdmin(this.state.name, this.state.password).then(response => console.log(response.data));
+    authAdmin(this.state.name, this.state.password).then(response => {
+      this.props.updateOneState('isAdmin', true);
+      this.props.updateOneState('isLogin', true);
+      this.props.updateOneState('appToken', response.data);
+      methodsCookie.addCookie('appToken', response.data);
+      store.dispatch(push("/map"));
+    });
   };
   public render() {
     return (
@@ -37,3 +55,8 @@ export default class AuthAdmin extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AuthAdmin);

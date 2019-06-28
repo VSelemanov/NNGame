@@ -1,11 +1,15 @@
-.modal_back{
+.modal_back {
+  z-index: 2;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+  background: rgba(41, 31, 16, 0.5);
+  backdrop-filter: blur(40px);
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
-  background: rgba(41, 31, 16, 0.5);
-  backdrop-filter: blur(40px);
 }
 .main{
   height: 100%;

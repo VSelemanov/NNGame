@@ -1,8 +1,5 @@
 import React from 'react';
 import style from './KeyboardWindow.module.scss';
-// import { Link } from 'react-router-dom';
-// import progress_bar_bg from '../../img/progress_bar_bg.svg';
-// import progress_bar_main from '../../img/progress_bar_main.svg';
 
 class KeyboardWindow extends React.Component<any, any> {
   constructor(props: any) {
@@ -12,18 +9,18 @@ class KeyboardWindow extends React.Component<any, any> {
       startTime: '',
     };
   }
-  public update = (code: string) => () => {
-    console.log(code);
 
+  public update = (code: string) => () => {
     this.setState({
       value: code !== 'delete' ? this.state.value + code : this.state.value.slice(0, -1),
     });
   };
+
   public componentDidMount(){
     console.log('начинаем отсчет');
     this.setState({startTime: new Date()})
-    
   }
+  
   render() {
     return (
       <div className={style.modal_back}>
@@ -39,11 +36,9 @@ class KeyboardWindow extends React.Component<any, any> {
           </div>
           <div className={style.footer}>
             <div className={style.timer}>
-
+              
             </div>
-            {/* <div className={style.progress_bar}>
-              <div className={style.progress_cover} />
-            </div> */}
+
             <div className={style.keyboard}>
               <svg viewBox="0 0 1376 583" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
