@@ -27,8 +27,7 @@ class KeyboardWindow extends React.Component<any, any> {
         <div className={style.main}>
           <div className={style.question_text}>
             <p>
-              Вот вам вопрос какойто, отвечайте скорее на него?! feefeefefeffeefef dwefef efefefe
-              efefefeef
+              {this.props.question}
             </p>
           </div>
           <div className={style.input}>

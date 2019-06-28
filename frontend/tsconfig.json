@@ -19,10 +19,6 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "typeRoots": [
-    "../node_modules/@types",
-    "../@types"
-  ],
   "include": [
     "src"
   ]

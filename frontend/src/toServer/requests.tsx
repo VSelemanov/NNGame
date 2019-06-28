@@ -13,10 +13,36 @@ export const TEAM_OPERATION_URL = `${API_URL}${PREFIX}/team`;
 export const ADMIN_OPERATION_URL = `${API_URL}${PREFIX}/admin`;
 export const ROOM_OPERATION_URL = `${API_URL}${PREFIX}/gameroom`;
 export const ROOM_STATUS_URL = `${API_URL}${PREFIX}/gameroom/gamestatus`;
+export const GET_QUESTION_URL = `${API_URL}${PREFIX}/gameroom/question`;
+export const QUESTION_START_URL = `${API_URL}${PREFIX}/gameroom/question/start`;
 const config = {
 	headers: {
 		authorization: `Bearer ${store.getState().global.appToken}`,
 	},
+};
+
+export const startQuestion = async () => {
+  try {
+    return axios.get(QUESTION_START_URL,{headers: {
+			authorization: `Bearer ${methodsCookie.getCookie('appToken')}`,
+		}});
+  } catch (e) {
+    return e;
+  }
+};
+
+export const getQuestion = async (type: string) => {
+  try {
+    const config1 = {
+      headers: {
+        authorization: `Bearer ${methodsCookie.getCookie('appToken')}`,
+      },
+      params: {isNumeric: type === 'numeric'}
+    };
+    return axios.get(GET_QUESTION_URL, config1);
+  } catch (e) {
+    return e;
+  }
 };
 
 export const connectToGame = async (roomId: string) => {

@@ -23,8 +23,12 @@ export const deleteAllCookies = () => {
 };
 
 export const isAdmin = () => {
-  return store.getState().global.isAdmin
+  return store.getState().global.isAdmin || methodsCookie.getCookie('isAdmin')
 }
+export const isLogged = () => {
+  return store.getState().global.isLogin
+}
+
 
 export const isGameStart = () => {
   const gameStatus = store.getState().global.gameStatus;

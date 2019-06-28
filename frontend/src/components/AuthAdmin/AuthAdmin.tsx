@@ -1,6 +1,6 @@
 import React from 'react';
 import style from './AuthAdmin.module.scss';
-import { authAdmin } from '../../toServer/requests';
+import { authAdmin, connectToGame } from '../../toServer/requests';
 import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
 import store from '../../store';
@@ -34,6 +34,8 @@ class AuthAdmin extends React.Component<any, any> {
       this.props.updateOneState('isLogin', true);
       this.props.updateOneState('appToken', response.data);
       methodsCookie.addCookie('appToken', response.data);
+      methodsCookie.addCookie('isAdmin', 'true');
+      connectToGame("616d9a9e-e106-461b-b425-aa7a6ed750da");
       store.dispatch(push("/map"));
     });
   };
