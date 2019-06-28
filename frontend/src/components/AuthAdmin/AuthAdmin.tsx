@@ -35,7 +35,7 @@ class AuthAdmin extends React.Component<any, any> {
       this.props.updateOneState('appToken', response.data);
       methodsCookie.addCookie('appToken', response.data);
       methodsCookie.addCookie('isAdmin', 'true');
-      connectToGame("616d9a9e-e106-461b-b425-aa7a6ed750da");
+      connectToGame("c94254f5-6287-456b-8a5b-be165b679072");
       store.dispatch(push("/map"));
     });
   };

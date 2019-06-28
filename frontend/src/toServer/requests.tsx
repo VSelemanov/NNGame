@@ -15,10 +15,24 @@ export const ROOM_OPERATION_URL = `${API_URL}${PREFIX}/gameroom`;
 export const ROOM_STATUS_URL = `${API_URL}${PREFIX}/gameroom/gamestatus`;
 export const GET_QUESTION_URL = `${API_URL}${PREFIX}/gameroom/question`;
 export const QUESTION_START_URL = `${API_URL}${PREFIX}/gameroom/question/start`;
+export const SEND_ANSWER_URL = `${API_URL}${PREFIX}/gameroom/question/response`;
+export const TAKE_ZONE_URL = `${API_URL}${PREFIX}/gameroom/map/zone`;
+
+
 const config = {
 	headers: {
 		authorization: `Bearer ${store.getState().global.appToken}`,
 	},
+};
+
+export const takeZone = async (zoneName: string) => {
+  try {
+    return axios.post(TAKE_ZONE_URL,{zoneName},{ headers: {
+			authorization: `Bearer ${methodsCookie.getCookie('appToken')}`,
+		}});
+  } catch (e) {
+    return e;
+  }
 };
 
 export const startQuestion = async () => {
@@ -30,6 +44,19 @@ export const startQuestion = async () => {
     return e;
   }
 };
+
+
+export const sendAnswer = async (timer: number, response: number) => {
+  try {
+    return axios.post(SEND_ANSWER_URL, {timer,response }, { headers: {
+			authorization: `Bearer ${methodsCookie.getCookie('appToken')}`,
+		}});
+  } catch (e) {
+    return e;
+  }
+};
+
+
 
 export const getQuestion = async (type: string) => {
   try {

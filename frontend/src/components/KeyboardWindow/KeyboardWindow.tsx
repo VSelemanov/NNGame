@@ -1,12 +1,17 @@
 import React from 'react';
 import style from './KeyboardWindow.module.scss';
+import { sendAnswer } from '../../toServer/requests';
+// import moment from 'moment';
 
 class KeyboardWindow extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       value: '',
+      isCount: true,
       startTime: '',
+      endTime: null,
+      time: 0,
     };
   }
 
@@ -16,9 +21,30 @@ class KeyboardWindow extends React.Component<any, any> {
     });
   };
 
+  public timer = () => {
+    const timerId = setInterval(()=>this.setState({
+      time: this.state.time + 10
+    }) , 100);
+    console.log(this.state.time)
+    if(!this.state.isCount){clearInterval(timerId)}
+  }
+
+  public send = () => {
+    const endTime = this.state.time;
+    this.setState({
+      isCount: false,
+      endTime
+    })
+    sendAnswer(endTime, Number(this.state.value))
+  }
+
   public componentDidMount(){
     console.log('начинаем отсчет');
-    this.setState({startTime: new Date()})
+    const date = new Date().valueOf();
+    this.setState({
+      startTime: date
+    })
+    setTimeout(this.timer, 1000);
   }
   
   render() {
@@ -35,7 +61,7 @@ class KeyboardWindow extends React.Component<any, any> {
           </div>
           <div className={style.footer}>
             <div className={style.timer}>
-              
+              <p>{this.state.isCount ? this.state.time/100 : this.state.endTime/100}</p>
             </div>
 
             <div className={style.keyboard}>
@@ -164,11 +190,13 @@ class KeyboardWindow extends React.Component<any, any> {
                 />
                 <path
                   name="confirm"
-                  // onClick={() => alert(new Date - this.state.startTime)}
+                  onClick={this.send}
                   d="M1056 415.015C1056 412.245 1058.72 410 1062.08 410H1369.92C1373.28 410 1376 412.245 1376 415.015V577.985C1376 580.755 1373.28 583 1369.92 583H1062.08C1058.72 583 1056 580.755 1056 577.985V415.015Z"
                   fill="#63A647"
                 />
                 <path
+                  name="confirm"
+                  onClick={this.send}
                   d="M1204.57 526.949C1207.13 526.949 1209.69 525.972 1211.64 524.02L1252.83 482.832C1256.74 478.927 1256.74 472.595 1252.83 468.689C1248.93 464.784 1242.59 464.784 1238.69 468.689L1204.57 502.807L1193.99 492.228C1190.09 488.323 1183.75 488.323 1179.85 492.228C1175.94 496.133 1175.94 502.465 1179.85 506.37L1197.5 524.02C1199.45 525.973 1202.01 526.949 1204.57 526.949Z"
                   fill="white"
                 />

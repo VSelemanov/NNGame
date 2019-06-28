@@ -13,6 +13,7 @@ class CommandNamePage extends React.Component<any, any> {
     super(props);
     this.state = {
       name: '',
+      gameId: ''
     };
   }
   public update = (e: any) => {
@@ -22,21 +23,24 @@ class CommandNamePage extends React.Component<any, any> {
   };
 
   public auth = () => {
+    let gameId = '';
     authTeam(this.state.name)
     .then(response => {
-      getRoomList();
+      getRoomList().then(response => 
+        gameId = response.data[0]._id
+      );
       this.props.updateOneState('isLogin', true);
       this.props.updateOneState('appToken', response.data);
       methodsCookie.addCookie('appToken', response.data);
     })
     .then(response => {
-      connectToGame("616d9a9e-e106-461b-b425-aa7a6ed750da")
+      console.log('gameId', gameId)
+      setTimeout(()=>connectToGame(gameId)
       .then(response => {
-        console.log(response)
         this.props.updateOneState('appToken', response.data.gameToken);
         methodsCookie.addCookie('appToken', response.data.gameToken);
         store.dispatch(push("/map"))
-      })
+      }), 1000)
     })
   };
 

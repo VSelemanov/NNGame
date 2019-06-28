@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/NNGame/static/css/main.59256ffa.chunk.css",
+    "main.js": "/NNGame/static/js/main.fda92b42.chunk.js",
+    "main.js.map": "/NNGame/static/js/main.fda92b42.chunk.js.map",
+    "runtime~main.js": "/NNGame/static/js/runtime~main.8a087cad.js",
+    "runtime~main.js.map": "/NNGame/static/js/runtime~main.8a087cad.js.map",
+    "static/js/2.6eea58e8.chunk.js": "/NNGame/static/js/2.6eea58e8.chunk.js",
+    "static/js/2.6eea58e8.chunk.js.map": "/NNGame/static/js/2.6eea58e8.chunk.js.map",
+    "index.html": "/NNGame/index.html",
+    "precache-manifest.070a771e5c11828e6a8c396dda1b1449.js": "/NNGame/precache-manifest.070a771e5c11828e6a8c396dda1b1449.js",
+    "service-worker.js": "/NNGame/service-worker.js",
+    "static/css/main.59256ffa.chunk.css.map": "/NNGame/static/css/main.59256ffa.chunk.css.map",
+    "static/media/CommandNamePage.module.scss": "/NNGame/static/media/red-name.24540f2f.svg",
+    "static/media/KeyboardWindow.module.scss": "/NNGame/static/media/progress_bar_bg.c56d054c.svg",
+    "static/media/Map.module.scss": "/NNGame/static/media/map_bg.1215309d.svg",
+    "static/media/global_style.scss": "/NNGame/static/media/pt-serif.30cef0ea.ttf",
+    "static/media/KeyboardWindowAdmin.module.scss": "/NNGame/static/media/result_team3_bg.8e7a18ed.svg"
+  }
+}

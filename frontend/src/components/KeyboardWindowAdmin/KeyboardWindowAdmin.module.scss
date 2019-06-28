@@ -23,7 +23,7 @@
 
 .footer {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 40%;
   width: 80%;
@@ -56,5 +56,32 @@
       text-align: center;
     }
   }
+}
 
+.button_team1{
+  height: 40%;
+  width: 30%;
+  background: url('../../img/result_team1_bg.svg') no-repeat;
+  display: flex;
+  justify-content: center;
+  color: black;
+  font-size: 20px;
+}
+.button_team2{
+  height: 40%;
+  width: 30%;
+  background: url('../../img/result_team2_bg.svg') no-repeat;
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+}
+.button_team3{
+  height: 40%;
+  width: 30%;
+  background: url('../../img/result_team3_bg.svg') no-repeat;
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
 }
