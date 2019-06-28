@@ -37,8 +37,18 @@ const routes: ServerRoute[] = [
     options: {
       ...read,
       validate: {
+        failAction: async (request, h, err) => {
+          // @ts-ignore
+          if (err.isJoi) {
+            // do something with error
+            // @ts-ignore
+            console.log(err.message);
+          }
+
+          throw err;
+        },
         query: Joi.object({
-          isActive: Joi.boolean()
+          isActive: Joi.bool()
         })
       }
     }

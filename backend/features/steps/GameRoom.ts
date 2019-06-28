@@ -227,10 +227,8 @@ Then(
 );
 
 When("я делаю запрос получения списка комнат", async function() {
-  // const token = await getAdminLogin("admin", "admin");
-
   const res = await server.server.inject({
-    url: `${APIRoute}/${GameRoomPath}`,
+    url: `${APIRoute}/${GameRoomPath}?isActive=true`,
     method: HTTPMethods.get,
     headers: {
       Authorization
@@ -241,7 +239,7 @@ When("я делаю запрос получения списка комнат", 
 });
 
 Then("в ответе должна быть комната", async function() {
-  const res: IGameRoom = getResponse().result;
+  const res: IGameRoom[] = getResponse().result;
 
   expect(res).length.greaterThan(0, "GameRooms are empty");
 });

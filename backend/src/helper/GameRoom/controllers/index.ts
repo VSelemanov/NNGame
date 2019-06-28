@@ -21,7 +21,7 @@ const ctrl = {
     ): Promise<IGameRoom> => {
       const { isActive } = req.query;
       return await methods.read(
-        isActive === undefined || isActive === "" ? null : isActive === "true"
+        isActive === undefined || isActive === "" ? null : isActive
       );
     },
     {
