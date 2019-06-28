@@ -30,8 +30,13 @@ class CommandNamePage extends React.Component<any, any> {
       methodsCookie.addCookie('appToken', response.data);
     })
     .then(response => {
-      connectToGame("616d9a9e-e106-461b-b425-aa7a6ed750da");
-      store.dispatch(push("/map"))
+      connectToGame("616d9a9e-e106-461b-b425-aa7a6ed750da")
+      .then(response => {
+        console.log(response)
+        this.props.updateOneState('appToken', response.data.gameToken);
+        methodsCookie.addCookie('appToken', response.data.gameToken);
+        store.dispatch(push("/map"))
+      })
     })
   };
 

@@ -32,7 +32,7 @@ class Map extends React.Component <any, any> {
 
   public start1 = () => {
     console.log('try start Game')
-    startGame('1').then(() => alert('Игра успешно запущена!!!!'))
+    startGame('616d9a9e-e106-461b-b425-aa7a6ed750da').then(() => alert('Игра успешно запущена!!!!'))
   }
   render() {
     return (
@@ -61,7 +61,7 @@ class Map extends React.Component <any, any> {
            isModal: true
          })}>Создать комнату</button>} */}
          <div className={style.button_div}>
-          {isAdmin() && !isGameStart() && <button className={style.game_start} onClick={()=>startGame('1').then(() => alert('Игра успешно запущена!!!!'))}>Старт Игры</button>}
+          {isAdmin() && !isGameStart() && <button className={style.game_start} onClick={()=>startGame('616d9a9e-e106-461b-b425-aa7a6ed750da').then(() => alert('Игра успешно запущена!!!!'))}>Старт Игры</button>}
            <button className={style.game_status} onClick={()=>getGameStatus()}>Статус игры</button>
            <button className={style.game_status} onClick={()=>createRoom('Пикачииии')}>Создать комнату</button>
            <button className={style.game_status} onClick={()=>this.setState({isModal: true})}>Модалка</button>

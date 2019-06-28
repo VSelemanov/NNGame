@@ -23,7 +23,8 @@
 
 .footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   height: 40%;
   width: 80%;
 }
@@ -36,6 +37,12 @@
     font-size: 70px;
     text-align: center;
   }
+}
+.button{
+  height: auto;
+  max-height: 100px;
+  width: 100%;
+
 }
 //1280*680
 
