@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/static/css/main.95eb1882.chunk.css",
+    "main.js": "/static/js/main.43aaedc7.chunk.js",
+    "main.js.map": "/static/js/main.43aaedc7.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
+    "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
+    "static/js/2.b8e8ae88.chunk.js": "/static/js/2.b8e8ae88.chunk.js",
+    "static/js/2.b8e8ae88.chunk.js.map": "/static/js/2.b8e8ae88.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.f6b7ba1004ef14f096f24a4ed778c0a1.js": "/precache-manifest.f6b7ba1004ef14f096f24a4ed778c0a1.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.95eb1882.chunk.css.map": "/static/css/main.95eb1882.chunk.css.map",
+    "static/media/CommandNamePage.module.scss": "/static/media/red-name.24540f2f.svg",
+    "static/media/KeyboardWindow.module.scss": "/static/media/custom_button.6fb21958.svg",
+    "static/media/KeyboardWindowAdmin.module.scss": "/static/media/result_team3_bg.8e7a18ed.svg",
+    "static/media/Map.module.scss": "/static/media/map_bg.1215309d.svg",
+    "static/media/global_style.scss": "/static/media/pt-serif.30cef0ea.ttf"
+  }
+}
