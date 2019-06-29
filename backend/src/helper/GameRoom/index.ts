@@ -14,6 +14,7 @@ import QuestionMethods from "../Question";
 import { IQuestionGetRandom } from "../Question/interfaces";
 import { ErrorMessages as TeamErrorMessages } from "../Team/constants";
 import { ITeam } from "../Team/interfaces";
+import { gameStatus } from "./docs";
 
 const methods = {
   create: trycatcher(
@@ -225,19 +226,90 @@ const methods = {
       if (!GameRoom) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
+      if (GameRoom.gameStatus.currentPart === 1) {
+        const stepElement =
+          GameRoom.gameStatus.part1[GameRoom.gameStatus.part1.length - 1];
 
-      const stepElement =
-        GameRoom.gameStatus.part1[GameRoom.gameStatus.part1.length - 1];
+        const resultsIncludes = stepElement.results.filter(
+          result => result.teamId === teamResponse.teamId
+        );
 
-      const resultsIncludes = stepElement.results.filter(
-        result => result.teamId === teamResponse.teamId
-      );
+        if (resultsIncludes.length === 0) {
+          stepElement.results.push(teamResponse);
+        }
+        if (stepElement.results.length === 3) {
+          methods.calcQuestionWinner(stepElement);
+        }
+      } else {
+        const stepElement =
+          GameRoom.gameStatus.part2.steps[
+            GameRoom.gameStatus.part2.steps.length - 1
+          ];
 
-      if (resultsIncludes.length === 0) {
-        stepElement.results.push(teamResponse);
-      }
-      if (stepElement.results.length === 3) {
-        methods.calcQuestionWinner(stepElement);
+        if (teamResponse.teamId === stepElement.attacking._id) {
+          stepElement.attackingNumericResponse = {
+            response: teamResponse.response,
+            timer: teamResponse.timer as number
+          };
+        }
+
+        if (teamResponse.teamId === stepElement.deffender._id) {
+          stepElement.deffenderNumericResponse = {
+            response: teamResponse.response,
+            timer: teamResponse.timer as number
+          };
+        }
+
+        if (
+          stepElement.deffenderNumericResponse !== undefined &&
+          stepElement.attackingNumericResponse !== undefined &&
+          stepElement.numericQuestion !== undefined &&
+          stepElement.deffenderNumericResponse.response !== undefined &&
+          stepElement.attackingNumericResponse.response !== undefined
+        ) {
+          const a = stepElement.attackingNumericResponse;
+          const d = stepElement.deffenderNumericResponse;
+          const q = stepElement.numericQuestion;
+
+          const adif = Math.abs((q.numericAnswer || 0) - a.response);
+          const ddif = Math.abs((q.numericAnswer || 0) - d.response);
+
+          function winAttacking(gameResult: IGameStatus) {
+            const Team =
+              gameResult.part2.steps[gameResult.part2.steps.length - 1]
+                .attacking;
+            const deffenderZone =
+              gameResult.part2.steps[gameResult.part2.steps.length - 1]
+                .deffenderZone;
+            gameResult.part2.steps[gameResult.part2.steps.length - 1].winner =
+              "attacking";
+            gameResult.gameMap[deffenderZone].teamId = Team._id;
+          }
+
+          function winDeffender(gameResult: IGameStatus) {
+            const Team =
+              gameResult.part2.steps[gameResult.part2.steps.length - 1]
+                .deffender;
+            const attackingZone =
+              gameResult.part2.steps[gameResult.part2.steps.length - 1]
+                .attackingZone;
+            gameResult.part2.steps[gameResult.part2.steps.length - 1].winner =
+              "deffender";
+            gameResult.gameMap[attackingZone].teamId = Team._id;
+          }
+
+          if (adif < ddif) {
+            winAttacking(GameRoom.gameStatus);
+          } else if (adif > ddif) {
+            winDeffender(GameRoom.gameStatus);
+          } else {
+            if (a.timer < d.timer) {
+              winAttacking(GameRoom.gameStatus);
+            } else if (a.timer > d.timer) {
+              winDeffender(GameRoom.gameStatus);
+            }
+          }
+        }
       }
 
       await GameRoom.save();
@@ -326,6 +398,93 @@ const methods = {
       logMessage: `${EntityName} get status`
     }
   ),
+  winnerCheck: (gameStatus: IGameStatus) => {
+    const step = gameStatus.part2.steps[gameStatus.part2.steps.length - 1];
+    if (step.attackingResponse === step.deffenderResponse) {
+      if (
+        step.question.answers &&
+        step.attackingResponse !== undefined &&
+        step.question.answers[step.attackingResponse].isRight
+      ) {
+        return "draw";
+      } else {
+        return "none";
+      }
+    } else {
+      if (
+        step.question.answers &&
+        step.attackingResponse !== undefined &&
+        step.question.answers[step.attackingResponse].isRight
+      ) {
+        return "attacking";
+      }
+      if (
+        step.question.answers &&
+        step.deffenderResponse !== undefined &&
+        step.question.answers[step.deffenderResponse].isRight
+      ) {
+        return "deffender";
+      }
+    }
+  },
+  attackResponse: trycatcher(
+    async (roomId: string, teamId: string, response: number) => {
+      const GameRoom = await server.GameRoom.findOne({ _id: roomId });
+      if (!GameRoom) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+
+      const step =
+        GameRoom.gameStatus.part2.steps[
+          GameRoom.gameStatus.part2.steps.length - 1
+        ];
+
+      if (teamId === step.attacking._id) {
+        step.attackingResponse = response;
+      }
+
+      if (teamId === step.deffender._id) {
+        step.deffenderResponse = response;
+      }
+
+      if (
+        step.deffenderResponse !== undefined &&
+        step.attackingResponse !== undefined &&
+        step.winner === undefined
+      ) {
+        step.winner = methods.winnerCheck(GameRoom.gameStatus);
+
+        switch (step.winner) {
+          case "attacking":
+            GameRoom.gameStatus.gameMap[step.deffenderZone].teamId =
+              step.attacking._id;
+            GameRoom.markModified(
+              `gameStatus.gameMap.${step.deffenderZone}.teamId`
+            );
+            break;
+          case "deffender":
+            GameRoom.gameStatus.gameMap[step.attackingZone].teamId =
+              step.deffender._id;
+            GameRoom.markModified(
+              `gameStatus.gameMap.${step.attackingZone}.teamId`
+            );
+            break;
+          case "draw":
+            step.numericQuestion = await QuestionMethods.random({
+              isNumeric: true
+            });
+            break;
+        }
+      }
+
+      await GameRoom.save();
+
+      return GameRoom.gameStatus;
+    },
+    {
+      logMessage: `${EntityName} get status`
+    }
+  ),
   findBaseOnMap: (gameMap: IMap, teamId: string): boolean => {
     for (const zoneName of Object.keys(gameMap)) {
       if (gameMap[zoneName].teamId === teamId) {
@@ -346,7 +505,7 @@ const methods = {
       (r): IResultDifTimer => ({
         timer: r.timer || 15,
         teamId: r.teamId,
-        dif: (stepElement.question.numericAnswer || 0) - r.response
+        dif: Math.abs((stepElement.question.numericAnswer || 0) - r.response)
       })
     );
 

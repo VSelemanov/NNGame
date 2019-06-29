@@ -101,7 +101,7 @@ const Part2StepSchema = new Schema({
       type: Number
       // required: true
     },
-    reponse: {
+    response: {
       type: Number
       // required: true
     }
@@ -111,10 +111,13 @@ const Part2StepSchema = new Schema({
       type: Number
       // required: true
     },
-    reponse: {
+    response: {
       type: Number
       // required: true
     }
+  },
+  winner: {
+    type: String
   }
 });
 

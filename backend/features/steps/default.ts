@@ -1,4 +1,4 @@
-import { Given, BeforeAll, AfterAll, Then } from "cucumber";
+import { Given, BeforeAll, AfterAll, Then, setDefaultTimeout } from "cucumber";
 import { server } from "../../src/server";
 import { expect } from "chai";
 import utils from "../../src/utils";
@@ -16,6 +16,8 @@ import {
 import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
 import methods from "../../src/helper/GameRoom";
+
+setDefaultTimeout(10 * 1000);
 
 let ServerStarted = false;
 

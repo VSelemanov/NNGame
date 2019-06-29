@@ -23,8 +23,8 @@ export interface IStepPart2 {
   deffender: ITeam;
   question: IQuestion;
   numericQuestion?: IQuestion;
-  attackingResponse?: string;
-  deffenderResponse?: string;
+  attackingResponse?: number;
+  deffenderResponse?: number;
   attackingNumericResponse?: {
     response: number;
     timer: number;
@@ -33,6 +33,7 @@ export interface IStepPart2 {
     response: number;
     timer: number;
   };
+  winner?: string;
 }
 
 export interface IMap {

@@ -25,6 +25,7 @@ import { expect } from "chai";
 import methods from "../../src/helper/GameRoom";
 import { getLogin, getGameToken, getAdminLogin } from "./default";
 import { gameStatus } from "../../src/helper/GameRoom/docs";
+import { ITeam } from "../../src/helper/Team/interfaces";
 
 let roomNumber;
 
@@ -479,5 +480,128 @@ Then(
     expect(step.attackingZone).not.empty;
     expect(step.deffenderZone).not.empty;
     expect(step.question).not.empty;
+  }
+);
+
+When("команда {string} дает ответ {int}", async function(type, response) {
+  const GameRoom = await server.GameRoom.findOne();
+  if (!GameRoom) {
+    throw new Error(ErrorMessages.NOT_FOUND);
+  }
+  const Team: ITeam =
+    GameRoom.gameStatus.part2.steps[GameRoom.gameStatus.part2.steps.length - 1][
+      type
+    ];
+
+  const token = await getGameToken(Team.name);
+
+  const res = await server.server.inject({
+    url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.attack}/${
+      GameRoomPaths.response
+    }`,
+    method: HTTPMethods.post,
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    payload: {
+      response
+    }
+  });
+
+  setResponse(res);
+});
+
+Then(
+  "в ответе новый статус игры с ответами защитника и нападающего",
+  async function() {
+    const res: IGameStatus = getResponse().result;
+
+    expect(res).have.property("part2");
+    expect(res.part2).have.property("steps");
+    expect(res.part2.steps).length.greaterThan(0, "step are empty");
+    expect(res.part2.steps[res.part2.steps.length - 1]).have.property(
+      "attackingResponse"
+    );
+    expect(res.part2.steps[res.part2.steps.length - 1]).have.property(
+      "deffenderResponse"
+    );
+    expect(res.part2.steps[res.part2.steps.length - 1].attackingResponse).not
+      .empty;
+    expect(res.part2.steps[res.part2.steps.length - 1].deffenderResponse).not
+      .empty;
+  }
+);
+
+Then("победит команда {string}", async function(type) {
+  const GameRoom = await server.GameRoom.findOne();
+  if (!GameRoom) {
+    throw new Error(ErrorMessages.NOT_FOUND);
+  }
+  expect(
+    GameRoom.gameStatus.part2.steps[GameRoom.gameStatus.part2.steps.length - 1]
+      .winner
+  ).to.eql(type);
+});
+
+Then("зона {string} станет принадлежать команде {string}", async function(
+  zone,
+  type
+) {
+  const res: IGameStatus = getResponse().result;
+  expect(res.gameMap[zone].teamId).to.eql(
+    res.part2.steps[res.part2.steps.length - 1][type]._id
+  );
+});
+
+Then("победителя нет", async function() {
+  const res: IGameStatus = getResponse().result;
+  expect(res.part2.steps[res.part2.steps.length - 1].winner).to.eql("none");
+});
+
+Then("правильная ничья", function() {
+  const res: IGameStatus = getResponse().result;
+
+  expect(res.part2.steps[res.part2.steps.length - 1].winner).to.eql("draw");
+});
+
+Then("задается числовой вопрос", function() {
+  const res: IGameStatus = getResponse().result;
+
+  expect(res.part2.steps[res.part2.steps.length - 1]).have.property(
+    "numericQuestion"
+  );
+
+  expect(res.part2.steps[res.part2.steps.length - 1].numericQuestion).not.empty;
+});
+
+When(
+  "{string} делает запрос на отправку ответа r={int} t={int}",
+  async function(type, response, timer) {
+    const GameRoom = await server.GameRoom.findOne();
+    if (!GameRoom) {
+      throw new Error(ErrorMessages.NOT_FOUND);
+    }
+    const Team: ITeam =
+      GameRoom.gameStatus.part2.steps[
+        GameRoom.gameStatus.part2.steps.length - 1
+      ][type];
+
+    const token = await getGameToken(Team.name);
+
+    const res = await server.server.inject({
+      url: `${APIRoute}/${GameRoomPath}/${GameRoomPaths.showQuestion}/${
+        GameRoomPaths.response
+      }`,
+      method: HTTPMethods.post,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      payload: {
+        response,
+        timer
+      }
+    });
+
+    setResponse(res);
   }
 );

@@ -119,3 +119,15 @@ export const attack = {
     }
   }
 };
+
+export const attackResponse = {
+  description: "Ответ в дуэли на вариативный вопрос",
+  /*notes:
+      "Параметры: projectId - для получения списка, bimObjectId - для получения информации по объекту",*/
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};

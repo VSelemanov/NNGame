@@ -172,6 +172,25 @@ const ctrl = {
       logMessage: `${EntityName} team response request`,
       isRequest: true
     }
+  ),
+  attackResponse: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        { response: number },
+        {},
+        {},
+        { gameRoomId: string; teamId: string }
+      >,
+      h
+    ): Promise<IGameRoom> => {
+      const { gameRoomId, teamId } = req.auth.credentials;
+      const { response } = req.payload;
+      return await methods.attackResponse(gameRoomId, teamId, response);
+    },
+    {
+      logMessage: `${EntityName} team response request`,
+      isRequest: true
+    }
   )
 };
 
