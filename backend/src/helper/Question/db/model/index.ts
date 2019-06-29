@@ -24,12 +24,12 @@ export const QuestionSchema = new Schema(
     },
     answers: [
       {
-        _id: {
-          type: String,
-          default: uuid.v4,
-          unique: true,
-          required: true
-        },
+        // _id: {
+        //   type: String,
+        //   default: uuid.v4,
+        //   unique: true,
+        //   required: true
+        // },
         title: {
           type: String,
           required: true
