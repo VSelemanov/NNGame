@@ -63,9 +63,14 @@
   width: 30%;
   background: url('../../img/result_team1_bg.svg') no-repeat;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   color: black;
-  font-size: 20px;
+  & p {
+    font-size: 24px;
+    margin: 3px;
+  }
 }
 .button_team2{
   height: 40%;
@@ -73,8 +78,13 @@
   background: url('../../img/result_team2_bg.svg') no-repeat;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   color: #fff;
-  font-size: 20px;
+  & p {
+    font-size: 24px;
+    margin: 3px;
+  }
 }
 .button_team3{
   height: 40%;
@@ -82,6 +92,11 @@
   background: url('../../img/result_team3_bg.svg') no-repeat;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   color: #fff;
-  font-size: 20px;
+  & p {
+    font-size: 24px;
+    margin: 3px;
+  }
 }

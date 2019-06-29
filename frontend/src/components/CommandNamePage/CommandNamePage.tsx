@@ -34,7 +34,6 @@ class CommandNamePage extends React.Component<any, any> {
       methodsCookie.addCookie('appToken', response.data);
     })
     .then(response => {
-      console.log('gameId', gameId)
       setTimeout(()=>connectToGame(gameId)
       .then(response => {
         this.props.updateOneState('appToken', response.data.gameToken);
@@ -51,10 +50,10 @@ class CommandNamePage extends React.Component<any, any> {
           <p>Введите название вашей команды</p>
         </div>
         <div className={style.input}>
-          <input type="text" name="name" placeholder="Введите название" onChange={this.update} value={this.state.value}/>
+          <input type="text" name="name" autoComplete="off" placeholder="Введите название" onChange={this.update} value={this.state.value}/>
         </div>
-        <button onClick={this.auth}>Войти</button>
-        <button onClick={()=>createTeam(this.state.name)}>Создать</button>
+        <button className={style.button} onClick={this.auth}>Войти</button>
+        <button className={style.button} onClick={()=>createTeam(this.state.name)}>Создать</button>
       </div>
     );
   }

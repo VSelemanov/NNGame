@@ -49,34 +49,15 @@
   justify-content: space-between;
   width: 65%;
 }
-.progress_bar{
-  background: url('../../img/progress_bar_bg.svg') no-repeat;
-  height: auto;
-  width: 90%;
-  max-width: 28px;
-  display: flex;
-  justify-content: center;
-}
 .keyboard {
   height: auto;
   width: 90%;
   max-width: 620px;
 }
-.progress_cover{
-  border-radius: 5px;
-  margin-top: 10px;
-  height: 90%;
-  width: 16px;
-  background: #EA6237;
-}
-.progress_bar .progress_cover {
-  background-color: #FCBC51; 
-  background-image: linear-gradient(
-        45deg, rgb(252,163,17) 25%, 
-        transparent 25%, transparent 50%, 
-        rgb(252,163,17) 50%, rgb(252,163,17) 75%,
-        transparent 75%, transparent); 
-  animation: regressAnimation 6s;
+.custom_button{
+  background: url('../../img/custom_button.svg') no-repeat;
+  height: auto;
+  width: 90%;
 }
 //1280*680
 @keyframes regressAnimation {
@@ -100,11 +81,6 @@
       font-size: 70px;
       line-height: 70px;
     }
-  }
-  .progress_bar{
-    height: auto;
-    width: 90%;
-    max-width: 28px;
   }
   .keyboard {
     height: auto;

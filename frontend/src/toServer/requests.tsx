@@ -56,8 +56,6 @@ export const sendAnswer = async (timer: number, response: number) => {
   }
 };
 
-
-
 export const getQuestion = async (type: string) => {
   try {
     const config1 = {

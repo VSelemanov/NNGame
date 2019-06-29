@@ -3,6 +3,7 @@ import React from 'react';
 import { takeZone } from '../../toServer/requests';
 import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
+import store from '../../store';
 
 const defaultColor = "#F1E0C3"
 const colors = ['#F8F3EB', '#BFC4D4', '#F4CEC1' ];
@@ -11,14 +12,17 @@ class MapVector extends React.Component <any, any> {
   constructor(props: any){
     super(props);
     this.state={
-      gameMap: null
+      count: 0
     }
-
   }
+  
   public coloredZone = (zoneName: string) => {
-    takeZone(zoneName);
+    const count = store.getState().global.available;
+    if( count > 0){
+      takeZone(zoneName).then(()=> this.props.updateOneState('available', count - 1))
+    }
   }
-
+  
   public getColor = (zoneName: string) => {
     const gameMap = this.props.gameMap;
     const teams = this.props.teams;
@@ -32,7 +36,6 @@ class MapVector extends React.Component <any, any> {
     }
     return defaultColor;
   }
-
 
   render() {
     return (
