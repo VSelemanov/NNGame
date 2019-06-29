@@ -1,6 +1,6 @@
 import style from './Map.module.scss';
 import React from 'react';
-import { takeZone } from '../../toServer/requests';
+import { takeZone, attackZone } from '../../toServer/requests';
 import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
 import store from '../../store';
@@ -9,17 +9,24 @@ const defaultColor = "#F1E0C3"
 const colors = ['#F8F3EB', '#BFC4D4', '#F4CEC1' ];
 
 class MapVector extends React.Component <any, any> {
+  public duelData: any = [];
   constructor(props: any){
     super(props);
     this.state={
-      count: 0
+      count: 0,
     }
   }
   
   public coloredZone = (zoneName: string) => {
-    const count = store.getState().global.available;
-    if( count > 0){
-      takeZone(zoneName).then(()=> this.props.updateOneState('available', count - 1))
+    if(this.props.currentPart === 1){
+      const count = store.getState().global.available;
+      if( count > 0){
+        takeZone(zoneName).then(()=> this.props.updateOneState('available', count - 1))
+      }
+    } else {
+      console.log('режим дуэли');
+      this.duelData.push(zoneName);
+      this.duelData.length === 2 && attackZone(this.duelData) 
     }
   }
   

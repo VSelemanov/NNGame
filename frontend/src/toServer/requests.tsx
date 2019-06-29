@@ -17,12 +17,24 @@ export const GET_QUESTION_URL = `${API_URL}${PREFIX}/gameroom/question`;
 export const QUESTION_START_URL = `${API_URL}${PREFIX}/gameroom/question/start`;
 export const SEND_ANSWER_URL = `${API_URL}${PREFIX}/gameroom/question/response`;
 export const TAKE_ZONE_URL = `${API_URL}${PREFIX}/gameroom/map/zone`;
-
+export const ATTACK_ZONE_URL = `${API_URL}${PREFIX}/gameroom/attack`;
 
 const config = {
 	headers: {
 		authorization: `Bearer ${store.getState().global.appToken}`,
 	},
+};
+
+export const attackZone = async (data: any) => { 
+  console.log(data)
+  const [ attackingZone, deffenderZone ]  = data;
+  try {
+    return axios.post(ATTACK_ZONE_URL,{attackingZone, deffenderZone },{ headers: {
+			authorization: `Bearer ${methodsCookie.getCookie('appToken')}`,
+		}});
+  } catch (e) {
+    return e;
+  }
 };
 
 export const takeZone = async (zoneName: string) => {
