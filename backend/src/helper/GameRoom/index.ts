@@ -458,6 +458,7 @@ const methods = {
           case "attacking":
             GameRoom.gameStatus.gameMap[step.deffenderZone].teamId =
               step.attacking._id;
+            methods.incDecZones("attacking", "deffender", GameRoom);
             GameRoom.markModified(
               `gameStatus.gameMap.${step.deffenderZone}.teamId`
             );
@@ -465,6 +466,7 @@ const methods = {
           case "deffender":
             GameRoom.gameStatus.gameMap[step.attackingZone].teamId =
               step.deffender._id;
+            methods.incDecZones("deffender", "attacking", GameRoom);
             GameRoom.markModified(
               `gameStatus.gameMap.${step.attackingZone}.teamId`
             );
@@ -485,6 +487,26 @@ const methods = {
       logMessage: `${EntityName} get status`
     }
   ),
+  incDecZones: (incType: string, decType: string, GameRoom: IGameRoom) => {
+    const gameStatus = GameRoom.gameStatus;
+    const incTeamId =
+      gameStatus.part2.steps[gameStatus.part2.steps.length - 1][incType].teamId;
+    const decTeamId =
+      gameStatus.part2.steps[gameStatus.part2.steps.length - 1][decType].teamId;
+
+    for (const key of Object.keys(gameStatus.teams)) {
+      if (incTeamId === gameStatus.teams[key].teamId && key !== "$init") {
+        gameStatus.teams[key].zones += 1;
+        console.log({ t: gameStatus.teams[key].zones });
+        GameRoom.markModified(`gameStatus.teams.${key}.zones`);
+      }
+
+      if (decTeamId === gameStatus.teams[key].teamId && key !== "$init") {
+        gameStatus.teams[key].zones -= 1;
+        GameRoom.markModified(`gameStatus.teams.${key}.zones`);
+      }
+    }
+  },
   findBaseOnMap: (gameMap: IMap, teamId: string): boolean => {
     for (const zoneName of Object.keys(gameMap)) {
       if (gameMap[zoneName].teamId === teamId) {
