@@ -1,5 +1,5 @@
 import { Schema, Model, model, Document } from "mongoose";
-import { baseFlds } from "../../../../constants";
+import { baseFlds, baseSchemaOptions } from "../../../../constants";
 import { IAdmin } from "../../interfaces";
 
 const AdminSchema = new Schema(
@@ -14,9 +14,6 @@ const AdminSchema = new Schema(
       required: true
     }
   },
-  {
-    timestamps: true,
-    versionKey: false
-  }
+  baseSchemaOptions
 );
 export default model<IAdmin>("Admin", AdminSchema);

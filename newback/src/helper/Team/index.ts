@@ -14,26 +14,26 @@ const methods = {
     {
       logMessage: `${EntityName} method error`
     }
-  ),
-  login: trycatcher(
-    async (name: string): Promise<string> => {
-      const Team = await server.Team.findOne({ name });
-      if (!Team) {
-        throw new Error(ErrorMessages.NOT_FOUND);
-      }
-      const token = jwt.sign(
-        { _id: Team.id, isAdmin: false },
-        process.env.SECRET_KEY || "nngame",
-        {
-          algorithm: "HS256"
-        }
-      );
-      return token;
-    },
-    {
-      logMessage: `${EntityName} method error`
-    }
   )
+  // login: trycatcher(
+  //   async (name: string): Promise<string> => {
+  //     const Team = await server.Team.findOne({ name });
+  //     if (!Team) {
+  //       throw new Error(ErrorMessages.NOT_FOUND);
+  //     }
+  //     const token = jwt.sign(
+  //       { _id: Team.id, isAdmin: false },
+  //       process.env.SECRET_KEY || "nngame",
+  //       {
+  //         algorithm: "HS256"
+  //       }
+  //     );
+  //     return token;
+  //   },
+  //   {
+  //     logMessage: `${EntityName} method error`
+  //   }
+  // )
 };
 
 export default methods;

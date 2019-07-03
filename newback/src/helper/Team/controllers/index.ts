@@ -13,16 +13,16 @@ const ctrl = {
     {
       logMessage: `${EntityName} create request`
     }
-  ),
-  login: trycatcher(
-    async (req: IDecoratedRequest<{ name: string }>, h) => {
-      const { name } = req.payload;
-      return await methods.login(name);
-    },
-    {
-      logMessage: `${EntityName} create request`
-    }
   )
+  // login: trycatcher(
+  //   async (req: IDecoratedRequest<{ name: string }>, h) => {
+  //     const { name } = req.payload;
+  //     return await methods.login(name);
+  //   },
+  //   {
+  //     logMessage: `${EntityName} create request`
+  //   }
+  // )
 };
 
 export default ctrl;

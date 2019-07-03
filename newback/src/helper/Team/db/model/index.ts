@@ -1,5 +1,5 @@
 import { Schema, Model, model, Document } from "mongoose";
-import { baseFlds } from "../../../../constants";
+import { baseFlds, baseSchemaOptions } from "../../../../constants";
 import { ITeam } from "../../interfaces";
 
 export const TeamSchema = new Schema(
@@ -15,10 +15,7 @@ export const TeamSchema = new Schema(
       default: 0
     }
   },
-  {
-    timestamps: true,
-    versionKey: false
-  }
+  baseSchemaOptions
 );
 
 export default model<ITeam>("Team", TeamSchema);

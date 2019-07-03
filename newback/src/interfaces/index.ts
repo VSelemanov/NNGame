@@ -10,8 +10,8 @@ export type IDecoratedRequest<P = {}, Q = {}, Par = {}, C = {}, H = {}> = {
 
 export interface IBaseFlds {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  cAt: Date;
+  uAt: Date;
 }
 
 export interface IMapZone {

@@ -1,4 +1,4 @@
-import { SchemaDefinition } from "mongoose";
+import { SchemaDefinition, SchemaOptions } from "mongoose";
 import uuid = require("uuid");
 
 export const APIRoute = `/api`;
@@ -12,6 +12,14 @@ export const baseFlds: SchemaDefinition = {
     // required: true,
     // unique: true
   }
+};
+
+export const baseSchemaOptions: SchemaOptions = {
+  timestamps: {
+    createdAt: "cAt",
+    updatedAt: "uAt"
+  },
+  versionKey: false
 };
 
 export enum HTTPMethods {
