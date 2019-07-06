@@ -2,7 +2,7 @@ import { APIRoute } from "../constants/index";
 import Boom from "boom";
 // routes
 import AdminRoutes from "../helper/Admin/routes";
-// import GameRoomRoutes from "../helper/GameRoom/routes";
+import RoomRoutes from "../helper/Room/routes";
 import TeamRoutes from "../helper/Team/routes";
 import QuestionRoutes from "../helper/Question/routes";
 // interfaces
@@ -20,7 +20,7 @@ const Routes: ServerRoute[] = [
     }
   },
   ...AdminRoutes,
-  // ...GameRoomRoutes,
+  ...RoomRoutes,
   ...TeamRoutes,
   ...QuestionRoutes
 ];

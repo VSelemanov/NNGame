@@ -17,5 +17,5 @@ export interface IBaseFlds {
 export interface IMapZone {
   nearby: string[];
   isStartBase: boolean;
-  teamId: string;
+  team: string | null;
 }

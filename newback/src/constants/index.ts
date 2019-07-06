@@ -49,7 +49,7 @@ export enum mapZones {
 
 export const zoneFlds = {
   isStartBase: false,
-  teamId: ""
+  team: null
 };
 
 export const GameMap = {

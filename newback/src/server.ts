@@ -7,7 +7,7 @@ import HapiSwagger from "hapi-swagger";
 import Vision from "vision";
 // db
 import AdminModel from "./helper/Admin/db/model";
-// import GameRoomModel from "./helper/GameRoom/db/model";
+import RoomModel from "./helper/Room/db/model";
 import TeamModel from "./helper/Team/db/model";
 import QuestionModel from "./helper/Question/db/model";
 // import db from "./database";
@@ -19,9 +19,9 @@ import Auth from "./strategies/Auth";
 import { APIRoute } from "./constants";
 import { Connection, Model, Document, MongooseDocument } from "mongoose";
 import { IAdmin } from "./helper/Admin/interfaces";
-// import { IGameRoom } from "./helper/GameRoom/interfaces";
 import { ITeam } from "./helper/Team/interfaces";
 import { IQuestion } from "./helper/Question/interfaces";
+import { IRoom } from "./helper/Room/interfaces";
 // utils
 // interfaces
 
@@ -43,7 +43,7 @@ class Server {
   };
 
   private _Admin: Model<IAdmin> = AdminModel;
-  // private _GameRoom: Model<IGameRoom> = GameRoomModel;
+  private _Room: Model<IRoom> = RoomModel;
   private _Team: Model<ITeam> = TeamModel;
   private _Question: Model<IQuestion> = QuestionModel;
 
@@ -101,7 +101,7 @@ class Server {
       // });
 
       // this._server.auth.strategy("game-room-auth", "bearer-access-token", {
-      //   validate: Auth.GameRoomAuth,
+      //   validate: Auth.RoomAuth,
       //   allowChaining: true
       // });
 
@@ -179,9 +179,9 @@ class Server {
   get Admin() {
     return this._Admin;
   }
-  // get GameRoom() {
-  //   return this._GameRoom;
-  // }
+  get Room() {
+    return this._Room;
+  }
   get Team() {
     return this._Team;
   }

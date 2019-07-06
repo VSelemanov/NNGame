@@ -16,7 +16,7 @@ When(
       url: `${APIRoute}/${routePath}`,
       method: HTTPMethods.post,
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: token
       },
       payload: {
         isNumeric: true,
@@ -47,7 +47,7 @@ When(
       url: `${APIRoute}/${routePath}`,
       method: HTTPMethods.post,
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: token
       },
       payload: {
         isNumeric: false,

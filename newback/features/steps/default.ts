@@ -46,7 +46,7 @@ export async function getAdminLogin(
       password
     } as IAdminBase
   });
-  return res.result as any;
+  return `Bearer ${res.result as any}`;
 }
 
 // export async function getGameToken(teamName: string): Promise<string> {
@@ -81,7 +81,7 @@ Given("сервер стартовал", function() {
 
 Given("база данных пуста", async function() {
   await utils.truncateCollection(server.Admin.collection);
-  // await utils.truncateCollection(server.GameRoom.collection);
+  await utils.truncateCollection(server.Room.collection);
   await utils.truncateCollection(server.Team.collection);
   await utils.truncateCollection(server.Question.collection);
 });
