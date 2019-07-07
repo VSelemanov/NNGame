@@ -5,7 +5,7 @@ import { EntityName, ErrorMessages } from "./constants";
 import { roomDefault } from "./constants";
 import jwt from "jsonwebtoken";
 import { teams } from "../../constants";
-import { ITeam } from "../Team/interfaces";
+import { ITeam, ITeamInRoom } from "../Team/interfaces";
 
 import TeamMethods from "../Team";
 
@@ -23,36 +23,25 @@ const methods = {
         }
       });
 
+      const TeamsInRoom: any = new Map();
+
+      for (const key of Object.keys(teams)) {
+        TeamsInRoom[key] = {
+          ...(teamsObject.find(
+            r => r._id === teamsId[teams[key]]
+          ) as ITeam).toJSON(),
+          inviteCode: TeamMethods.generateInviteCode()
+        };
+      }
+
       const Room = await server.Room.create({
         ...roomDefault,
         theme: RoomData.theme,
         gameStatus: {
           ...roomDefault.gameStatus,
-          teams: {
-            [teams.team1]: {
-              ...(teamsObject.find(
-                r => r._id === teamsId[teams.team1]
-              ) as ITeam).toJSON(),
-              inviteCode: TeamMethods.generateInviteCode()
-            },
-            [teams.team2]: {
-              ...(teamsObject.find(
-                r => r._id === teamsId[teams.team2]
-              ) as ITeam).toJSON(),
-              inviteCode: TeamMethods.generateInviteCode()
-            },
-            [teams.team3]: {
-              ...(teamsObject.find(
-                r => r._id === teamsId[teams.team3]
-              ) as ITeam).toJSON(),
-              inviteCode: TeamMethods.generateInviteCode()
-            }
-          }
+          teams: TeamsInRoom
         }
       } as IRoomBase);
-      // Room.markModified("gameStatus.teams.team1");
-      // Room.markModified("gameStatus.teams.team2");
-      // Room.markModified("gameStatus.teams.team3");
       const res = await Room.save();
       return res;
     },
