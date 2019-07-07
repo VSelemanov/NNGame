@@ -9,10 +9,14 @@ export interface ITeamBase {
 
 export interface ITeam extends ITeamBase, Document {}
 
+export interface ITeamInRoom extends ITeam {
+  inviteCode: number;
+}
+
 export interface ITeamsInRoom {
-  [teams.team1]: ITeam;
-  [teams.team2]: ITeam;
-  [teams.team3]: ITeam;
+  [teams.team1]: ITeamInRoom;
+  [teams.team2]: ITeamInRoom;
+  [teams.team3]: ITeamInRoom;
 }
 
 export interface ITeamResponsePart1 {

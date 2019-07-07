@@ -8,13 +8,13 @@
     "registry": "vselemanov/nngame"
   },
   "scripts": {
-    "test": "rm -rf ./coverage && rm -rf ./.nyc_output && NODE_PATH=../../../:./node_modules nyc cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts'",
-    "testbug": "NODE_PATH=../../../:./node_modules cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts' --tags @bug",
-    "testnew": "NODE_PATH=../../../:./node_modules cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts' --tags @new",
+    "test": "rm -rf ./coverage && rm -rf ./.nyc_output && nyc cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts'",
+    "testbug": "cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts' --tags @bug",
+    "testnew": "cucumber-js --require-module dotenv/config --require-module ts-node/register --require 'features/**/*.ts' --tags @new",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "start": "npm run lint && npm run format && clear && NODE_PATH=../../../ ts-node -r dotenv/config ./src/index.ts",
-    "build": "NODE_PATH=../../../ ./node_modules/.bin/tsc",
+    "build": "./node_modules/.bin/tsc",
     "buildContainer": "semver -i $(cat version.num) > version.num && docker build -t $npm_package_config_registry:$(cat version.num) .",
     "pushContainer": "docker push $npm_package_config_registry:$(cat version.num)",
     "deploy": "npm run buildContainer && npm run pushContainer",

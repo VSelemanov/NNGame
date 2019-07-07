@@ -3,7 +3,7 @@ import teamsInRoom from "../../../Team/db/model/teamsInRoom";
 import { mapZones, baseFlds } from "../../../../constants";
 import mapZone from "./mapZone";
 
-const gameMap = new Schema({
+const gameMapSchema = new Schema({
   ...baseFlds,
   [mapZones.avtoz]: mapZone,
   [mapZones.karpovka]: mapZone,
@@ -22,4 +22,4 @@ const gameMap = new Schema({
   [mapZones.yarmarka]: mapZone
 });
 
-export default gameMap;
+export default gameMapSchema;

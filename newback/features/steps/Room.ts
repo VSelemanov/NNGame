@@ -54,7 +54,10 @@ Then(
     }
 
     expect(teamsObject[teams.team1]).not.empty;
+    expect(teamsObject[teams.team1]).have.property("inviteCode");
     expect(teamsObject[teams.team2]).not.empty;
+    expect(teamsObject[teams.team2]).have.property("inviteCode");
     expect(teamsObject[teams.team3]).not.empty;
+    expect(teamsObject[teams.team3]).have.property("inviteCode");
   }
 );

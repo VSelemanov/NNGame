@@ -1,13 +1,13 @@
 import { Schema } from "mongoose";
 import teamsInRoom from "../../../Team/db/model/teamsInRoom";
-import gameMap from "./gameMap";
+import gameMapSchema from "./gameMap";
 import Part2Schema from "./Part2";
 import { baseFlds } from "../../../../constants";
 
 const RoomSchema = new Schema({
   ...baseFlds,
   teams: teamsInRoom,
-  gameMap: gameMap,
+  gameMap: gameMapSchema,
   currentPart: {
     type: Number,
     required: true,

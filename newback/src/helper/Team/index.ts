@@ -3,6 +3,7 @@ import { ITeamBase, ITeam } from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
 import jwt from "jsonwebtoken";
+import utils from "../../../src/utils";
 
 const methods = {
   create: trycatcher(
@@ -14,7 +15,10 @@ const methods = {
     {
       logMessage: `${EntityName} method error`
     }
-  )
+  ),
+  generateInviteCode: (): string => {
+    return `${utils.getRandomInt(0, 999999)}`.padStart(6, "0");
+  }
   // login: trycatcher(
   //   async (name: string): Promise<string> => {
   //     const Team = await server.Team.findOne({ name });

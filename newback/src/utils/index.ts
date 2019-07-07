@@ -18,8 +18,18 @@ const utils = {
       logMessage: "truncateCollection utils"
     }
   ),
-  getRandomInt(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min)) + min;
+
+  getRandomInt: (min, max) => {
+    const arr: number[] = [];
+    const res: number[] = [];
+    for (let i = min; i <= max; i++) {
+      arr.push(i);
+    }
+    for (let i = 0; i < 1; i++) {
+      res.push(arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
+    }
+
+    return res[0];
   }
 };
 

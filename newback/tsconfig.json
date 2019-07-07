@@ -9,8 +9,7 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationDir": "./dist/types/",
-    "esModuleInterop": true,
-    "baseUrl": "../../../"
+    "esModuleInterop": true
   },
   "include": ["."],
   "exclude": ["node_modules", "./dist", "frontend"]
