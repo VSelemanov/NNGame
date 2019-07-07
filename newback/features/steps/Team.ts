@@ -59,7 +59,5 @@ When("я делаю запрос на авторизацию команды {str
 Then("в ответе должен быть jwt токен команды", async function() {
   const jwt = getResponse().result;
 
-  console.log({ jwt });
-
   expect(typeof jwt).to.eql("string");
 });

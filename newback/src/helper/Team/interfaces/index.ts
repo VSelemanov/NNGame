@@ -11,6 +11,7 @@ export interface ITeam extends ITeamBase, Document {}
 
 export interface ITeamInRoom extends ITeam {
   inviteCode: number;
+  isLoggedIn: boolean;
 }
 
 export interface ITeamsInRoom {

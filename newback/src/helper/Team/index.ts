@@ -42,6 +42,7 @@ const methods = {
         if (teamsInGame[key].inviteCode === inviteCode) {
           Team = teamsInGame[key];
           teamKey = key;
+          teamsInGame[key].isLoggedIn = true;
         }
       }
 
@@ -56,6 +57,9 @@ const methods = {
           algorithm: "HS256"
         }
       );
+
+      await Room.save();
+
       return token;
     },
     {

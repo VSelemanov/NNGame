@@ -10,6 +10,11 @@ TeamInRoomSchema.add({
   inviteCode: {
     type: String,
     required: true
+  },
+  isLoggedIn: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 });
 
