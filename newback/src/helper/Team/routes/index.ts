@@ -3,7 +3,7 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import TeamCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
-import { create } from "../docs";
+import { create, login } from "../docs";
 import Joi from "joi";
 
 const routes: ServerRoute[] = [
@@ -19,20 +19,20 @@ const routes: ServerRoute[] = [
         })
       }
     }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.login}`,
+    method: HTTPMethods.post,
+    handler: TeamCtrl.login,
+    options: {
+      ...login,
+      validate: {
+        payload: Joi.object({
+          inviteCode: Joi.string().required()
+        })
+      }
+    }
   }
-  // {
-  //   path: `${APIRoute}/${routePath}/${paths.login}`,
-  //   method: HTTPMethods.post,
-  //   handler: TeamCtrl.login,
-  //   options: {
-  //     ...login,
-  //     validate: {
-  //       payload: Joi.object({
-  //         name: Joi.string().required()
-  //       })
-  //     }
-  //   }
-  // }
 ];
 
 export default routes;

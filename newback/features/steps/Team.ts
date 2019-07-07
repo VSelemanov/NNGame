@@ -1,6 +1,6 @@
 import { When, Then, Given } from "cucumber";
 import { server } from "../../src/server";
-import { APIRoute, HTTPMethods } from "../../src/constants";
+import { APIRoute, HTTPMethods, teams } from "../../src/constants";
 import { routePath, paths } from "../../src/helper/Team/constants";
 import { Authorization } from "./constants";
 import { ITeamBase } from "../../src/helper/Team/interfaces";
@@ -31,10 +31,25 @@ Then("в списке команд должна быть команда {string}
 });
 
 When("я делаю запрос на авторизацию команды {string}", async function(name) {
+  const Room = (await server.Room.find({
+    isActive: true,
+    isStarted: false
+  }))[0];
+  const teamsInGame = Room.gameStatus.teams;
+  if (!teamsInGame) {
+    throw new Error("Teams is null");
+  }
+  let inviteCode = "000000";
+  for (const key of Object.keys(teams)) {
+    if (teamsInGame[key].name === name) {
+      inviteCode = teamsInGame[key].inviteCode;
+    }
+  }
+
   const res = await server.server.inject({
     url: `${APIRoute}/${routePath}/${paths.login}`,
     method: HTTPMethods.post,
-    payload: { name },
+    payload: { inviteCode },
     headers: { Authorization }
   });
 
@@ -43,6 +58,8 @@ When("я делаю запрос на авторизацию команды {str
 
 Then("в ответе должен быть jwt токен команды", async function() {
   const jwt = getResponse().result;
+
+  console.log({ jwt });
 
   expect(typeof jwt).to.eql("string");
 });
