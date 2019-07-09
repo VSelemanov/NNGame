@@ -6,7 +6,16 @@ import { Authorization } from "./constants";
 import { ITeamBase } from "../../src/helper/Team/interfaces";
 import { setResponse, getResponse } from "./lib/response";
 import { expect } from "chai";
-import { string } from "joi";
+import Nes from "@hapi/nes";
+import { Client } from "nes";
+
+import {
+  routePath as RoomPath,
+  paths as RoomPaths
+} from "../../src/helper/Room/constants";
+import { getGameToken } from "./default";
+
+const client: Client = new Nes.Client("ws://localhost:3000");
 
 When("я делаю запрос на создание новой команды {string}", async function(name) {
   const res = await server.server.inject({
@@ -60,4 +69,39 @@ Then("в ответе должен быть jwt токен команды", asyn
   const jwt = getResponse().result;
 
   expect(typeof jwt).to.eql("string");
+});
+
+When(
+  "я подписываюсь на обновление состояния игры командой {string}",
+  async function(TeamName) {
+    // const token = await getGameToken(TeamName);
+
+    await client.connect({
+      auth: { headers: { Authorization: `Bearer ${process.env.APP_TOKEN}` } }
+    });
+    await client.subscribe(
+      `${APIRoute}/${RoomPath}/${RoomPaths.gameStatus}`,
+      (message, flags) => {
+        setResponse({ message, TeamName });
+      }
+    );
+  }
+);
+
+When("отправляю сервером событие", async function() {
+  await server._server.publish(
+    `${APIRoute}/${RoomPath}/${RoomPaths.gameStatus}`,
+    "hello"
+  );
+});
+
+Then("команда {string} получит сообщение из сокета", async function(TeamName) {
+  const res = getResponse();
+
+  expect(res).have.property("message");
+  expect(res).have.property("TeamName");
+  expect(res.message).to.eql("hello");
+  expect(res.TeamName).to.eql(TeamName);
+
+  await client.disconnect();
 });

@@ -5,17 +5,24 @@ import utils from "../../src/utils";
 import { getResponse } from "./lib/response";
 import { APIRoute, HTTPMethods } from "../../src/constants";
 // import { routePath as TeamRoutePath } from "../../src/helper/Team/constants";
-import { routePath as AdminRoutePath } from "../../src/helper/Admin/constants";
-// import { routePath as GameRoomRoutePath } from "../../src/helper/GameRoom/constants";
-// import { paths as TeamPaths } from "../../src/helper/Team/constants";
+import {
+  routePath as AdminRoutePath,
+  ErrorMessages as AdminErrorMessages
+} from "../../src/helper/Admin/constants";
+import {
+  routePath as RoomRoutePath,
+  ErrorMessages as RoomErrorMessages
+} from "../../src/helper/Room/constants";
+import {
+  paths as TeamPaths,
+  ErrorMessages as TeamErrorMessages
+} from "../../src/helper/Team/constants";
 import { paths as AdminPaths } from "../../src/helper/Admin/constants";
-// import {
-//   paths as GameRoomPaths,
-//   ErrorMessages
-// } from "../../src/helper/GameRoom/constants";
+
 import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
-// import methods from "../../src/helper/GameRoom";
+
+import TeamMethods from "../../src/helper/Team";
 
 setDefaultTimeout(10 * 1000);
 
@@ -49,22 +56,31 @@ export async function getAdminLogin(
   return `Bearer ${res.result as any}`;
 }
 
-// export async function getGameToken(teamName: string): Promise<string> {
-//   const GameRoom = await server.GameRoom.findOne();
-//   if (!GameRoom) {
-//     throw new Error(ErrorMessages.NOT_FOUND);
-//   }
+export async function getGameToken(teamName: string): Promise<string> {
+  const Room = await server.Room.findOne({ isActive: true });
+  if (!Room) {
+    throw new Error(RoomErrorMessages.NOT_FOUND);
+  }
 
-//   const Team = await server.Team.findOne({ name: teamName });
+  const Team = await server.Team.findOne({ name: teamName });
 
-//   if (!Team) {
-//     throw new Error(ErrorMessages.NOT_FOUND);
-//   }
+  if (!Team) {
+    throw new Error(TeamErrorMessages.NOT_FOUND);
+  }
 
-//   // const token = await getLogin(teamName);
+  if (!Room.gameStatus.teams) {
+    throw new Error(TeamErrorMessages.NOT_FOUND);
+  }
 
-//   return methods.generateGameToken(GameRoom._id, false, Team._id);
-// }
+  let inviteCode = "000000";
+  for (const key of Object.keys(Room.gameStatus.teams)) {
+    if (Room.gameStatus.teams[key]._id === Team._id) {
+      inviteCode = Room.gameStatus.teams[key].inviteCode;
+    }
+  }
+
+  return TeamMethods.login(inviteCode);
+}
 
 BeforeAll(async () => {
   await server.start();

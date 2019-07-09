@@ -9,7 +9,9 @@ export enum ErrorMessages {
   NOT_FOUND = "Room not found"
 }
 
-export enum paths {}
+export enum paths {
+  gameStatus = "gamestatus"
+}
 
 export const roomDefault: IRoomBase = {
   gameStatus: {

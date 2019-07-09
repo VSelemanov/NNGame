@@ -19,6 +19,16 @@ const Routes: ServerRoute[] = [
       auth: false
     }
   },
+  {
+    method: "GET",
+    path: `${APIRoute}/socket`,
+    handler: () => {
+      return "ok";
+    },
+    options: {
+      auth: false
+    }
+  },
   ...AdminRoutes,
   ...RoomRoutes,
   ...TeamRoutes,

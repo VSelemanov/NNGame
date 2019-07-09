@@ -22,6 +22,8 @@ import { IAdmin } from "./helper/Admin/interfaces";
 import { ITeam } from "./helper/Team/interfaces";
 import { IQuestion } from "./helper/Question/interfaces";
 import { IRoom } from "./helper/Room/interfaces";
+import Nes from "@hapi/nes";
+import { routePath, paths } from "./helper/Room/constants";
 // utils
 // interfaces
 
@@ -78,6 +80,8 @@ class Server {
         }
       ]);
 
+      await this._server.register(Nes);
+
       (<any>this._server).views({
         engines: { html: Handlebars },
         path: `${__dirname}`,
@@ -132,6 +136,12 @@ class Server {
     }
   }
 
+  private serverSubscriptions() {
+    this._server.subscription(`${APIRoute}/${routePath}/${paths.gameStatus}`, {
+      auth: false
+    });
+  }
+
   public generateHttpError(data) {
     const { code, message } = data;
     switch (code) {
@@ -157,6 +167,7 @@ class Server {
   public async start() {
     await this.createServer();
     await this.startServer();
+    this.serverSubscriptions();
     await this.connectToDb();
   }
 
