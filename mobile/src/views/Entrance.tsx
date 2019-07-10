@@ -11,7 +11,7 @@ class Entrance extends React.Component<Store> {
 	public render() {
 		return (
 			<View style={styles.container}>
-				<Text>React-Native Starter Kit</Text>
+				<Text>React-Native(Expo) Starter Kit</Text>
 			</View>
 		);
 	}

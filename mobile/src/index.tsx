@@ -85,27 +85,28 @@ export default class App extends React.Component<{}, { isReady: boolean }> {
 	}
 
 	// для предварительной загрузки всех assets
-	private async _cacheResourcesAsync(): Promise<any[]> {
+	private async _cacheResourcesAsync(): Promise<void> {
 		function cacheImages(iel: any[]) {
-			return iel.map((el: any) => {
+			iel.map((el: any) => {
 				if (typeof el === "string") {
-					return Image.prefetch(el);
+					Image.prefetch(el);
 				} else {
-					return Asset.fromModule(el).downloadAsync();
+					Asset.fromModule(el).downloadAsync();
 				}
 			});
 		}
 
 		function cacheFonts(fel: any) {
-			return Font.loadAsync(fel);
+			Font.loadAsync(fel);
 		}
 
 		const fonts = {};
 		const images = [];
 
-		const fontsAssets = cacheFonts(fonts);
-		const imageAssets = cacheImages(images);
-
-		return Promise.all([fontsAssets, ...imageAssets]);
+		return new Promise(async (resolve, reject) => {
+			cacheFonts(fonts);
+			cacheImages(images);
+			resolve();
+		});
 	}
 }
