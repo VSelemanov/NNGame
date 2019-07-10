@@ -23,6 +23,9 @@ import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
 
 import TeamMethods from "../../src/helper/Team";
+import { IRoom } from "../../src/helper/Room/interfaces";
+import { ITeam } from "../../src/helper/Team/interfaces";
+import RoomMethods from "../../src/helper/Room";
 
 setDefaultTimeout(10 * 1000);
 
@@ -37,6 +40,20 @@ let ServerStarted = false;
 //   });
 //   return res.result as any;
 // }
+
+export async function getActiveRoom(): Promise<IRoom> {
+  return await RoomMethods.getActiveRoom();
+}
+
+export async function getTeam(teamName: string): Promise<ITeam> {
+  const Team = await server.Team.findOne({ name: teamName });
+
+  if (!Team) {
+    throw new Error(TeamErrorMessages.NOT_FOUND);
+  }
+
+  return Team;
+}
 
 export async function getAdminLogin(
   name: string,
@@ -57,16 +74,8 @@ export async function getAdminLogin(
 }
 
 export async function getGameToken(teamName: string): Promise<string> {
-  const Room = await server.Room.findOne({ isActive: true });
-  if (!Room) {
-    throw new Error(RoomErrorMessages.NOT_FOUND);
-  }
-
-  const Team = await server.Team.findOne({ name: teamName });
-
-  if (!Team) {
-    throw new Error(TeamErrorMessages.NOT_FOUND);
-  }
+  const Room = await getActiveRoom();
+  const Team = await getTeam(teamName);
 
   if (!Room.gameStatus.teams) {
     throw new Error(TeamErrorMessages.NOT_FOUND);

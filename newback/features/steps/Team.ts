@@ -13,7 +13,8 @@ import {
   routePath as RoomPath,
   paths as RoomPaths
 } from "../../src/helper/Room/constants";
-import { getGameToken } from "./default";
+import { getGameToken, getActiveRoom } from "./default";
+import { IGameStatus } from "../../src/helper/Room/interfaces";
 
 const client: Client = new Nes.Client("ws://localhost:3000");
 
@@ -40,10 +41,8 @@ Then("в списке команд должна быть команда {string}
 });
 
 When("я делаю запрос на авторизацию команды {string}", async function(name) {
-  const Room = (await server.Room.find({
-    isActive: true,
-    isStarted: false
-  }))[0];
+  const Room = await getActiveRoom();
+
   const teamsInGame = Room.gameStatus.teams;
   if (!teamsInGame) {
     throw new Error("Teams is null");
@@ -82,26 +81,27 @@ When(
     await client.subscribe(
       `${APIRoute}/${RoomPath}/${RoomPaths.gameStatus}`,
       (message, flags) => {
-        setResponse({ message, TeamName });
+        setResponse(message);
       }
     );
   }
 );
 
 When("отправляю сервером событие", async function() {
+  const Room = await getActiveRoom();
   await server._server.publish(
     `${APIRoute}/${RoomPath}/${RoomPaths.gameStatus}`,
-    "hello"
+    Room.gameStatus
   );
 });
 
 Then("команда {string} получит сообщение из сокета", async function(TeamName) {
-  const res = getResponse();
+  const res: IGameStatus = getResponse();
 
-  expect(res).have.property("message");
-  expect(res).have.property("TeamName");
-  expect(res.message).to.eql("hello");
-  expect(res.TeamName).to.eql(TeamName);
+  expect(res).have.property("teams");
+  expect(res).have.property("gameMap");
+  expect(res).have.property("part1");
+  expect(res).have.property("part2");
 
   await client.disconnect();
 });

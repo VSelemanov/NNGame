@@ -1,5 +1,5 @@
 import trycatcher from "../../utils/trycatcher";
-import { IRoomBase, IRoomCreateRequest } from "./interfaces";
+import { IRoomBase, IRoomCreateRequest, IRoom } from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
 import { roomDefault } from "./constants";
@@ -47,6 +47,20 @@ const methods = {
     },
     {
       logMessage: `${EntityName} create method`
+    }
+  ),
+  getActiveRoom: trycatcher(
+    async (): Promise<IRoom> => {
+      const Room = await server.Room.findOne({ isActive: true });
+
+      if (!Room) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+
+      return Room;
+    },
+    {
+      logMessage: `get active ${EntityName} method`
     }
   )
 };

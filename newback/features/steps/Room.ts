@@ -1,5 +1,5 @@
 import { When, Then } from "cucumber";
-import { getAdminLogin } from "./default";
+import { getAdminLogin, getActiveRoom } from "./default";
 import { server } from "../../src/server";
 import { APIRoute, HTTPMethods, teams } from "../../src/constants";
 import { setResponse } from "./lib/response";
@@ -34,14 +34,7 @@ When(
 Then(
   "в списке комнат должна появиться новая активная комната с тремя командами и инвайт кодами",
   async function() {
-    const Room = await server.Room.findOne({
-      isStarted: false,
-      isActive: true
-    });
-
-    if (!Room) {
-      throw new Error(ErrorMessages.NOT_FOUND);
-    }
+    const Room = await getActiveRoom();
 
     expect(Room.isActive).to.eql(true);
     expect(Room).have.property("gameStatus");

@@ -6,6 +6,7 @@ import { ErrorMessages as RoomErrorMessages } from "../Room/constants";
 import jwt from "jsonwebtoken";
 import utils from "../../../src/utils";
 import { teams } from "../../constants";
+import RoomMethods from "../Room";
 
 const methods = {
   create: trycatcher(
@@ -23,14 +24,8 @@ const methods = {
   },
   login: trycatcher(
     async (inviteCode: string): Promise<string> => {
-      const Room = await server.Room.findOne({
-        isActive: true,
-        isStarted: false
-      });
+      const Room = await RoomMethods.getActiveRoom();
 
-      if (!Room) {
-        throw new Error(RoomErrorMessages.NOT_FOUND);
-      }
       const teamsInGame = Room.gameStatus.teams;
       if (!teamsInGame) {
         throw new Error(ErrorMessages.NOT_FOUND);
