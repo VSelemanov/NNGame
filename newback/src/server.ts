@@ -23,7 +23,11 @@ import { ITeam } from "./helper/Team/interfaces";
 import { IQuestion } from "./helper/Question/interfaces";
 import { IRoom } from "./helper/Room/interfaces";
 import Nes from "@hapi/nes";
-import { routePath, paths } from "./helper/Room/constants";
+import {
+  routePath,
+  paths,
+  subscriptionGameStatuspath
+} from "./helper/Room/constants";
 // utils
 // interfaces
 
@@ -99,15 +103,10 @@ class Server {
         allowChaining: true
       });
 
-      // this._server.auth.strategy("team-auth", "bearer-access-token", {
-      //   validate: Auth.TeamAuth,
-      //   allowChaining: true
-      // });
-
-      // this._server.auth.strategy("game-room-auth", "bearer-access-token", {
-      //   validate: Auth.RoomAuth,
-      //   allowChaining: true
-      // });
+      this._server.auth.strategy("team-auth", "bearer-access-token", {
+        validate: Auth.TeamAuth,
+        allowChaining: true
+      });
 
       this._server.auth.default("app-auth");
 
@@ -137,7 +136,7 @@ class Server {
   }
 
   private serverSubscriptions() {
-    this._server.subscription(`${APIRoute}/${routePath}/${paths.gameStatus}`, {
+    this._server.subscription(subscriptionGameStatuspath, {
       auth: false
     });
   }

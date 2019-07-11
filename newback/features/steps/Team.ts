@@ -4,17 +4,24 @@ import { APIRoute, HTTPMethods, teams } from "../../src/constants";
 import { routePath, paths } from "../../src/helper/Team/constants";
 import { Authorization } from "./constants";
 import { ITeamBase } from "../../src/helper/Team/interfaces";
-import { setResponse, getResponse } from "./lib/response";
+import {
+  setResponse,
+  getResponse,
+  setStreamResponse,
+  getStreamResponse
+} from "./lib/response";
 import { expect } from "chai";
 import Nes from "@hapi/nes";
 import { Client } from "nes";
 
 import {
   routePath as RoomPath,
-  paths as RoomPaths
+  paths as RoomPaths,
+  subscriptionGameStatuspath
 } from "../../src/helper/Room/constants";
-import { getGameToken, getActiveRoom } from "./default";
+import { getGameToken, getActiveRoom, getTeam } from "./default";
 import { IGameStatus } from "../../src/helper/Room/interfaces";
+import methods from "../../src/helper/Team";
 
 const client: Client = new Nes.Client("ws://localhost:3000");
 
@@ -78,25 +85,19 @@ When(
     await client.connect({
       auth: { headers: { Authorization: `Bearer ${process.env.APP_TOKEN}` } }
     });
-    await client.subscribe(
-      `${APIRoute}/${RoomPath}/${RoomPaths.gameStatus}`,
-      (message, flags) => {
-        setResponse(message);
-      }
-    );
+    await client.subscribe(subscriptionGameStatuspath, (message, flags) => {
+      setStreamResponse(message);
+    });
   }
 );
 
 When("отправляю сервером событие", async function() {
   const Room = await getActiveRoom();
-  await server._server.publish(
-    `${APIRoute}/${RoomPath}/${RoomPaths.gameStatus}`,
-    Room.gameStatus
-  );
+  await server._server.publish(subscriptionGameStatuspath, Room.gameStatus);
 });
 
 Then("команда {string} получит сообщение из сокета", async function(TeamName) {
-  const res: IGameStatus = getResponse();
+  const res: IGameStatus = getStreamResponse();
 
   expect(res).have.property("teams");
   expect(res).have.property("gameMap");
@@ -105,3 +106,35 @@ Then("команда {string} получит сообщение из сокет�
 
   await client.disconnect();
 });
+
+When(
+  "команда {string} делает запрос на выбор стартовой зоны {string}",
+  async function(teamName: string, zoneKey: string) {
+    const Team = await getTeam(teamName);
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.get,
+      url: `${APIRoute}/${routePath}/${paths.zone}/${zoneKey}`,
+      headers: {
+        Authorization: token
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в сокете должно быть новое состояние игры с занятой зоной {string} командой {string}",
+  async function(teamName, zoneKey) {
+    const res: IGameStatus = getStreamResponse();
+
+    expect(res).have.property("teams");
+    expect(res).have.property("part1");
+    expect(res).have.property("part2");
+    expect(res).have.property("currentPart");
+
+    await client.disconnect();
+  }
+);

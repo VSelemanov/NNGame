@@ -1,5 +1,5 @@
 import { IRoomBase } from "../interfaces";
-import { teams, GameMap } from "../../../constants";
+import { teams, GameMap, APIRoute } from "../../../constants";
 
 export const EntityName = "Room";
 
@@ -13,10 +13,16 @@ export enum paths {
   gameStatus = "gamestatus"
 }
 
+export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${paths.gameStatus}`;
+
 export const roomDefault: IRoomBase = {
   gameStatus: {
     currentPart: 0,
-    teams: null,
+    teams: {
+      [teams.team1]: null,
+      [teams.team2]: null,
+      [teams.team3]: null
+    },
     gameMap: GameMap,
     part1: [],
     part2: {

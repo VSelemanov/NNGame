@@ -23,3 +23,13 @@ export const login = {
     }
   }
 };
+
+export const colorZone = {
+  description: "Окрас зоны в цвет команды",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};

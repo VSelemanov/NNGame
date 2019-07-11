@@ -2,11 +2,15 @@ import trycatcher from "../../utils/trycatcher";
 import { ITeamBase, ITeam } from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
-import { ErrorMessages as RoomErrorMessages } from "../Room/constants";
+import {
+  ErrorMessages as RoomErrorMessages,
+  subscriptionGameStatuspath
+} from "../Room/constants";
 import jwt from "jsonwebtoken";
 import utils from "../../../src/utils";
 import { teams } from "../../constants";
 import RoomMethods from "../Room";
+import { IRoom } from "../Room/interfaces";
 
 const methods = {
   create: trycatcher(
@@ -60,6 +64,37 @@ const methods = {
     {
       logMessage: `${EntityName} login method error`
     }
+  ),
+  getTeamLinkInGame: trycatcher(
+    async (id: string): Promise<string> => {
+      const Room = await RoomMethods.getActiveRoom();
+      if (!Room.gameStatus.teams) {
+        throw new Error(RoomErrorMessages.NOT_FOUND);
+      }
+      let teamKey: string | null = null;
+      for (const key of Object.keys(teams)) {
+        if (Room.gameStatus.teams[key]._id === id) {
+          teamKey = key;
+        }
+      }
+
+      if (!teamKey) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+
+      return teamKey;
+    },
+    {
+      logMessage: `${EntityName} get teamlink method error`
+    }
+  ),
+  zone: trycatcher(
+    async (zoneKey: string, teamKey: string) => {
+      const Room: IRoom = await RoomMethods.colorZone(zoneKey, teamKey);
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
+    },
+    { logMessage: `${EntityName} zone method error` }
   )
 };
 

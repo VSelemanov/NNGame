@@ -3,7 +3,7 @@ import { server } from "../../src/server";
 import { expect } from "chai";
 import utils from "../../src/utils";
 import { getResponse } from "./lib/response";
-import { APIRoute, HTTPMethods } from "../../src/constants";
+import { APIRoute, HTTPMethods, teams } from "../../src/constants";
 // import { routePath as TeamRoutePath } from "../../src/helper/Team/constants";
 import {
   routePath as AdminRoutePath,
@@ -27,19 +27,9 @@ import { IRoom } from "../../src/helper/Room/interfaces";
 import { ITeam } from "../../src/helper/Team/interfaces";
 import RoomMethods from "../../src/helper/Room";
 
-setDefaultTimeout(10 * 1000);
+// setDefaultTimeout(10 * 1000);
 
 let ServerStarted = false;
-
-// export async function getLogin(name: string): Promise<string> {
-//   const res = await server.server.inject({
-//     url: `${APIRoute}/${TeamRoutePath}/${TeamPaths.login}`,
-//     method: HTTPMethods.post,
-//     payload: { name },
-//     headers: { Authorization }
-//   });
-//   return res.result as any;
-// }
 
 export async function getActiveRoom(): Promise<IRoom> {
   return await RoomMethods.getActiveRoom();
@@ -82,13 +72,13 @@ export async function getGameToken(teamName: string): Promise<string> {
   }
 
   let inviteCode = "000000";
-  for (const key of Object.keys(Room.gameStatus.teams)) {
+  for (const key of Object.keys(teams)) {
     if (Room.gameStatus.teams[key]._id === Team._id) {
       inviteCode = Room.gameStatus.teams[key].inviteCode;
     }
   }
 
-  return TeamMethods.login(inviteCode);
+  return `Bearer ${await TeamMethods.login(inviteCode)}`;
 }
 
 BeforeAll(async () => {

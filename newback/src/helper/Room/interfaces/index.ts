@@ -48,7 +48,7 @@ export interface IGamePart2 {
 }
 
 export interface IGameStatus {
-  teams: ITeamsInRoom | null;
+  teams: ITeamsInRoom;
   gameMap: IGameMap;
   currentPart: number;
   part1: IGamePart1[];

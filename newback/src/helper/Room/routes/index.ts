@@ -3,7 +3,7 @@ import { APIRoute, HTTPMethods, teams } from "../../../constants";
 import RoomCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 import { create } from "../docs";
-import Joi from "joi";
+import Joi from "@hapi/joi";
 
 const routes: ServerRoute[] = [
   {

@@ -3,8 +3,8 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import TeamCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
-import { create, login } from "../docs";
-import Joi from "joi";
+import { create, login, colorZone } from "../docs";
+import Joi from "@hapi/joi";
 
 const routes: ServerRoute[] = [
   {
@@ -14,7 +14,7 @@ const routes: ServerRoute[] = [
     options: {
       ...create,
       validate: {
-        payload: Joi.object({
+        payload: Joi.object().keys({
           name: Joi.string().required()
         })
       }
@@ -31,6 +31,15 @@ const routes: ServerRoute[] = [
           inviteCode: Joi.string().required()
         })
       }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.zone}/{zoneKey}`,
+    method: HTTPMethods.get,
+    handler: TeamCtrl.zone,
+    options: {
+      ...colorZone,
+      auth: "team-auth"
     }
   }
 ];

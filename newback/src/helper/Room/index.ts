@@ -62,6 +62,20 @@ const methods = {
     {
       logMessage: `get active ${EntityName} method`
     }
+  ),
+  colorZone: trycatcher(
+    async (zoneKey: string, teamKey: string): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+
+      Room.gameStatus.gameMap[zoneKey].team = teamKey;
+
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `color zone ${EntityName} method`
+    }
   )
 };
 

@@ -1,6 +1,6 @@
 import trycatcher from "../../../utils/trycatcher";
 import { IDecoratedRequest } from "../../../interfaces";
-import { ITeamBase, ITeam } from "../interfaces";
+import { ITeamBase, ITeam, ITeamCredentials } from "../interfaces";
 import methods from "../";
 import { EntityName } from "../constants";
 
@@ -11,7 +11,8 @@ const ctrl = {
       return await methods.create(TeamData);
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} create request`,
+      isRequest: true
     }
   ),
   login: trycatcher(
@@ -20,7 +21,22 @@ const ctrl = {
       return await methods.login(inviteCode);
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} create request`,
+      isRequest: true
+    }
+  ),
+  zone: trycatcher(
+    async (
+      req: IDecoratedRequest<{}, {}, { zoneKey: string }, ITeamCredentials>,
+      h
+    ) => {
+      const { zoneKey } = req.params;
+      const { teamKey } = req.auth.credentials;
+      return await methods.zone(zoneKey, teamKey);
+    },
+    {
+      logMessage: `${EntityName} create request`,
+      isRequest: true
     }
   )
 };

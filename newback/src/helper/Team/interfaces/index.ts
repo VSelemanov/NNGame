@@ -15,13 +15,20 @@ export interface ITeamInRoom extends ITeam {
 }
 
 export interface ITeamsInRoom {
-  [teams.team1]: ITeamInRoom;
-  [teams.team2]: ITeamInRoom;
-  [teams.team3]: ITeamInRoom;
+  [teams.team1]: ITeamInRoom | null;
+  [teams.team2]: ITeamInRoom | null;
+  [teams.team3]: ITeamInRoom | null;
 }
 
 export interface ITeamResponsePart1 {
   timer: number;
   response: number;
   allowZones: number;
+}
+
+export interface ITeamCredentials {
+  _id: string;
+  teamKey: string;
+  isAdmin: false;
+  iat: number;
 }
