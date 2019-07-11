@@ -66,8 +66,12 @@ const methods = {
   colorZone: trycatcher(
     async (zoneKey: string, teamKey: string): Promise<IRoom> => {
       const Room: IRoom = await methods.getActiveRoom();
+      if (Room.gameStatus.gameMap[zoneKey].team) {
+        methods.incDecZones(Room.gameStatus.gameMap[zoneKey].team, Room, -1);
+      }
 
       Room.gameStatus.gameMap[zoneKey].team = teamKey;
+      methods.incDecZones(teamKey, Room);
 
       await Room.save();
 
@@ -75,6 +79,14 @@ const methods = {
     },
     {
       logMessage: `color zone ${EntityName} method`
+    }
+  ),
+  incDecZones: trycatcher(
+    (teamKey: string, Room: IRoom, direction: number = 1) => {
+      Room.gameStatus.teams[teamKey].zones += direction;
+    },
+    {
+      logMessage: "increment zone methods"
     }
   ),
   startgame: trycatcher(

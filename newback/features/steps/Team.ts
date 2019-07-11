@@ -125,11 +125,14 @@ When(
 );
 
 Then(
-  "в сокете должно быть новое состояние игры с занятой зоной {string} командой {string}",
+  "в сокете должно быть новое состояние игры с занятой зоной {string} командой {string} и увеличенным счетчиком",
   async function(zoneKey, teamName) {
     const res: IGameStatus = getSocketResponse();
+    await client.disconnect();
 
     const Team = await getTeam(teamName);
+
+    const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
 
     expect(res).have.property("teams");
     expect(res).have.property("part1");
@@ -137,10 +140,7 @@ Then(
     expect(res).have.property("currentPart");
     expect(res).have.property("gameMap");
 
-    expect(res.gameMap[zoneKey].team).to.eql(
-      await TeamMethods.getTeamLinkInGame(Team._id)
-    );
-
-    await client.disconnect();
+    expect(res.gameMap[zoneKey].team).to.eql(teamKey);
+    expect(res.teams[teamKey].zones).to.eql(1);
   }
 );

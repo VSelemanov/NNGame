@@ -88,7 +88,7 @@ const methods = {
       logMessage: `${EntityName} get teamlink method error`
     }
   ),
-  zone: trycatcher(
+  colorZone: trycatcher(
     async (zoneKey: string, teamKey: string) => {
       const Room: IRoom = await RoomMethods.colorZone(zoneKey, teamKey);
       await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);

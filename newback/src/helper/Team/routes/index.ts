@@ -36,7 +36,7 @@ const routes: ServerRoute[] = [
   {
     path: `${APIRoute}/${routePath}/${paths.zone}/{zoneKey}`,
     method: HTTPMethods.post,
-    handler: TeamCtrl.zone,
+    handler: TeamCtrl.colorZone,
     options: {
       ...colorZone,
       auth: "team-auth"

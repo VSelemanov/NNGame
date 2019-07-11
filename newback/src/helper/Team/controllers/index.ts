@@ -25,14 +25,14 @@ const ctrl = {
       isRequest: true
     }
   ),
-  zone: trycatcher(
+  colorZone: trycatcher(
     async (
       req: IDecoratedRequest<{}, {}, { zoneKey: string }, ITeamCredentials>,
       h
     ) => {
       const { zoneKey } = req.params;
       const { teamKey } = req.auth.credentials;
-      return await methods.zone(zoneKey, teamKey);
+      return await methods.colorZone(zoneKey, teamKey);
     },
     {
       logMessage: `${EntityName} create request`,

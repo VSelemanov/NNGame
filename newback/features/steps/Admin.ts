@@ -8,6 +8,7 @@ import { routePath, paths } from "../../src/helper/Admin/constants/";
 import { expect } from "chai";
 import { getAdminLogin, getTeam, client } from "./default";
 import { IGameStatus } from "../../src/helper/Room/interfaces";
+import TeamMethods from "../../src/helper/Team";
 
 When("я создаю нового администратора l={string} p={string}", async function(
   name,
@@ -96,9 +97,19 @@ When(
 
 Then("в сокете должен быть статус игры с флагом", async function() {
   const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
 
   expect(res.currentPart).to.eql(1);
   expect(res.isStarted).to.eql(true);
+});
 
-  await client.disconnect();
+Then("в счетчике команды {string} должно быть {int} зон", async function(
+  teamName,
+  zones
+) {
+  const res: IGameStatus = getSocketResponse();
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(res.teams[teamKey].zones).to.eql(zones);
 });
