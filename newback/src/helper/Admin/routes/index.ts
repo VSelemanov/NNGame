@@ -2,7 +2,14 @@ import { ServerRoute } from "hapi";
 import { APIRoute, HTTPMethods } from "../../../constants";
 import AdminCtrl from "../controllers";
 import { routePath, paths } from "../constants";
-import { login, create, colorZone, startGame, nextQuestion } from "../docs";
+import {
+  login,
+  create,
+  colorZone,
+  startGame,
+  nextQuestion,
+  startQuestion
+} from "../docs";
 import Joi from "@hapi/joi";
 
 const routes: ServerRoute[] = [
@@ -64,6 +71,15 @@ const routes: ServerRoute[] = [
     handler: AdminCtrl.nextquestion,
     options: {
       ...nextQuestion,
+      auth: "admin-auth"
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.startquestion}`,
+    method: HTTPMethods.post,
+    handler: AdminCtrl.startquestion,
+    options: {
+      ...startQuestion,
       auth: "admin-auth"
     }
   }

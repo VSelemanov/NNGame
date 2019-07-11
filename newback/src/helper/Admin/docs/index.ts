@@ -42,7 +42,17 @@ export const startGame = {
 };
 
 export const nextQuestion = {
-  description: "Админ стартует игру",
+  description: "Запрос следующего вопроса для тура",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};
+
+export const startQuestion = {
+  description: "Старт таймера вопроса",
   tags: ["api", routePath],
   plugins: {
     "hapi-swagger": {

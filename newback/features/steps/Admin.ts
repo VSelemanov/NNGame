@@ -140,3 +140,30 @@ Then(
     expect(res.part1.currentStep).to.eql(currentStep);
   }
 );
+
+When(
+  "администратор l={string} p={string} делает запрос на старт таймера",
+  async function(name, password) {
+    const token = await getAdminLogin(name, password);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.startquestion}`,
+      headers: {
+        Authorization: token
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в сокете в первом туре на текущем шаге должен быть установлен флаг isStarted",
+  async function() {
+    const res: IGameStatus = getSocketResponse();
+    await client.disconnect();
+
+    expect(res.part1.steps[res.part1.currentStep || 0].isStarted).to.eql(true);
+  }
+);

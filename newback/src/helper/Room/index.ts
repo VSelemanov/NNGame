@@ -128,7 +128,22 @@ const methods = {
       return Room;
     },
     {
-      logMessage: `${EntityName} start game method`
+      logMessage: `${EntityName} next question method`
+    }
+  ),
+  startquestion: trycatcher(
+    async (): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+      Room.gameStatus.part1.steps[
+        Room.gameStatus.part1.currentStep || 0
+      ].isStarted = true;
+
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `${EntityName} start question method`
     }
   )
 };

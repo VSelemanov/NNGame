@@ -47,6 +47,14 @@ const ctrl = {
     {
       logMessage: `${EntityName} next question request`
     }
+  ),
+  startquestion: trycatcher(
+    async (req, h) => {
+      return await methods.startquestion();
+    },
+    {
+      logMessage: `${EntityName} start question request`
+    }
   )
 };
 

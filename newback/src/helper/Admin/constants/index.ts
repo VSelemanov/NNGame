@@ -10,5 +10,6 @@ export enum paths {
   login = "login",
   zone = "zone",
   startgame = "startgame",
-  nextquestion = "nextquestion"
+  nextquestion = "nextquestion",
+  startquestion = "startquestion"
 }
