@@ -45,7 +45,17 @@ const methods = {
       return "ok";
     },
     {
-      logMessage: `${EntityName} login method`
+      logMessage: `${EntityName} color zone method`
+    }
+  ),
+  startgame: trycatcher(
+    async (): Promise<string> => {
+      const Room: IRoom = await RoomMethods.startgame();
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
+    },
+    {
+      logMessage: `${EntityName} start game method`
     }
   )
 };

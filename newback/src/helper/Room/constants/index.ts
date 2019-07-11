@@ -13,10 +13,13 @@ export enum paths {
   gameStatus = "gamestatus"
 }
 
-export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${paths.gameStatus}`;
+export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${
+  paths.gameStatus
+}`;
 
 export const roomDefault: IRoomBase = {
   gameStatus: {
+    isStarted: false,
     currentPart: 0,
     teams: {
       [teams.team1]: null,
@@ -31,6 +34,5 @@ export const roomDefault: IRoomBase = {
     }
   },
   isActive: true,
-  isStarted: false,
   theme: null
 };

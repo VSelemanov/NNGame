@@ -26,10 +26,14 @@ import TeamMethods from "../../src/helper/Team";
 import { IRoom } from "../../src/helper/Room/interfaces";
 import { ITeam } from "../../src/helper/Team/interfaces";
 import RoomMethods from "../../src/helper/Room";
+import { Client } from "@hapi/nes";
+import Nes from "@hapi/nes";
 
 // setDefaultTimeout(10 * 1000);
 
 let ServerStarted = false;
+
+export const client: Client = new Nes.Client("ws://localhost:3000");
 
 export async function getActiveRoom(): Promise<IRoom> {
   return await RoomMethods.getActiveRoom();

@@ -3,10 +3,11 @@ import { server } from "../../src/server";
 import { HTTPMethods, APIRoute } from "../../src/constants";
 import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
-import { setResponse, getResponse } from "./lib/response";
+import { setResponse, getResponse, getSocketResponse } from "./lib/response";
 import { routePath, paths } from "../../src/helper/Admin/constants/";
 import { expect } from "chai";
-import { getAdminLogin, getTeam } from "./default";
+import { getAdminLogin, getTeam, client } from "./default";
+import { IGameStatus } from "../../src/helper/Room/interfaces";
 
 When("я создаю нового администратора l={string} p={string}", async function(
   name,
@@ -75,3 +76,29 @@ When(
     setResponse(res);
   }
 );
+
+When(
+  "администратор l={string} p={string} делает запрос на старт игры",
+  async function(name, password) {
+    const token = await getAdminLogin(name, password);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.startgame}`,
+      headers: {
+        Authorization: token
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then("в сокете должен быть статус игры с флагом", async function() {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.currentPart).to.eql(1);
+  expect(res.isStarted).to.eql(true);
+
+  await client.disconnect();
+});

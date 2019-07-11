@@ -76,6 +76,19 @@ const methods = {
     {
       logMessage: `color zone ${EntityName} method`
     }
+  ),
+  startgame: trycatcher(
+    async (): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+      Room.gameStatus.currentPart = 1;
+      Room.gameStatus.isStarted = true;
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `game start ${EntityName} method`
+    }
   )
 };
 

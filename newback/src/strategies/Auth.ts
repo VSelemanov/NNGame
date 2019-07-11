@@ -46,7 +46,7 @@ const Auth = {
 
       return {
         isValid: true,
-        credentials: { ...tokenData }
+        credentials: { ...tokenData, isAdmin: false }
       };
     } catch (error) {
       console.log("TeamAuth Error -----> ", error);

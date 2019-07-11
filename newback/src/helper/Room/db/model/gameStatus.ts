@@ -16,7 +16,12 @@ const RoomSchema = new Schema({
   part1: {
     type: Array
   },
-  part2: Part2Schema
+  part2: Part2Schema,
+  isStarted: {
+    type: Boolean,
+    required: true,
+    default: false
+  }
 });
 
 export default RoomSchema;

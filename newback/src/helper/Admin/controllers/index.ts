@@ -31,6 +31,14 @@ const ctrl = {
     {
       logMessage: `${EntityName} create request`
     }
+  ),
+  startgame: trycatcher(
+    async (req, h) => {
+      return await methods.startgame();
+    },
+    {
+      logMessage: `${EntityName} create request`
+    }
   )
 };
 

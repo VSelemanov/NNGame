@@ -7,11 +7,6 @@ import gameStatusSchema from "./gameStatus";
 const RoomSchema = new Schema(
   {
     ...baseFlds,
-    isStarted: {
-      type: Boolean,
-      required: true,
-      default: false
-    },
     isActive: {
       type: Boolean,
       required: true,

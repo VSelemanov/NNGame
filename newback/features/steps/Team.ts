@@ -7,8 +7,8 @@ import { ITeamBase } from "../../src/helper/Team/interfaces";
 import {
   setResponse,
   getResponse,
-  setStreamResponse,
-  getStreamResponse
+  setSocketResponse,
+  getSocketResponse
 } from "./lib/response";
 import { expect } from "chai";
 import Nes from "@hapi/nes";
@@ -22,8 +22,7 @@ import {
 import { getGameToken, getActiveRoom, getTeam } from "./default";
 import { IGameStatus } from "../../src/helper/Room/interfaces";
 import TeamMethods from "../../src/helper/Team";
-
-const client: Client = new Nes.Client("ws://localhost:3000");
+import { client } from "./default";
 
 When("я делаю запрос на создание новой команды {string}", async function(name) {
   const res = await server.server.inject({
@@ -86,7 +85,7 @@ When(
       auth: { headers: { Authorization: `Bearer ${process.env.APP_TOKEN}` } }
     });
     await client.subscribe(subscriptionGameStatuspath, (message, flags) => {
-      setStreamResponse(message);
+      setSocketResponse(message);
     });
   }
 );
@@ -97,7 +96,7 @@ When("отправляю сервером событие", async function() {
 });
 
 Then("команда {string} получит сообщение из сокета", async function(TeamName) {
-  const res: IGameStatus = getStreamResponse();
+  const res: IGameStatus = getSocketResponse();
 
   expect(res).have.property("teams");
   expect(res).have.property("gameMap");
@@ -128,7 +127,7 @@ When(
 Then(
   "в сокете должно быть новое состояние игры с занятой зоной {string} командой {string}",
   async function(zoneKey, teamName) {
-    const res: IGameStatus = getStreamResponse();
+    const res: IGameStatus = getSocketResponse();
 
     const Team = await getTeam(teamName);
 

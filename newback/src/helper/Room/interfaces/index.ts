@@ -5,7 +5,7 @@ import { mapZones, teams } from "../../../constants";
 import { IQuestion } from "../../Question/interfaces";
 
 export interface IRoomBase {
-  isStarted: boolean;
+  // isStarted: boolean;
   isActive: boolean;
   theme: string | null;
   gameStatus: IGameStatus;
@@ -53,6 +53,7 @@ export interface IGameStatus {
   currentPart: number;
   part1: IGamePart1[];
   part2: IGamePart2;
+  isStarted: boolean;
 }
 
 export interface IRoomCreateRequest {

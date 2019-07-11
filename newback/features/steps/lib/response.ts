@@ -1,6 +1,6 @@
 let lastResponse;
 
-let lastStreamResponse;
+let lastSocketResponse;
 
 export function setResponse(resp) {
   lastResponse = resp;
@@ -10,10 +10,10 @@ export function getResponse() {
   return lastResponse;
 }
 
-export function setStreamResponse(resp) {
-  lastStreamResponse = resp;
+export function setSocketResponse(resp) {
+  lastSocketResponse = resp;
 }
 
-export function getStreamResponse() {
-  return lastStreamResponse;
+export function getSocketResponse() {
+  return lastSocketResponse;
 }
