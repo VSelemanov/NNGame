@@ -9,5 +9,6 @@ export enum ErrorMessages {
 export enum paths {
   login = "login",
   zone = "zone",
-  startgame = "startgame"
+  startgame = "startgame",
+  nextquestion = "nextquestion"
 }

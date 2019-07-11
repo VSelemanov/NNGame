@@ -40,3 +40,13 @@ export const startGame = {
     }
   }
 };
+
+export const nextQuestion = {
+  description: "Админ стартует игру",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};

@@ -1,6 +1,7 @@
 import { Schema } from "mongoose";
 import teamsInRoom from "../../../Team/db/model/teamsInRoom";
 import gameMapSchema from "./gameMap";
+import Part1Schema from "./Part1";
 import Part2Schema from "./Part2";
 import { baseFlds } from "../../../../constants";
 
@@ -13,9 +14,7 @@ const RoomSchema = new Schema({
     required: true,
     default: 0
   },
-  part1: {
-    type: Array
-  },
+  part1: Part1Schema,
   part2: Part2Schema,
   isStarted: {
     type: Boolean,

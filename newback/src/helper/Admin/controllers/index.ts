@@ -20,7 +20,7 @@ const ctrl = {
       return await methods.login(AdminData);
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} login request`
     }
   ),
   colorZone: trycatcher(
@@ -29,7 +29,7 @@ const ctrl = {
       return await methods.colorZone(_id, zone);
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} color zone request`
     }
   ),
   startgame: trycatcher(
@@ -37,7 +37,15 @@ const ctrl = {
       return await methods.startgame();
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} start game request`
+    }
+  ),
+  nextquestion: trycatcher(
+    async (req, h) => {
+      return await methods.nextquestion();
+    },
+    {
+      logMessage: `${EntityName} next question request`
     }
   )
 };

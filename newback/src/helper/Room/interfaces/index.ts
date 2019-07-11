@@ -30,12 +30,23 @@ export interface IGameMap {
 }
 
 export interface IGamePart1 {
+  currentStep: number | null;
+  steps: IGamePart1Step[];
+}
+
+export interface IGamePart1Step {
   question: IQuestion;
   results: {
     [teams.team1]: ITeamResponsePart1;
     [teams.team2]: ITeamResponsePart1;
     [teams.team3]: ITeamResponsePart1;
   };
+  allowZones: {
+    [teams.team1]: number | null;
+    [teams.team2]: number | null;
+    [teams.team3]: number | null;
+  };
+  isStarted: boolean;
 }
 
 export interface IGamePart2Step {
@@ -51,7 +62,7 @@ export interface IGameStatus {
   teams: ITeamsInRoom;
   gameMap: IGameMap;
   currentPart: number;
-  part1: IGamePart1[];
+  part1: IGamePart1;
   part2: IGamePart2;
   isStarted: boolean;
 }

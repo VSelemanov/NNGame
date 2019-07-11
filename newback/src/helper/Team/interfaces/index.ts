@@ -21,9 +21,9 @@ export interface ITeamsInRoom {
 }
 
 export interface ITeamResponsePart1 {
-  timer: number;
-  response: number;
-  allowZones: number;
+  timer: number | null;
+  response: number | null;
+  result: number | null;
 }
 
 export interface ITeamCredentials {

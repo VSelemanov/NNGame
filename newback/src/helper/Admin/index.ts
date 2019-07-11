@@ -57,6 +57,16 @@ const methods = {
     {
       logMessage: `${EntityName} start game method`
     }
+  ),
+  nextquestion: trycatcher(
+    async (): Promise<string> => {
+      const Room: IRoom = await RoomMethods.nextquestion();
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
+    },
+    {
+      logMessage: `${EntityName} start game method`
+    }
   )
 };
 

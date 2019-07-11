@@ -113,3 +113,30 @@ Then("в счетчике команды {string} должно быть {int} з
 
   expect(res.teams[teamKey].zones).to.eql(zones);
 });
+
+When(
+  "администратор l={string} p={string} делает запрос на следующий вопрос",
+  async function(name, password) {
+    const token = await getAdminLogin(name, password);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.get,
+      url: `${APIRoute}/${routePath}/${paths.nextquestion}`,
+      headers: {
+        Authorization: token
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в сокете в первом туре должен появиться новый вопрос и счетчик равен {int}",
+  function(currentStep) {
+    const res: IGameStatus = getSocketResponse();
+    client.disconnect();
+    expect(res.part1.steps).length.greaterThan(0, "Steps are empty");
+    expect(res.part1.currentStep).to.eql(currentStep);
+  }
+);

@@ -30,7 +30,7 @@ const methods = {
         count: minCount
       });
 
-      const index: number = utils.getRandomInt(0, Questions.length);
+      const index: number = utils.getRandomInt(0, Questions.length - 1);
 
       Questions[index].count += 1;
       await Questions[index].save();

@@ -1,11 +1,16 @@
 import trycatcher from "../../utils/trycatcher";
 import { IRoomBase, IRoomCreateRequest, IRoom } from "./interfaces";
 import { server } from "../../server";
-import { EntityName, ErrorMessages } from "./constants";
+import {
+  EntityName,
+  ErrorMessages,
+  allowZonesDefault,
+  resultsDefault
+} from "./constants";
 import { roomDefault } from "./constants";
-import jwt from "jsonwebtoken";
 import { teams } from "../../constants";
 import { ITeam, ITeamInRoom } from "../Team/interfaces";
+import QuestionMethods from "../Question";
 
 import TeamMethods from "../Team";
 
@@ -86,7 +91,7 @@ const methods = {
       Room.gameStatus.teams[teamKey].zones += direction;
     },
     {
-      logMessage: "increment zone methods"
+      logMessage: "increment/decrement zone methods"
     }
   ),
   startgame: trycatcher(
@@ -100,6 +105,30 @@ const methods = {
     },
     {
       logMessage: `game start ${EntityName} method`
+    }
+  ),
+  nextquestion: trycatcher(
+    async (): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+      const Question = await QuestionMethods.random({ isNumeric: true });
+
+      const part = Room.gameStatus.part1;
+
+      part.steps.push({
+        question: Question,
+        allowZones: allowZonesDefault,
+        isStarted: false,
+        results: resultsDefault
+      });
+
+      part.currentStep = part.currentStep !== null ? part.currentStep + 1 : 0;
+
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `${EntityName} start game method`
     }
   )
 };
