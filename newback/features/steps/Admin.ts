@@ -6,6 +6,7 @@ import { IAdminBase } from "../../src/helper/Admin/interfaces";
 import { setResponse, getResponse } from "./lib/response";
 import { routePath, paths } from "../../src/helper/Admin/constants/";
 import { expect } from "chai";
+import { getAdminLogin, getTeam } from "./default";
 
 When("я создаю нового администратора l={string} p={string}", async function(
   name,
@@ -52,3 +53,25 @@ Then("в ответе должен быть токен администрато�
 
   expect(typeof res).to.eql("string");
 });
+
+When(
+  "администратор l={string} p={string} делает запрос на перекрас зоны {string} в цвет команды {string}",
+  async function(name, password, zoneKey, teamName) {
+    const token = await getAdminLogin(name, password);
+    const Team = await getTeam(teamName);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.zone}`,
+      headers: {
+        Authorization: token
+      },
+      payload: {
+        _id: Team._id,
+        zone: zoneKey
+      }
+    });
+
+    setResponse(res);
+  }
+);

@@ -21,7 +21,7 @@ import {
 } from "../../src/helper/Room/constants";
 import { getGameToken, getActiveRoom, getTeam } from "./default";
 import { IGameStatus } from "../../src/helper/Room/interfaces";
-import methods from "../../src/helper/Team";
+import TeamMethods from "../../src/helper/Team";
 
 const client: Client = new Nes.Client("ws://localhost:3000");
 
@@ -114,7 +114,7 @@ When(
     const token = await getGameToken(teamName);
 
     const res = await server.server.inject({
-      method: HTTPMethods.get,
+      method: HTTPMethods.post,
       url: `${APIRoute}/${routePath}/${paths.zone}/${zoneKey}`,
       headers: {
         Authorization: token
@@ -127,13 +127,20 @@ When(
 
 Then(
   "в сокете должно быть новое состояние игры с занятой зоной {string} командой {string}",
-  async function(teamName, zoneKey) {
+  async function(zoneKey, teamName) {
     const res: IGameStatus = getStreamResponse();
+
+    const Team = await getTeam(teamName);
 
     expect(res).have.property("teams");
     expect(res).have.property("part1");
     expect(res).have.property("part2");
     expect(res).have.property("currentPart");
+    expect(res).have.property("gameMap");
+
+    expect(res.gameMap[zoneKey].team).to.eql(
+      await TeamMethods.getTeamLinkInGame(Team._id)
+    );
 
     await client.disconnect();
   }

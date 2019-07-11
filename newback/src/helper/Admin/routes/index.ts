@@ -2,7 +2,7 @@ import { ServerRoute } from "hapi";
 import { APIRoute, HTTPMethods } from "../../../constants";
 import AdminCtrl from "../controllers";
 import { routePath, paths } from "../constants";
-import { login, create } from "../docs";
+import { login, create, colorZone } from "../docs";
 import Joi from "@hapi/joi";
 
 const routes: ServerRoute[] = [
@@ -32,6 +32,21 @@ const routes: ServerRoute[] = [
           password: Joi.string().required()
         })
       }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.zone}`,
+    method: HTTPMethods.post,
+    handler: AdminCtrl.colorZone,
+    options: {
+      ...colorZone,
+      validate: {
+        payload: Joi.object({
+          _id: Joi.string().required(),
+          zone: Joi.string().required()
+        })
+      },
+      auth: "admin-auth"
     }
   }
 ];

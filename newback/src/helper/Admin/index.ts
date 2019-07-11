@@ -2,7 +2,11 @@ import trycatcher from "../../utils/trycatcher";
 import { IAdminBase, IAdmin } from "./interfaces";
 import { server } from "../../server";
 import { EntityName, ErrorMessages } from "./constants";
+import TeamMethods from "../Team";
+import RoomMethods from "../Room";
 import jwt from "jsonwebtoken";
+import { subscriptionGameStatuspath } from "../Room/constants";
+import { IRoom } from "../Room/interfaces";
 
 const methods = {
   create: trycatcher(
@@ -28,6 +32,17 @@ const methods = {
           algorithm: "HS256"
         }
       );
+    },
+    {
+      logMessage: `${EntityName} login method`
+    }
+  ),
+  colorZone: trycatcher(
+    async (_id: string, zoneKey: string): Promise<string> => {
+      const teamKey = await TeamMethods.getTeamLinkInGame(_id);
+      const Room: IRoom = await RoomMethods.colorZone(zoneKey, teamKey);
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
     },
     {
       logMessage: `${EntityName} login method`

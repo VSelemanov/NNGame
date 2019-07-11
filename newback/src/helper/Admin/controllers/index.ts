@@ -22,6 +22,15 @@ const ctrl = {
     {
       logMessage: `${EntityName} create request`
     }
+  ),
+  colorZone: trycatcher(
+    async (req: IDecoratedRequest<{ _id: string; zone: string }>, h) => {
+      const { _id, zone } = req.payload;
+      return await methods.colorZone(_id, zone);
+    },
+    {
+      logMessage: `${EntityName} create request`
+    }
   )
 };
 
