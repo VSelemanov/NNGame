@@ -182,3 +182,22 @@ Then("в сокете состояние игры с ответом от ком�
   expect(teamResponse.response).not.null;
   expect(teamResponse.timer).not.null;
 });
+
+Then(
+  "в сокете состояние игры со следующими результатами по выбору доступных зон:",
+  async function(dataTable) {
+    const res: IGameStatus = getSocketResponse();
+    await client.disconnect();
+
+    const allowZones = res.part1.steps[res.part1.currentStep || 0].allowZones;
+
+    for (const row of dataTable.hashes() as IAllowZoneForTeam[]) {
+      expect(allowZones[row.teamKey]).to.eql(+row.allowZones);
+    }
+  }
+);
+
+interface IAllowZoneForTeam {
+  teamKey: string;
+  allowZones: number;
+}

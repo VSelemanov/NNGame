@@ -1,5 +1,11 @@
 import trycatcher from "../../utils/trycatcher";
-import { IRoomBase, IRoomCreateRequest, IRoom, IGamePart1 } from "./interfaces";
+import {
+  IRoomBase,
+  IRoomCreateRequest,
+  IRoom,
+  IGamePart1,
+  IGamePart1Step
+} from "./interfaces";
 import { server } from "../../server";
 import {
   EntityName,
@@ -122,8 +128,6 @@ const methods = {
           responses: responsesDefault
         }) - 1;
 
-      console.log({ index });
-
       part.currentStep = part.currentStep !== null ? part.currentStep + 1 : 0;
 
       Room.markModified(`gameStatus.part1.steps[${index}].results.team1`);
@@ -160,12 +164,15 @@ const methods = {
       const Room: IRoom = await methods.getActiveRoom();
       const part = Room.gameStatus[`part${Room.gameStatus.currentPart}`];
       if (Room.gameStatus.currentPart === 1) {
-        const results: ITeamResponsePart1 = (part as IGamePart1).steps[
-          part.currentStep
-        ].responses[teamKey];
+        const step = (part as IGamePart1).steps[part.currentStep];
+        const teamResponse: ITeamResponsePart1 = step.responses[teamKey];
 
-        results.response = response;
-        results.timer = timer;
+        teamResponse.response = response;
+        teamResponse.timer = timer;
+
+        if (methods.checkTeamResponses(step)) {
+          methods.calcQuestionWinner(step);
+        }
       }
 
       await Room.save();
@@ -175,7 +182,57 @@ const methods = {
     {
       logMessage: `${EntityName} start question method`
     }
-  )
+  ),
+  checkTeamResponses: (step: IGamePart1Step): boolean => {
+    for (const teamKey of Object.keys(teams)) {
+      if (step.responses[teamKey] === null) {
+        return false;
+      }
+    }
+    return true;
+  },
+  calcQuestionWinner: (stepElement: IGamePart1Step) => {
+    interface IResultDifTimer {
+      dif: number;
+      timer: number;
+      teamKey: string;
+    }
+
+    const semiRes: IResultDifTimer[] = Object.keys(teams).map(
+      (teamKey): IResultDifTimer => {
+        return {
+          timer: stepElement.responses[teamKey].timer || 100,
+          dif: Math.abs(
+            (stepElement.question.numericAnswer || 0) -
+              stepElement.responses[teamKey].response
+          ),
+          teamKey
+        };
+      }
+    );
+
+    semiRes.sort((a, b) => {
+      if (a.dif < b.dif) {
+        return -1;
+      } else if (a.dif > b.dif) {
+        return 1;
+      } else {
+        if (a.timer < b.timer) {
+          return -1;
+        } else if (a.timer > b.timer) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+
+    for (let i = 0; i < semiRes.length; i++) {
+      const zones = 2 - i;
+      stepElement.allowZones[semiRes[i].teamKey] = zones;
+      stepElement.responses[semiRes[i].teamKey].result = zones;
+    }
+  }
 };
 
 export default methods;
