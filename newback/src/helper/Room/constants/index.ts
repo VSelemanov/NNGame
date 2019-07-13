@@ -14,7 +14,9 @@ export enum paths {
   gameStatus = "gamestatus"
 }
 
-export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${paths.gameStatus}`;
+export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${
+  paths.gameStatus
+}`;
 
 export const allowZonesDefault = {
   [teams.team1]: null,
@@ -22,16 +24,16 @@ export const allowZonesDefault = {
   [teams.team3]: null
 };
 
-const resultDefault: ITeamResponsePart1 = {
+const responseDefault: ITeamResponsePart1 = {
   timer: null,
   response: null,
   result: null
 };
 
-export const resultsDefault = {
-  [teams.team1]: resultDefault,
-  [teams.team2]: resultDefault,
-  [teams.team3]: resultDefault
+export const responsesDefault = {
+  [teams.team1]: responseDefault,
+  [teams.team2]: responseDefault,
+  [teams.team3]: responseDefault
 };
 
 export const roomDefault: IRoomBase = {

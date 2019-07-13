@@ -41,6 +41,21 @@ const routes: ServerRoute[] = [
       ...colorZone,
       auth: "team-auth"
     }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.response}`,
+    method: HTTPMethods.post,
+    handler: TeamCtrl.response,
+    options: {
+      ...colorZone,
+      auth: "team-auth",
+      validate: {
+        payload: Joi.object({
+          response: Joi.number().required(),
+          timer: Joi.number().required()
+        })
+      }
+    }
   }
 ];
 

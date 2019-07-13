@@ -3,7 +3,10 @@ import { server } from "../../src/server";
 import { APIRoute, HTTPMethods, teams } from "../../src/constants";
 import { routePath, paths } from "../../src/helper/Team/constants";
 import { Authorization } from "./constants";
-import { ITeamBase } from "../../src/helper/Team/interfaces";
+import {
+  ITeamBase,
+  ITeamResponsePart1
+} from "../../src/helper/Team/interfaces";
 import {
   setResponse,
   getResponse,
@@ -144,3 +147,38 @@ Then(
     expect(res.teams[teamKey].zones).to.eql(1);
   }
 );
+
+When(
+  "команда {string} отвечает на числовой вопрос ответ = {int} таймер = {int}",
+  async function(teamName: string, response: number, timer: number) {
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.response}`,
+      headers: {
+        Authorization: token
+      },
+      payload: {
+        timer,
+        response
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then("в сокете состояние игры с ответом от команды {string}", async function(
+  teamName: string
+) {
+  const res: IGameStatus = getSocketResponse();
+
+  await client.disconnect();
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+  const teamResponse: ITeamResponsePart1 =
+    res.part1.steps[res.part1.currentStep || 0].responses[teamKey];
+  expect(teamResponse.response).not.null;
+  expect(teamResponse.timer).not.null;
+});

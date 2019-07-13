@@ -38,6 +38,25 @@ const ctrl = {
       logMessage: `${EntityName} create request`,
       isRequest: true
     }
+  ),
+  response: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        { response: number; timer: number },
+        {},
+        {},
+        ITeamCredentials
+      >,
+      h
+    ) => {
+      const { response, timer } = req.payload;
+      const { teamKey } = req.auth.credentials;
+      return await methods.response(response, timer, teamKey);
+    },
+    {
+      logMessage: `${EntityName} create request`,
+      isRequest: true
+    }
   )
 };
 

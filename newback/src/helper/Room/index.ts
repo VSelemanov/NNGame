@@ -1,15 +1,15 @@
 import trycatcher from "../../utils/trycatcher";
-import { IRoomBase, IRoomCreateRequest, IRoom } from "./interfaces";
+import { IRoomBase, IRoomCreateRequest, IRoom, IGamePart1 } from "./interfaces";
 import { server } from "../../server";
 import {
   EntityName,
   ErrorMessages,
   allowZonesDefault,
-  resultsDefault
+  responsesDefault
 } from "./constants";
 import { roomDefault } from "./constants";
 import { teams } from "../../constants";
-import { ITeam, ITeamInRoom } from "../Team/interfaces";
+import { ITeam, ITeamInRoom, ITeamResponsePart1 } from "../Team/interfaces";
 import QuestionMethods from "../Question";
 
 import TeamMethods from "../Team";
@@ -114,14 +114,19 @@ const methods = {
 
       const part = Room.gameStatus.part1;
 
-      part.steps.push({
-        question: Question,
-        allowZones: allowZonesDefault,
-        isStarted: false,
-        results: resultsDefault
-      });
+      const index =
+        part.steps.push({
+          question: Question,
+          allowZones: allowZonesDefault,
+          isStarted: false,
+          responses: responsesDefault
+        }) - 1;
+
+      console.log({ index });
 
       part.currentStep = part.currentStep !== null ? part.currentStep + 1 : 0;
+
+      Room.markModified(`gameStatus.part1.steps[${index}].results.team1`);
 
       await Room.save();
 
@@ -137,6 +142,31 @@ const methods = {
       Room.gameStatus.part1.steps[
         Room.gameStatus.part1.currentStep || 0
       ].isStarted = true;
+
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `${EntityName} start question method`
+    }
+  ),
+  teamResponse: trycatcher(
+    async (
+      response: number,
+      timer: number,
+      teamKey: string
+    ): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+      const part = Room.gameStatus[`part${Room.gameStatus.currentPart}`];
+      if (Room.gameStatus.currentPart === 1) {
+        const results: ITeamResponsePart1 = (part as IGamePart1).steps[
+          part.currentStep
+        ].responses[teamKey];
+
+        results.response = response;
+        results.timer = timer;
+      }
 
       await Room.save();
 

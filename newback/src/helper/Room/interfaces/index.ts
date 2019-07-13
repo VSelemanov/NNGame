@@ -36,7 +36,7 @@ export interface IGamePart1 {
 
 export interface IGamePart1Step {
   question: IQuestion;
-  results: {
+  responses: {
     [teams.team1]: ITeamResponsePart1;
     [teams.team2]: ITeamResponsePart1;
     [teams.team3]: ITeamResponsePart1;

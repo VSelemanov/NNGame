@@ -95,6 +95,18 @@ const methods = {
       return "ok";
     },
     { logMessage: `${EntityName} zone method error` }
+  ),
+  response: trycatcher(
+    async (response: number, timer: number, teamKey: string) => {
+      const Room: IRoom = await RoomMethods.teamResponse(
+        response,
+        timer,
+        teamKey
+      );
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
+    },
+    { logMessage: `${EntityName} zone method error` }
   )
 };
 
