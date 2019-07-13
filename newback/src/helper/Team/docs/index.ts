@@ -33,3 +33,13 @@ export const colorZone = {
     }
   }
 };
+
+export const response = {
+  description: "Ответ команды на вопрос",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};

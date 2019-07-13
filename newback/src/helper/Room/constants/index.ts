@@ -14,9 +14,7 @@ export enum paths {
   gameStatus = "gamestatus"
 }
 
-export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${
-  paths.gameStatus
-}`;
+export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${paths.gameStatus}`;
 
 export const allowZonesDefault = {
   [teams.team1]: null,
