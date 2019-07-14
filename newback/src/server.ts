@@ -28,6 +28,7 @@ import {
   paths,
   subscriptionGameStatuspath
 } from "./helper/Room/constants";
+import methods from "./helper/Room";
 // utils
 // interfaces
 
@@ -135,9 +136,13 @@ class Server {
     }
   }
 
-  private serverSubscriptions() {
+  private async serverSubscriptions() {
     this._server.subscription(subscriptionGameStatuspath, {
-      auth: false
+      auth: false,
+      onSubscribe: async (socket, path, params) => {
+        const Room: IRoom = await methods.getActiveRoom();
+        await socket.publish(subscriptionGameStatuspath, Room.gameStatus);
+      }
     });
   }
 

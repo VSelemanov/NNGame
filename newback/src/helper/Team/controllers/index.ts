@@ -57,6 +57,25 @@ const ctrl = {
       logMessage: `${EntityName} create request`,
       isRequest: true
     }
+  ),
+  attack: trycatcher(
+    async (
+      req: IDecoratedRequest<
+        { attackingZone: string; defenderZone: string },
+        {},
+        {},
+        ITeamCredentials
+      >,
+      h
+    ) => {
+      const { attackingZone, defenderZone } = req.payload;
+      const { teamKey } = req.auth.credentials;
+      return await methods.attack(attackingZone, defenderZone, teamKey);
+    },
+    {
+      logMessage: `${EntityName} create request`,
+      isRequest: true
+    }
   )
 };
 

@@ -3,7 +3,7 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import TeamCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
-import { create, login, colorZone, response } from "../docs";
+import { create, login, colorZone, response, attack } from "../docs";
 import Joi from "@hapi/joi";
 
 const routes: ServerRoute[] = [
@@ -53,6 +53,21 @@ const routes: ServerRoute[] = [
         payload: Joi.object({
           response: Joi.number().required(),
           timer: Joi.number().required()
+        })
+      }
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.attack}`,
+    method: HTTPMethods.post,
+    handler: TeamCtrl.attack,
+    options: {
+      ...attack,
+      auth: "team-auth",
+      validate: {
+        payload: Joi.object({
+          attackingZone: Joi.string().required(),
+          defenderZone: Joi.string().required()
         })
       }
     }

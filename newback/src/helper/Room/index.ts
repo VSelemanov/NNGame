@@ -4,7 +4,8 @@ import {
   IRoomCreateRequest,
   IRoom,
   IGamePart1,
-  IGamePart1Step
+  IGamePart1Step,
+  IGameStatus
 } from "./interfaces";
 import { server } from "../../server";
 import {
@@ -14,11 +15,12 @@ import {
   responsesDefault
 } from "./constants";
 import { roomDefault } from "./constants";
-import { teams } from "../../constants";
+import { teams, mapZones } from "../../constants";
 import { ITeam, ITeamInRoom, ITeamResponsePart1 } from "../Team/interfaces";
 import QuestionMethods from "../Question";
 
 import TeamMethods from "../Team";
+import { IQuestion } from "../Question/interfaces";
 
 const methods = {
   create: trycatcher(
@@ -83,6 +85,14 @@ const methods = {
 
       Room.gameStatus.gameMap[zoneKey].team = teamKey;
       methods.incDecZones(teamKey, Room);
+
+      const mapIsFull = methods.checkFillMap(Room.gameStatus.gameMap);
+      if (mapIsFull && Room.gameStatus.currentPart === 1) {
+        Room.gameStatus.currentPart = 2;
+        Room.gameStatus.part2.teamQueue = await methods.prepareTeamQueue(
+          Room.gameStatus
+        );
+      }
 
       await Room.save();
 
@@ -180,7 +190,7 @@ const methods = {
       return Room;
     },
     {
-      logMessage: `${EntityName} start question method`
+      logMessage: `${EntityName} team response method`
     }
   ),
   checkTeamResponses: (step: IGamePart1Step): boolean => {
@@ -232,7 +242,64 @@ const methods = {
       stepElement.allowZones[semiRes[i].teamKey] = zones;
       stepElement.responses[semiRes[i].teamKey].result = zones;
     }
-  }
+  },
+  prepareTeamQueue: async (gameStatus: IGameStatus) => {
+    const res: ITeamInRoom[] = [];
+    for (const key of Object.keys(teams)) {
+      res.push(gameStatus.teams[key]);
+    }
+    res.sort((a, b) => {
+      if (a.zones < b.zones) {
+        return -1;
+      } else if (a.zones > b.zones) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    return await Promise.all(
+      res.map(async r => await TeamMethods.getTeamLinkInGame(r._id))
+    );
+  },
+  checkFillMap: (gameMap): boolean => {
+    for (const key of Object.keys(mapZones)) {
+      if (gameMap[key].team === "") {
+        return false;
+      }
+    }
+    return true;
+  },
+  teamAttack: trycatcher(
+    async (
+      attackingZone: string,
+      defenderZone: string,
+      teamKey: string
+    ): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+
+      const part = Room.gameStatus.part2;
+
+      const question: IQuestion = await QuestionMethods.random({
+        isNumeric: false
+      });
+
+      part.steps.push({
+        attacking: teamKey,
+        attackingZone: attackingZone,
+        defenderZone: defenderZone,
+        defender: Room.gameStatus.gameMap[defenderZone].team,
+        question
+      });
+
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `${EntityName} team attack method`
+    }
+  )
 };
 
 export default methods;

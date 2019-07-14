@@ -43,3 +43,13 @@ export const response = {
     }
   }
 };
+
+export const attack = {
+  description: "Ответ команды на вопрос",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};

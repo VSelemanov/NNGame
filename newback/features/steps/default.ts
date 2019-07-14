@@ -9,10 +9,7 @@ import {
   routePath as AdminRoutePath,
   ErrorMessages as AdminErrorMessages
 } from "../../src/helper/Admin/constants";
-import {
-  routePath as RoomRoutePath,
-  ErrorMessages as RoomErrorMessages
-} from "../../src/helper/Room/constants";
+
 import {
   paths as TeamPaths,
   ErrorMessages as TeamErrorMessages
@@ -28,6 +25,7 @@ import { ITeam } from "../../src/helper/Team/interfaces";
 import RoomMethods from "../../src/helper/Room";
 import { Client } from "@hapi/nes";
 import Nes from "@hapi/nes";
+import methods from "../../src/helper/Room";
 
 // setDefaultTimeout(10 * 1000);
 
@@ -108,4 +106,23 @@ Given("база данных пуста", async function() {
 Then("сервер должен вернуть статус {int}", function(code) {
   const res = getResponse();
   expect(res.statusCode).to.eql(code);
+});
+
+Given("команды владеют следующими зонами:", async function(dataTable) {
+  for (const row of dataTable.hashes() as ITeamZone[]) {
+    await methods.colorZone(row.zone, row.teamKey);
+  }
+});
+
+interface ITeamZone {
+  teamKey: string;
+  zone: string;
+}
+
+Given("активен тур номер {int}", async function(partNumber) {
+  const Room: IRoom = await RoomMethods.getActiveRoom();
+
+  Room.gameStatus.currentPart = 1;
+
+  await Room.save();
 });

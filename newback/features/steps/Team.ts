@@ -14,8 +14,6 @@ import {
   getSocketResponse
 } from "./lib/response";
 import { expect } from "chai";
-import Nes from "@hapi/nes";
-import { Client } from "nes";
 
 import {
   routePath as RoomPath,
@@ -100,13 +98,12 @@ When("отправляю сервером событие", async function() {
 
 Then("команда {string} получит сообщение из сокета", async function(TeamName) {
   const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
 
   expect(res).have.property("teams");
   expect(res).have.property("gameMap");
   expect(res).have.property("part1");
   expect(res).have.property("part2");
-
-  await client.disconnect();
 });
 
 When(
@@ -194,6 +191,43 @@ Then(
     for (const row of dataTable.hashes() as IAllowZoneForTeam[]) {
       expect(allowZones[row.teamKey]).to.eql(+row.allowZones);
     }
+  }
+);
+
+When(
+  "команда {string} делает атаку из зоны {string} на зону {string}",
+  async function(teamName, attackingZone, defenderZone) {
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.attack}`,
+      headers: {
+        Authorization: token
+      },
+      payload: {
+        attackingZone,
+        defenderZone
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в сокете установлены зоны атаки и обороны, атакующие и защищающиеся команды",
+  async function() {
+    const res: IGameStatus = getSocketResponse();
+    await client.disconnect();
+
+    const step = res.part2.steps[res.part2.steps.length - 1];
+
+    expect(step.attacking).not.empty;
+    expect(step.defender).not.empty;
+    expect(step.attackingZone).not.empty;
+    expect(step.defenderZone).not.empty;
+    expect(step.question).not.empty;
   }
 );
 

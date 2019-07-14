@@ -50,7 +50,23 @@ export interface IGamePart1Step {
 }
 
 export interface IGamePart2Step {
+  attackingZone: string;
+  defenderZone: string;
+  attacking: string;
+  defender: string;
   question: IQuestion;
+  numericQuestion?: IQuestion;
+  attackingResponse?: number;
+  defenderResponse?: number;
+  attackingNumericResponse?: {
+    response: number;
+    timer: number;
+  };
+  defenderNumericResponse?: {
+    response: number;
+    timer: number;
+  };
+  winner?: string;
 }
 
 export interface IGamePart2 {

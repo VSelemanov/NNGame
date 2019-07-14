@@ -28,7 +28,7 @@ const methods = {
   },
   login: trycatcher(
     async (inviteCode: string): Promise<string> => {
-      const Room = await RoomMethods.getActiveRoom();
+      const Room: IRoom = await RoomMethods.getActiveRoom();
 
       const teamsInGame = Room.gameStatus.teams;
       if (!teamsInGame) {
@@ -58,6 +58,8 @@ const methods = {
       );
 
       await Room.save();
+
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
 
       return token;
     },
@@ -94,7 +96,7 @@ const methods = {
       await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
       return "ok";
     },
-    { logMessage: `${EntityName} zone method error` }
+    { logMessage: `${EntityName} colorZone method error` }
   ),
   response: trycatcher(
     async (response: number, timer: number, teamKey: string) => {
@@ -106,7 +108,20 @@ const methods = {
       await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
       return "ok";
     },
-    { logMessage: `${EntityName} zone method error` }
+    { logMessage: `${EntityName} response method error` }
+  ),
+  attack: trycatcher(
+    async (attackingZone: string, defenderZone: string, teamKey: string) => {
+      const Room: IRoom = await RoomMethods.teamAttack(
+        attackingZone,
+        defenderZone,
+        teamKey
+      );
+
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
+    },
+    { logMessage: `${EntityName} attack method error` }
   )
 };
 
