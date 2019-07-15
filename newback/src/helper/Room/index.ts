@@ -24,6 +24,7 @@ import QuestionMethods from "../Question";
 
 import TeamMethods from "../Team";
 import { IQuestion } from "../Question/interfaces";
+import utils from "../../utils";
 
 const methods = {
   create: trycatcher(
@@ -248,6 +249,11 @@ const methods = {
             if (winner === winnerCheckResults.defender) {
               await methods.colorZone(step.attackingZone, step[winner], Room);
             }
+            if (winner === winnerCheckResults.draw) {
+              step.numericQuestion = await QuestionMethods.random({
+                isNumeric: true
+              });
+            }
           }
         }
         // Числовой вопрос второго тура
@@ -255,10 +261,60 @@ const methods = {
           if (!timer) {
             throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
           }
-          step[`${roleInDuel}NumeriсResponse`] = {
-            response,
-            timer
-          };
+          if (roleInDuel === "attacking") {
+            step.attackingNumericResponse = {
+              response,
+              timer
+            };
+          }
+          if (roleInDuel === "defender") {
+            step.defenderNumericResponse = {
+              response,
+              timer
+            };
+          }
+
+          if (
+            step.attackingNumericResponse &&
+            step.defenderNumericResponse &&
+            step.numericQuestion
+          ) {
+            const numericAnswer = step.numericQuestion.numericAnswer || 0;
+            const dif = {
+              attacking: Math.abs(
+                step.attackingNumericResponse.response - numericAnswer
+              ),
+              defender: Math.abs(
+                step.defenderNumericResponse.response - numericAnswer
+              )
+            };
+            let zone = "";
+            if (dif.attacking < dif.defender) {
+              step.winner = step.attacking;
+              zone = step.defenderZone;
+            } else if (dif.attacking > dif.defender) {
+              step.winner = step.defender;
+              zone = step.attackingZone;
+            } else if (
+              step.attackingNumericResponse.timer <
+              step.defenderNumericResponse.timer
+            ) {
+              step.winner = step.attacking;
+              zone = step.defenderZone;
+            } else if (
+              step.attackingNumericResponse.timer >
+              step.defenderNumericResponse.timer
+            ) {
+              step.winner = step.defender;
+              zone = step.attackingZone;
+            } else {
+              const r = [step.attacking, step.defender];
+              const randomIndex = utils.getRandomInt(0, 1);
+              step.winner = r[randomIndex];
+              zone = randomIndex === 0 ? step.attackingZone : step.defenderZone;
+            }
+            await methods.colorZone(zone, step.winner, Room);
+          }
         }
         if (step.winner && step.winner !== winnerCheckResults.draw) {
           part.teamQueue.shift();

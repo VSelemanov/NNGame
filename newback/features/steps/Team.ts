@@ -311,3 +311,38 @@ Then("в сокете в ответе победителя не будет", asy
 
   expect(res.part2.steps[res.part2.steps.length - 1].winner).to.eql("none");
 });
+
+Then("в сокете в ответе будет ничья", async function() {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.part2.steps[res.part2.steps.length - 1].winner).to.eql("draw");
+});
+
+Then("в сокете во втором туре появился числовой вопрос", async function() {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.part2.steps[res.part2.steps.length - 1].numericQuestion).not.eql(
+    undefined
+  );
+});
+
+Then(
+  "команда {string} отвечает на числовой вопрос в дуэли r={int} и t={int}",
+  async function(teamName: string, response: number, timer: number) {
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.response}`,
+      headers: {
+        Authorization: token
+      },
+      payload: {
+        timer,
+        response
+      }
+    });
+
+    setResponse(res);
+  }
+);
