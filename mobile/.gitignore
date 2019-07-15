@@ -8,3 +8,6 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
+
+# e2e testing
+bin/Exponent.app

@@ -3,9 +3,10 @@ import {
 	NavigationContainerComponent,
 	NavigationComponent
 } from "react-navigation";
-import { SCREENS } from "./enum";
+import { SCREENS, ActionTypes } from "./enum";
 import { isDev } from "./constants";
-
+import { store } from "../store";
+import jwt_decode from "jwt-decode";
 export class Helper {
 	private navigator: NavigationComponent;
 	constructor() {
@@ -34,6 +35,7 @@ export class Helper {
 	}
 
 	public pushScreen(routeName: SCREENS, params?: object) {
+		lg(`Push screen ${routeName}`);
 		this.navigator.dispatch(
 			NavigationActions.navigate({
 				routeName,
@@ -51,6 +53,15 @@ export class Helper {
 			setTimeout(() => {
 				r();
 			}, t);
+		});
+	}
+
+	public handleGameStatus(status: any, flags: any) {
+		lg("Handle msg");
+		store.dispatch({
+			key: "session",
+			type: ActionTypes.HANDLE_GAME_STATUS,
+			status
 		});
 	}
 }

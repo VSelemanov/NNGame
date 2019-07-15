@@ -2,9 +2,11 @@ import { Platform } from "react-native";
 import { createAppContainer, createStackNavigator } from "react-navigation";
 
 import Entrance from "./views/Entrance";
+import GameMap from "./views/GameMap";
 
 const Routes: any = {
-	Entrance
+	Entrance,
+	GameMap
 };
 
 const AppNavigator = createAppContainer(
