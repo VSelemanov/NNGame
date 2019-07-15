@@ -304,3 +304,10 @@ Then("команда {string} удалена из очереди команд в
 
   expect(res.part2.teamQueue.includes(teamKey)).to.eql(false);
 });
+
+Then("в сокете в ответе победителя не будет", async function() {
+  const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
+
+  expect(res.part2.steps[res.part2.steps.length - 1].winner).to.eql("none");
+});

@@ -241,7 +241,7 @@ const methods = {
             step.defenderResponse !== undefined
           ) {
             const winner = methods.winnerCheck(step);
-            step.winner = step[winner];
+            step.winner = step[winner] || winner;
             if (winner === winnerCheckResults.attacking) {
               await methods.colorZone(step.defenderZone, step[winner], Room);
             }
