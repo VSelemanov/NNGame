@@ -55,7 +55,9 @@ export interface IGamePart2Step {
   attacking: string;
   defender: string;
   question: IQuestion;
+  isStarted: boolean;
   numericQuestion?: IQuestion;
+  numericIsStarted?: boolean;
   attackingResponse?: number;
   defenderResponse?: number;
   attackingNumericResponse?: {

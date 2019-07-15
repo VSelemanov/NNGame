@@ -10,7 +10,7 @@ import jwt from "jsonwebtoken";
 import utils from "../../../src/utils";
 import { teams } from "../../constants";
 import RoomMethods from "../Room";
-import { IRoom } from "../Room/interfaces";
+import { IRoom, IGamePart1Step, IGamePart1 } from "../Room/interfaces";
 
 const methods = {
   create: trycatcher(
@@ -31,6 +31,9 @@ const methods = {
       const Room: IRoom = await RoomMethods.getActiveRoom();
 
       const teamsInGame = Room.gameStatus.teams;
+
+      // console.log({ teamsInGame });
+
       if (!teamsInGame) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
@@ -38,12 +41,17 @@ const methods = {
       let Team: ITeam | null = null;
       let teamKey: string | null = null;
       for (const key of Object.keys(teams)) {
+        // console.log({ tic: teamsInGame[key].inviteCode });
+        // console.log({ inviteCode });
         if (teamsInGame[key].inviteCode === inviteCode) {
           Team = teamsInGame[key];
           teamKey = key;
           teamsInGame[key].isLoggedIn = true;
         }
       }
+
+      // console.log({ Team });
+      // console.log({ teamKey });
 
       if (!Team || !teamKey) {
         throw new Error(ErrorMessages.NOT_FOUND);
@@ -93,13 +101,21 @@ const methods = {
   colorZone: trycatcher(
     async (zoneKey: string, teamKey: string) => {
       const Room: IRoom = await RoomMethods.colorZone(zoneKey, teamKey);
+      const currentPart = Room.gameStatus.currentPart;
+      if (currentPart === 1) {
+        const part: IGamePart1 = Room.gameStatus.part1;
+        const step = part.steps[part.currentStep || 0];
+        --step.allowZones[teamKey];
+        Room.markModified("gameStatus.part1.steps");
+        await Room.save();
+      }
       await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
       return "ok";
     },
     { logMessage: `${EntityName} colorZone method error` }
   ),
   response: trycatcher(
-    async (response: number, timer: number, teamKey: string) => {
+    async (response: number, timer: number | undefined, teamKey: string) => {
       const Room: IRoom = await RoomMethods.teamResponse(
         response,
         timer,

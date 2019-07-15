@@ -7,11 +7,20 @@ export const EntityName = "Room";
 export const routePath = "room";
 
 export enum ErrorMessages {
-  NOT_FOUND = "Room not found"
+  NOT_FOUND = "Room not found",
+  TIMER_IS_REQUIRED = "Timer is required for numeric responses",
+  TEAM_NOT_IN_DUEL = "Team not in duel"
 }
 
 export enum paths {
   gameStatus = "gamestatus"
+}
+
+export enum winnerCheckResults {
+  draw = "draw",
+  none = "none",
+  attacking = "attacking",
+  defender = "defender"
 }
 
 export const subscriptionGameStatuspath = `${APIRoute}/${routePath}/${paths.gameStatus}`;

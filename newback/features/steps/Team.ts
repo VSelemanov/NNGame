@@ -235,3 +235,72 @@ interface IAllowZoneForTeam {
   teamKey: string;
   allowZones: number;
 }
+
+When(
+  "команда {string} отвечает на вариативный вопрос в дуэли и дает вариант ответа {int}",
+  async function(teamName, response) {
+    const token = await getGameToken(teamName);
+
+    const res = await server.server.inject({
+      method: HTTPMethods.post,
+      url: `${APIRoute}/${routePath}/${paths.response}`,
+      headers: {
+        Authorization: token
+      },
+      payload: {
+        response
+      }
+    });
+
+    setResponse(res);
+  }
+);
+
+Then(
+  "в сокете в ответе атакующего должен появиться ответ {int}",
+  async function(attackinResponse) {
+    const res: IGameStatus = getSocketResponse();
+    await client.disconnect();
+
+    expect(
+      res.part2.steps[res.part2.steps.length - 1].attackingResponse
+    ).to.eql(attackinResponse);
+  }
+);
+
+Then("в сокете в ответе победитель будет команда {string}", async function(
+  teamName: string
+) {
+  const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
+
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(res.part2.steps[res.part2.steps.length - 1].winner).to.eql(teamKey);
+});
+
+Then("зона {string} переходит во владения команды {string}", async function(
+  zoneKey: string,
+  teamName: string
+) {
+  const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
+
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(res.gameMap[zoneKey].team).to.eql(teamKey);
+});
+
+Then("команда {string} удалена из очереди команд в дуэлях", async function(
+  teamName
+) {
+  const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
+
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(res.part2.teamQueue.includes(teamKey)).to.eql(false);
+});

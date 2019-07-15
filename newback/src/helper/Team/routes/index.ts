@@ -52,7 +52,7 @@ const routes: ServerRoute[] = [
       validate: {
         payload: Joi.object({
           response: Joi.number().required(),
-          timer: Joi.number().required()
+          timer: Joi.number()
         })
       }
     }

@@ -5,14 +5,17 @@ import {
   IRoom,
   IGamePart1,
   IGamePart1Step,
-  IGameStatus
+  IGameStatus,
+  IGamePart2,
+  IGamePart2Step
 } from "./interfaces";
 import { server } from "../../server";
 import {
   EntityName,
   ErrorMessages,
   allowZonesDefault,
-  responsesDefault
+  responsesDefault,
+  winnerCheckResults
 } from "./constants";
 import { roomDefault } from "./constants";
 import { teams, mapZones } from "../../constants";
@@ -77,26 +80,37 @@ const methods = {
     }
   ),
   colorZone: trycatcher(
-    async (zoneKey: string, teamKey: string): Promise<IRoom> => {
-      const Room: IRoom = await methods.getActiveRoom();
-      if (Room.gameStatus.gameMap[zoneKey].team) {
-        methods.incDecZones(Room.gameStatus.gameMap[zoneKey].team, Room, -1);
-      }
+    async (
+      zoneKey: string,
+      teamKey: string | null,
+      Room: IRoom | null = null
+    ): Promise<IRoom> => {
+      const CurrentRoom = !Room ? await methods.getActiveRoom() : Room;
 
-      Room.gameStatus.gameMap[zoneKey].team = teamKey;
-      methods.incDecZones(teamKey, Room);
-
-      const mapIsFull = methods.checkFillMap(Room.gameStatus.gameMap);
-      if (mapIsFull && Room.gameStatus.currentPart === 1) {
-        Room.gameStatus.currentPart = 2;
-        Room.gameStatus.part2.teamQueue = await methods.prepareTeamQueue(
-          Room.gameStatus
+      if (CurrentRoom.gameStatus.gameMap[zoneKey].team) {
+        methods.incDecZones(
+          CurrentRoom.gameStatus.gameMap[zoneKey].team,
+          CurrentRoom,
+          -1
         );
       }
 
-      await Room.save();
+      CurrentRoom.gameStatus.gameMap[zoneKey].team = teamKey;
+      if (teamKey) {
+        methods.incDecZones(teamKey, CurrentRoom);
+      }
 
-      return Room;
+      const mapIsFull = methods.checkFillMap(CurrentRoom.gameStatus.gameMap);
+      if (mapIsFull && CurrentRoom.gameStatus.currentPart === 1) {
+        CurrentRoom.gameStatus.currentPart = 2;
+        CurrentRoom.gameStatus.part2.teamQueue = await methods.prepareTeamQueue(
+          CurrentRoom.gameStatus
+        );
+      }
+
+      await CurrentRoom.save();
+
+      return CurrentRoom;
     },
     {
       logMessage: `color zone ${EntityName} method`
@@ -153,9 +167,24 @@ const methods = {
   startquestion: trycatcher(
     async (): Promise<IRoom> => {
       const Room: IRoom = await methods.getActiveRoom();
-      Room.gameStatus.part1.steps[
-        Room.gameStatus.part1.currentStep || 0
-      ].isStarted = true;
+
+      const currentPart = Room.gameStatus.currentPart;
+
+      if (currentPart === 1) {
+        const part: IGamePart1 = Room.gameStatus[`part${currentPart}`];
+        part.steps[part.currentStep || 0].isStarted = true;
+      }
+
+      if (currentPart === 2) {
+        const part: IGamePart2 = Room.gameStatus[`part${currentPart}`];
+        const step = part.steps[part.steps.length - 1];
+        if (!step.isStarted) {
+          step.isStarted = true;
+        } else {
+          step.numericIsStarted = true;
+        }
+        Room.markModified("gameStatus.part2.steps");
+      }
 
       await Room.save();
 
@@ -168,13 +197,18 @@ const methods = {
   teamResponse: trycatcher(
     async (
       response: number,
-      timer: number,
+      timer: number | undefined,
       teamKey: string
     ): Promise<IRoom> => {
       const Room: IRoom = await methods.getActiveRoom();
-      const part = Room.gameStatus[`part${Room.gameStatus.currentPart}`];
-      if (Room.gameStatus.currentPart === 1) {
-        const step = (part as IGamePart1).steps[part.currentStep];
+      const currentPart = Room.gameStatus.currentPart;
+
+      if (currentPart === 1) {
+        const part: IGamePart1 = Room.gameStatus[`part${currentPart}`];
+        if (!timer) {
+          throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+        }
+        const step = (part as IGamePart1).steps[part.currentStep || 0];
         const teamResponse: ITeamResponsePart1 = step.responses[teamKey];
 
         teamResponse.response = response;
@@ -185,6 +219,54 @@ const methods = {
         }
       }
 
+      if (currentPart === 2) {
+        const part: IGamePart2 = Room.gameStatus[`part${currentPart}`];
+        const step = part.steps[part.steps.length - 1];
+        let roleInDuel: string | null = null;
+        if (step.attacking === teamKey) {
+          roleInDuel = winnerCheckResults.attacking;
+        }
+        if (step.defender === teamKey) {
+          roleInDuel = winnerCheckResults.defender;
+        }
+        if (!roleInDuel) {
+          throw new Error(ErrorMessages.TEAM_NOT_IN_DUEL);
+        }
+
+        // Вариативный вопрос второго тура
+        if (step.isStarted && !step.numericIsStarted) {
+          step[`${roleInDuel}Response`] = response;
+          if (
+            step.attackingResponse !== undefined &&
+            step.defenderResponse !== undefined
+          ) {
+            const winner = methods.winnerCheck(step);
+            step.winner = step[winner];
+            if (winner === winnerCheckResults.attacking) {
+              await methods.colorZone(step.defenderZone, step[winner], Room);
+            }
+            if (winner === winnerCheckResults.defender) {
+              await methods.colorZone(step.attackingZone, step[winner], Room);
+            }
+          }
+        }
+        // Числовой вопрос второго тура
+        if (step.isStarted && step.numericIsStarted) {
+          if (!timer) {
+            throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+          }
+          step[`${roleInDuel}NumeriсResponse`] = {
+            response,
+            timer
+          };
+        }
+        if (step.winner && step.winner !== winnerCheckResults.draw) {
+          part.teamQueue.shift();
+        }
+        Room.markModified("gameStatus.part2.teamQueue");
+        Room.markModified("gameStatus.part2.steps");
+      }
+
       await Room.save();
 
       return Room;
@@ -193,6 +275,35 @@ const methods = {
       logMessage: `${EntityName} team response method`
     }
   ),
+  winnerCheck: (step: IGamePart2Step): string => {
+    if (step.attackingResponse === step.defenderResponse) {
+      if (
+        step.question.answers &&
+        step.attackingResponse !== undefined &&
+        step.question.answers[step.attackingResponse].isRight
+      ) {
+        return winnerCheckResults.draw;
+      } else {
+        return winnerCheckResults.none;
+      }
+    } else {
+      if (
+        step.question.answers &&
+        step.attackingResponse !== undefined &&
+        step.question.answers[step.attackingResponse].isRight
+      ) {
+        return winnerCheckResults.attacking;
+      }
+      if (
+        step.question.answers &&
+        step.defenderResponse !== undefined &&
+        step.question.answers[step.defenderResponse].isRight
+      ) {
+        return winnerCheckResults.defender;
+      }
+    }
+    return winnerCheckResults.none;
+  },
   checkTeamResponses: (step: IGamePart1Step): boolean => {
     for (const teamKey of Object.keys(teams)) {
       if (step.responses[teamKey] === null) {
@@ -286,10 +397,11 @@ const methods = {
 
       part.steps.push({
         attacking: teamKey,
-        attackingZone: attackingZone,
-        defenderZone: defenderZone,
+        attackingZone,
+        defenderZone,
         defender: Room.gameStatus.gameMap[defenderZone].team,
-        question
+        question,
+        isStarted: false
       });
 
       await Room.save();

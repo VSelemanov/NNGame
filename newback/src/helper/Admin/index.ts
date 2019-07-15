@@ -38,8 +38,8 @@ const methods = {
     }
   ),
   colorZone: trycatcher(
-    async (_id: string, zoneKey: string): Promise<string> => {
-      const teamKey = await TeamMethods.getTeamLinkInGame(_id);
+    async (_id: string | null, zoneKey: string): Promise<string> => {
+      const teamKey = _id ? await TeamMethods.getTeamLinkInGame(_id) : null;
       const Room: IRoom = await RoomMethods.colorZone(zoneKey, teamKey);
       await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
       return "ok";
@@ -65,7 +65,7 @@ const methods = {
       return "ok";
     },
     {
-      logMessage: `${EntityName} start game method`
+      logMessage: `${EntityName} next question method`
     }
   ),
   startquestion: trycatcher(
@@ -75,7 +75,7 @@ const methods = {
       return "ok";
     },
     {
-      logMessage: `${EntityName} start game method`
+      logMessage: `${EntityName} start question method`
     }
   )
 };

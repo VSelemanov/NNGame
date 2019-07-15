@@ -167,3 +167,10 @@ Then(
     expect(res.part1.steps[res.part1.currentStep || 0].isStarted).to.eql(true);
   }
 );
+
+Then("в сокете шага дуэли флаг старта true", async function() {
+  const res: IGameStatus = getSocketResponse();
+  await client.disconnect();
+
+  expect(res.part2.steps[res.part2.steps.length - 1].isStarted).to.eql(true);
+});

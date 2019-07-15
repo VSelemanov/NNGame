@@ -42,7 +42,7 @@ const ctrl = {
   response: trycatcher(
     async (
       req: IDecoratedRequest<
-        { response: number; timer: number },
+        { response: number; timer?: number },
         {},
         {},
         ITeamCredentials
