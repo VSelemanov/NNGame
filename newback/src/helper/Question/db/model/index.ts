@@ -1,5 +1,5 @@
 import { Schema, Model, model, Document } from "mongoose";
-import { baseFlds } from "../../../../constants";
+import { baseFlds, baseSchemaOptions } from "../../../../constants";
 import { IQuestion } from "../../interfaces";
 import uuid = require("uuid");
 
@@ -41,9 +41,6 @@ export const QuestionSchema = new Schema(
       }
     ]
   },
-  {
-    timestamps: true,
-    versionKey: false
-  }
+  baseSchemaOptions
 );
 export default model<IQuestion>("Question", QuestionSchema);

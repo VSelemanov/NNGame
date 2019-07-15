@@ -497,7 +497,6 @@ const methods = {
     for (const key of Object.keys(gameStatus.teams)) {
       if (incTeamId === gameStatus.teams[key].teamId && key !== "$init") {
         gameStatus.teams[key].zones += 1;
-        console.log({ t: gameStatus.teams[key].zones });
         GameRoom.markModified(`gameStatus.teams.${key}.zones`);
       }
 
