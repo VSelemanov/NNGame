@@ -1,6 +1,6 @@
 import React from "react";
 import style from "./AuthAdmin.module.scss";
-import { authAdmin, connectToGame, getRoomList } from "../../toServer/requests";
+import { authAdmin } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
 import store from "../../store";
@@ -23,16 +23,12 @@ class AuthAdmin extends React.Component<any, any> {
 
   public auth = () => {
     authAdmin(this.state.name, this.state.password).then(response => {
+      console.log('Успешная авторизация')
       this.props.updateOneState("isAdmin", true);
       this.props.updateOneState("isLogin", true);
-      console.log(response.data);
       methodsCookie.addCookie("appToken", response.data);
       methodsCookie.addCookie("isAdmin", "true");
-      getRoomList().then(response => {
-        methodsCookie.addCookie("roomId", response.data[0]._id);
-        connectToGame(response.data[0]._id);
-        store.dispatch(push("/map"));
-      });
+      store.dispatch(push("/map"));
     });
   };
   public render() {

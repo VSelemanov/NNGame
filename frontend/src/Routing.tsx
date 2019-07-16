@@ -1,10 +1,7 @@
 import { Route, Switch } from "react-router-dom";
 import * as React from "react";
-// import { deleteAllCookies, methodsCookie } from "./exports";
-import CommandNamePage from "./components/CommandNamePage/CommandNamePage";
 import Map from "./components/Map/Map";
 import AuthAdmin from "./components/AuthAdmin/AuthAdmin";
-import KeyboardWindow from "./components/KeyboardWindow/KeyboardWindow";
 import ModalSecondTour from "./components/ModalSecondTour/ModalSecondTour";
 
 export class Routing extends React.Component {
@@ -16,11 +13,9 @@ export class Routing extends React.Component {
     public render() {
     return (
       <Switch>
-        <Route exact={true} path="/" component={CommandNamePage} />
-        <Route path="/login" component={CommandNamePage} />
+        <Route exact={true} path="/" component={AuthAdmin} />
         <Route path="/admin" component={AuthAdmin} />
         <Route path="/map" component={Map} />
-        <Route path="/key" component={KeyboardWindow} />
         <Route path="/2tour" component={ModalSecondTour} />
       </Switch>
     );

@@ -35,7 +35,7 @@ export const takeZone = async (_id: string, zoneName: string) => {
   }
 };
 //
-export const startTImer = async () => {
+export const startTimer = async () => {
   try {
     return axios.post(TIMER_START_URL,{},config);
   } catch (e) {
@@ -84,7 +84,7 @@ export const authAdmin = async (name: string, password: string) => {
     return axios.post(ADMIN_LOGIN_URL, {
       name,
       password,
-    }, config);
+    }, configBase);
   } catch (e) {
     return e;
   }

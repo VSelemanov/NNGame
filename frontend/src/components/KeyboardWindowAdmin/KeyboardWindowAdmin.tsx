@@ -1,33 +1,21 @@
 import React from "react";
 import style from "./KeyboardWindowAdmin.module.scss";
-import { startQuestion } from "../../toServer/requests";
+import { startTimer } from "../../toServer/requests";
 
 class KeyboardWindowAdmin extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      value: "",
-      startTime: ""
     };
   }
 
   public getResult(teamName: string) {
-    const results = this.props.part1.results;
-    const teams = this.props.teams;
-    if (results.length === 3) {
-			const data =  results.filter((result: any) => result.teamId === teams[teamName]._id);
-			return data ? data[0].response : '-';
-    }
+
     return "-";
 	}
 	
 	public getTime(teamName: string) {
-    const results = this.props.part1.results;
-    const teams = this.props.teams;
-    if (results.length === 3) {
-			const data =  results.filter((result: any) => result.teamId === teams[teamName]._id);
-			return data ? data[0].timer/100 : '-';
-    }
+
     return "-";
 	}
 
@@ -38,7 +26,7 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
-            <button className={style.next_question} onClick={() => startQuestion()}>
+            <button className={style.next_question} onClick={() => startTimer()}>
                 Начало опроса
               </button>
             <p>{this.props.question}</p>

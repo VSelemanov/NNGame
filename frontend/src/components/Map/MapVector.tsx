@@ -1,9 +1,9 @@
 import style from './Map.module.scss';
 import React from 'react';
-import { takeZone, attackZone } from '../../toServer/requests';
+import { takeZone } from '../../toServer/requests';
 import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
-import store from '../../store';
+import ModalColoredZone from '../ModalColoredZone/ModalColoredZone';
 
 const defaultColor = "#F1E0C3"
 const colors = ['#F8F3EB', '#BFC4D4', '#F4CEC1' ];
@@ -13,21 +13,23 @@ class MapVector extends React.Component <any, any> {
   constructor(props: any){
     super(props);
     this.state={
-      count: 0,
+      curZone: '',
+      isModalColoredZone: false
     }
   }
   
+  public closeModalColoredZone(){
+    this.setState({
+      isModalColoredZone: false
+    })
+  }
+  public takeZoneFunc = (_id: string, zoneName: string)=> {
+
+    takeZone(_id,zoneName)
+  }
   public coloredZone = (zoneName: string) => {
-    if(this.props.currentPart === 1){
-      const count = store.getState().global.available;
-      if( count > 0){
-        takeZone(zoneName).then(()=> this.props.updateOneState('available', count - 1))
-      }
-    } else {
-      console.log('режим дуэли');
-      this.duelData.push(zoneName);
-      this.duelData.length === 2 && attackZone(this.duelData) 
-    }
+
+     
   }
   
   public getColor = (zoneName: string) => {
@@ -52,12 +54,14 @@ class MapVector extends React.Component <any, any> {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
+        {this.state.isModalColoredZone && <ModalColoredZone />}
         <path
-          className={style.pechery}
           onClick={()=>this.coloredZone('pecheri')}
           fill={this.getColor('pecheri')}
           d="M1572.79 488.634L1563.02 609.879H1593.11L1635.59 690.879L1623.13 822.292L1725.88 952.238L1726.39 945.574L1724.02 937.125L1723.35 929.352L1718.27 923.607L1716.24 919.551L1718.27 917.186L1716.24 915.158L1716.58 914.144L1717.93 913.806L1722.33 915.158L1735.87 912.117L1733.84 900.964L1740.27 897.246H1743.99L1753.13 890.825L1745.69 881.025L1738.92 875.279L1737.9 872.238L1736.21 866.493L1733.84 857.368L1724.02 827.965L1747.72 819.854L1771.07 846.215L1772.42 848.919H1774.12L1780.21 845.877L1780.55 844.525L1778.52 841.146V818.165L1782.24 814.447L1782.58 812.757L1781.9 812.419H1779.87L1778.85 811.744L1777.16 804.646L1779.53 802.957L1779.19 802.619L1777.5 802.281L1774.12 800.591L1771.41 799.915L1769.72 801.605L1767.68 799.577H1767.01L1766.67 800.929H1763.28L1761.59 803.633H1758.89L1757.53 804.646L1756.85 803.971V789.438L1758.55 781.327H1761.59L1762.95 774.23L1768.7 771.865L1773.1 772.203V763.754L1780.88 764.43L1784.95 761.05H1788.33V764.43H1790.7L1791.04 767.471H1794.08L1794.76 771.527L1802.21 771.189L1801.19 758.008L1824.54 756.657L1822.51 752.263L1830.97 748.546L1851.96 729.282L1786.72 591.396L1773.86 555.235L1769.13 543.068L1742.98 511.007L1732.49 502.896L1706.09 488.364L1693.9 485.323L1685.44 483.971L1613.35 485.998L1606.58 487.012L1589.66 488.364L1573.49 488.693L1572.79 488.634Z"
           strokeLinejoin="round"
+          stroke="#9F835A"
+          strokeWidth="3"
         />
         <path
           onClick={()=>this.coloredZone('moscowroad')}

@@ -7,37 +7,37 @@ import ReactSelect from "../ReactSelect/ReactSelect";
 const getDistrictName = (name: string) => {
   switch (name) {
     case "pecheri":
-      return "Верхние Печеры";
+      return "Р’РµСЂС…РЅРёРµ РџРµС‡РµСЂС‹";
     case "moscowroad":
-      return "Московское шоссе";
+      return "РњРѕСЃРєРѕРІСЃРєРѕРµ С€РѕСЃСЃРµ";
     case "moscow":
-      return "Московский";
+      return "РњРѕСЃРєРѕРІСЃРєРёР№";
     case "yarmarka":
-      return "Ярмарка";
+      return "РЇСЂРјР°СЂРєР°";
     case "kremlin":
-      return "Кремль";
+      return "РљСЂРµРјР»СЊ";
     case "karpovka":
-      return "Карповка";
+      return "РљР°СЂРїРѕРІРєР°";
     case "scherbinki":
-      return "Щербинки";
+      return "Р©РµСЂР±РёРЅРєРё";
     case "lenin":
-      return "Ленинский";
+      return "Р›РµРЅРёРЅСЃРєРёР№";
     case "kuznec":
-      return "Кузнечиха";
+      return "РљСѓР·РЅРµС‡РёС…Р°";
     case "miza":
-      return "Мыза";
+      return "РњС‹Р·Р°";
     case "varya":
-      return "Варя";
+      return "Р’Р°СЂСЏ";
     case "sort":
-      return "Сортировка";
+      return "РЎРѕСЂС‚РёСЂРѕРІРєР°";
     case "sormovo":
-      return "Сормово";
+      return "РЎРѕСЂРјРѕРІРѕ";
     case "sport":
-      return "Дворец Спорта";
+      return "Р”РІРѕСЂРµС† СЃРїРѕСЂС‚Р°";
     case "avtoz":
-      return "Автоавод";
+      return "РђРІС‚РѕР·Р°РІРѕРґ";
     default:
-      return "Неизвестный район";
+      return "РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЂР°Р№РѕРЅ";
   }
 };
 
@@ -61,7 +61,7 @@ class ModalColoredZone extends React.Component<any, any> {
       (key: string) =>
         teams[key].name && result.push({ value: teams[key]._id, label: teams[key].name })
     );
-    result.unshift({ value: null, label: "Зона без владельца" });
+    result.unshift({ value: null, label: "РќРµР№С‚СЂР°Р»СЊРЅР°СЏ Р·РѕРЅР°" });
     return result;
   };
 
@@ -77,8 +77,8 @@ class ModalColoredZone extends React.Component<any, any> {
         <div className={style.modalDialog}>
           <div className={style.modal_content}>
             <div className={style.header}>
-              <p>Сменить владельца зоны</p>
-              <p>{`"${getDistrictName(zoneName)}" на:`}</p>
+              <p>РР·РјРµРЅРёС‚СЊ РІР»Р°РґРµР»СЊС†Р° Р·РѕРЅС‹</p>
+              <p>{`"${getDistrictName(zoneName)}" РЅР°:`}</p>
             </div>
             <ReactSelect
               name="team2"
@@ -87,8 +87,8 @@ class ModalColoredZone extends React.Component<any, any> {
               data={this.getTeamData(teams)}
             />
             <div className={style.button_wrapper}>
-              <button onClick={() => this.props.closeFunc()}>Отмена</button>
-              <button onClick={() => this.props.func(teamId, zoneName)}>Сменить</button>
+              <button onClick={() => this.props.closeFunc()}>РћС‚РјРµРЅР°</button>
+              <button onClick={() => this.props.func(teamId, zoneName)}>РџСЂРёРјРµРЅРёС‚СЊ</button>
             </div>
           </div>
         </div>
