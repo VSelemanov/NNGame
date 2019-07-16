@@ -5,14 +5,14 @@ import { push } from 'connected-react-router';
 import { methodsCookie } from './exports_func';
 
 class App extends React.Component {
-  public componentWillMount() {
-      const path = store.getState().router.location.pathname;
-    if (!methodsCookie.getCookie('appToken') && path !== '/admin') {
-      store.dispatch(push("/"));
-    } else if(path !== '/admin'){
-      store.dispatch(push("/map"));
-    }
-  }
+  // public componentWillMount() {
+  //     const path = store.getState().router.location.pathname;
+  //   if (!methodsCookie.getCookie('appToken') && path !== '/admin') {
+  //     store.dispatch(push("/"));
+  //   } else if(path !== '/admin'){
+  //     store.dispatch(push("/map"));
+  //   }
+  // }
 render(){
   
   return (
