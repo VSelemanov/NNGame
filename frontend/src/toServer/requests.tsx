@@ -7,6 +7,7 @@ export const PREFIX = '/api';
 export const API_URL = `http://188.68.210.120:${API_PORT}`;
 
 export const ADMIN_LOGIN_URL = `${API_URL}${PREFIX}/admin/login`;//
+export const TEAMS_GET_URL = `${API_URL}${PREFIX}/team`;//
 export const TEAM_CREATE_URL = `${API_URL}${PREFIX}/team`;//
 export const ROOM_CREATE_URL = `${API_URL}${PREFIX}/room`;//
 export const GAME_START_URL = `${API_URL}${PREFIX}/admin/startgame`;//
@@ -25,6 +26,14 @@ const config = {
 	headers: {
 		authorization: `Bearer ${methodsCookie.getCookie('appToken')}`,
 	},
+};
+// получение списка всех команд для создания комнаты
+export const getAllTeams = async () => {
+  try {
+    return axios.get(TEAMS_GET_URL, config);
+  } catch (e) {
+    return e;
+  }
 };
 //
 export const takeZone = async (_id: string, zone: string) => {
@@ -73,7 +82,7 @@ export const createTeam = async (name: string) => {
   try {
     return axios.post(TEAM_CREATE_URL, {
       name,
-    }, configBase);
+    }, config);
   } catch (e) {
     return e;
   }

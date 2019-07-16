@@ -35,13 +35,21 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
             <p>{answers === 3 && question ? question.numericAnswer : "Ожидание ответов команд"}</p>
           </div>
           <div className={style.footer}>
-            <div className={style.button_team1}>{answers === 3 ? this.getResult(responses, "team1") : <span>-</span>}</div>
-            <div className={style.button_team2}>{answers === 3 ? this.getResult(responses, "team2") : <span>-</span>}</div>
-            <div className={style.button_team3}>{answers === 3 ? this.getResult(responses, "team3") : <span>-</span>}</div>
+            <div className={style.button_team1}>
+              {answers === 3 ? this.getResult(responses, "team1") : <span>-</span>}
+            </div>
+            <div className={style.button_team2}>
+              {answers === 3 ? this.getResult(responses, "team2") : <span>-</span>}
+            </div>
+            <div className={style.button_team3}>
+              {answers === 3 ? this.getResult(responses, "team3") : <span>-</span>}
+            </div>
           </div>
-          <button className={style.button} onClick={() => startTimer()}>
-            Начало опроса
-          </button>
+          {!this.props.isStarted &&
+            <button className={style.button} onClick={() => startTimer()}>
+              Начало опроса
+            </button>
+          }
         </div>
       </div>
     );

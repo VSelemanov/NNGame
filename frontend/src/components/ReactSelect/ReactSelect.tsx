@@ -22,7 +22,7 @@ const customStyles = {
 	}),
 	option: (styles: any, { isSelected }: any) => ({
     ...styles,
-    fontFamily: "Preslav",
+		fontFamily: "Preslav",
     // fontSize: "20px",
     // height: '30px',
 		// backgroundColor: isSelected ? '#D6D6D6' : 'white',

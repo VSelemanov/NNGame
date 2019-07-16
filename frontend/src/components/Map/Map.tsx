@@ -18,7 +18,8 @@ class Map extends React.Component<any, any> {
 			isModalRoom: false,
 			isNumQuestionModal: false,
 			numQuestion: [],
-      numResponses: [],
+			numResponses: [],
+			isNumStarted: false,
       gameMap: {},
 		};
 	}
@@ -98,14 +99,17 @@ class Map extends React.Component<any, any> {
 							numQuestion: question
 						})
 					}
+					// запись данных о ответах первого тура
 					if(step.responses){
 						const responses = step.responses;
 						Object.keys(responses).includes('_id') && delete responses['_id'];
 						this.setState({
-							numResponses: responses
+							numResponses: responses,
+							isNumStarted: step.isStarted
 						})
 					}
 					const answers = Object.keys(step.responses).filter(key => step.responses[key].response !== null).length;
+					// проверяем, если ответов не 3 в текущем вопросе то открываем модалку админа
 					if(answers !== 3){
 						this.setState({
 							isNumQuestionModal: true
@@ -124,17 +128,17 @@ class Map extends React.Component<any, any> {
 			<div className={style.main}>
 				<div className={style.left_panel}>
 					<div className={style.command_info}>
-						<span>{teams.team1 ? teams.team1.name : 'Ожидание команды'}</span>
+						<span>{teams.team1&&teams.team1.isLoggedIn ? teams.team1.name : 'Ожидание команды'}</span>
 						<p>Областей: {teams.team1 ? teams.team1.zones : '-'}</p>
 						<span>{teams.team1 ? teams.team1.inviteCode : '-'}</span>
 					</div>
 					<div className={style.command_info}>
-						<span>{teams.team2 ? teams.team2.name : 'Ожидание команды'}</span>
+						<span>{teams.team2&&teams.team2.isLoggedIn ? teams.team2.name : 'Ожидание команды'}</span>
 						<p>Областей: {teams.team2 ? teams.team2.zones : '-'}</p>
 						<span>{teams.team2 ? teams.team2.inviteCode : '-'}</span>
 					</div>
 					<div className={style.command_info}>
-						<span>{teams.team3 ? teams.team3.name : 'Ожидание команды'}</span>
+						<span>{teams.team3&&teams.team3.isLoggedIn ? teams.team3.name : 'Ожидание команды'}</span>
 						<p>Областей: {teams.team3 ? teams.team3.zones : '-'}</p>
 						<span>{teams.team3 ? teams.team3.inviteCode : '-'}</span>
 					</div>
@@ -168,6 +172,7 @@ class Map extends React.Component<any, any> {
 							teams={this.state.teams}
 							question={this.state.numQuestion}
 							responses={this.state.numResponses}
+							isStarted={this.state.isNumStarted}
 						/>
 					)}
 					<div className={style.map_wrapper}>
