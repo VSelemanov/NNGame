@@ -40,6 +40,10 @@ const methods = {
         }
       });
 
+      if (teamsObject.length !== 3) {
+        throw new Error(ErrorMessages.NOT_FOUND);
+      }
+
       const TeamsInRoom: any = new Map();
 
       for (const key of Object.keys(teams)) {
