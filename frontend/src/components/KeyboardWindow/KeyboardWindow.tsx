@@ -1,12 +1,16 @@
 import React from 'react';
 import style from './KeyboardWindow.module.scss';
 import { sendAnswer } from '../../toServer/requests';
+import { connect } from 'react-redux';
+import { mapStateToProps, mapDispatchToProps } from '../../exports';
+import store from '../../store';
 // import moment from 'moment';
 
 class KeyboardWindow extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
+      isTimeStart: false,
       value: '',
       isCount: true,
       startTime: '',
@@ -16,35 +20,41 @@ class KeyboardWindow extends React.Component<any, any> {
   }
 
   public update = (code: string) => () => {
-    this.setState({
-      value: code !== 'delete' ? this.state.value + code : this.state.value.slice(0, -1),
-    });
+    if(this.state.isCount){
+      this.setState({
+        value: code !== 'delete' ? this.state.value + code : this.state.value.slice(0, -1),
+      });
+    }
   };
 
   public timer = () => {
     const timerId = setInterval(()=>this.setState({
-      time: this.state.time + 10
-    }) , 100);
-    console.log(this.state.time)
-    if(!this.state.isCount){clearInterval(timerId)}
+      time: this.state.time + 5
+    }) , 50);
   }
 
   public send = () => {
     const endTime = this.state.time;
-    this.setState({
-      isCount: false,
-      endTime
-    })
-    sendAnswer(endTime, Number(this.state.value))
+    if(this.state.isCount){
+      sendAnswer(endTime, Number(this.state.value))
+      this.setState({
+        isCount: false,
+        endTime
+      })
+    }
   }
 
-  public componentDidMount(){
-    console.log('начинаем отсчет');
-    const date = new Date().valueOf();
-    this.setState({
-      startTime: date
-    })
-    setTimeout(this.timer, 1000);
+  public activateTimer = () => {
+    if(!this.state.isTimeStart && store.getState().global.isTimerStarted){
+       this.timer()
+      this.setState({
+        isTimeStart: true
+      })
+    }
+  }
+
+  public componentDidUpdate(){
+    setInterval(()=>this.activateTimer(), 1000)
   }
   
   render() {
@@ -52,9 +62,7 @@ class KeyboardWindow extends React.Component<any, any> {
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
-            <p>
-              {this.props.question}
-            </p>
+             <p>{this.props.question}</p>
           </div>
           <div className={style.input}>
             <input name="value" type="text" readOnly value={this.state.value} />
@@ -63,8 +71,11 @@ class KeyboardWindow extends React.Component<any, any> {
             <div className={style.timer}>
               <p>{this.state.isCount ? this.state.time/100 : this.state.endTime/100}</p>
             </div>
-
+            <div className={style.custom_button} onClick={this.update('.')}>
+              ,
+              </div>
             <div className={style.keyboard}>
+
               <svg viewBox="0 0 1376 583" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   name="1"
@@ -132,6 +143,7 @@ class KeyboardWindow extends React.Component<any, any> {
                   d="M883.759 301.01C883.759 303.77 883.339 306.38 882.499 308.84C881.659 311.24 880.429 313.37 878.809 315.23C877.189 317.03 875.179 318.47 872.779 319.55C870.379 320.57 867.649 321.08 864.589 321.08C861.589 321.08 858.889 320.6 856.489 319.64C854.089 318.68 852.019 317.27 850.279 315.41C848.539 313.49 847.189 311.15 846.229 308.39C845.329 305.63 844.879 302.45 844.879 298.85C844.879 292.91 845.629 287.45 847.129 282.47C848.689 277.43 850.819 273.05 853.519 269.33C856.219 265.61 859.399 262.61 863.059 260.33C866.779 257.99 870.799 256.52 875.119 255.92L876.649 261.68C873.289 262.28 870.229 263.42 867.469 265.1C864.709 266.78 862.279 268.85 860.179 271.31C858.139 273.77 856.459 276.53 855.139 279.59C853.819 282.65 852.919 285.8 852.439 289.04C853.399 287.42 855.019 285.95 857.299 284.63C859.579 283.25 862.369 282.56 865.669 282.56C871.309 282.56 875.719 284.18 878.899 287.42C882.139 290.66 883.759 295.19 883.759 301.01ZM876.289 301.73C876.289 297.47 875.299 294.26 873.319 292.1C871.339 289.94 868.279 288.86 864.139 288.86C861.199 288.86 858.649 289.58 856.489 291.02C854.389 292.46 852.919 294.08 852.079 295.88C851.959 296.72 851.899 297.41 851.899 297.95C851.899 298.49 851.899 299.09 851.899 299.75C851.899 301.61 852.139 303.44 852.619 305.24C853.159 307.04 853.969 308.66 855.049 310.1C856.129 311.48 857.449 312.62 859.009 313.52C860.629 314.36 862.519 314.78 864.679 314.78C866.419 314.78 867.979 314.45 869.359 313.79C870.799 313.13 872.029 312.23 873.049 311.09C874.069 309.95 874.849 308.57 875.389 306.95C875.989 305.33 876.289 303.59 876.289 301.73Z"
                   fill="#7B6442"
                 />
+
                 <path
                   name="7"
                   onClick={this.update('7')}
@@ -208,5 +220,7 @@ class KeyboardWindow extends React.Component<any, any> {
     );
   }
 }
-
-export default KeyboardWindow;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(KeyboardWindow);

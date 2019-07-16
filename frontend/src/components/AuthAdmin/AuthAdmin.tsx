@@ -1,42 +1,38 @@
-import React from 'react';
-import style from './AuthAdmin.module.scss';
-import { authAdmin, connectToGame } from '../../toServer/requests';
-import { connect } from 'react-redux';
-import { mapStateToProps, mapDispatchToProps } from '../../exports';
-import store from '../../store';
-import { push } from 'connected-react-router';
-import { methodsCookie } from '../../exports_func';
+import React from "react";
+import style from "./AuthAdmin.module.scss";
+import { authAdmin, connectToGame, getRoomList } from "../../toServer/requests";
+import { connect } from "react-redux";
+import { mapStateToProps, mapDispatchToProps } from "../../exports";
+import store from "../../store";
+import { push } from "connected-react-router";
+import { methodsCookie } from "../../exports_func";
 
 class AuthAdmin extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      name: '',
-      password: '',
+      name: "",
+      password: ""
     };
   }
   public update = (e: any) => {
     this.setState({
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
-  public parseJwt = (token: string) => {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-};
+
   public auth = () => {
     authAdmin(this.state.name, this.state.password).then(response => {
-      this.props.updateOneState('isAdmin', true);
-      this.props.updateOneState('isLogin', true);
-      this.props.updateOneState('appToken', response.data);
-      methodsCookie.addCookie('appToken', response.data);
-      methodsCookie.addCookie('isAdmin', 'true');
-      connectToGame("c94254f5-6287-456b-8a5b-be165b679072");
-      store.dispatch(push("/map"));
+      this.props.updateOneState("isAdmin", true);
+      this.props.updateOneState("isLogin", true);
+      console.log(response.data);
+      methodsCookie.addCookie("appToken", response.data);
+      methodsCookie.addCookie("isAdmin", "true");
+      getRoomList().then(response => {
+        methodsCookie.addCookie("roomId", response.data[0]._id);
+        connectToGame(response.data[0]._id);
+        store.dispatch(push("/map"));
+      });
     });
   };
   public render() {
@@ -60,5 +56,5 @@ class AuthAdmin extends React.Component<any, any> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AuthAdmin);

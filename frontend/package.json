@@ -2,7 +2,9 @@
   "name": "games",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "http://supergrovernn.github.io/NNGame",
+  "config": {
+    "registry": "vselemanov/nngame-front"
+  },
   "dependencies": {
     "@types/history": "^4.7.2",
     "@types/jest": "24.0.15",
@@ -14,6 +16,7 @@
     "axios": "^0.19.0",
     "connected-react-router": "^6.4.0",
     "history": "^4.9.0",
+    "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
@@ -25,11 +28,12 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "semver": "^6.1.2",
     "typescript": "3.4.5"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && semver -i $(cat version.num) > version.num && sudo docker build -t $npm_package_config_registry:$(cat version.num) . && sudo docker push $npm_package_config_registry:$(cat version.num)",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

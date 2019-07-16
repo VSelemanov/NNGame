@@ -1,19 +1,19 @@
-.main{
+.main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 60%
+  height: 60%;
 }
 .image {
   display: flex;
   justify-content: center;
-  background: url('../../img/red-name.svg') no-repeat;
+  background: url("../../img/red-name.svg") no-repeat;
   height: auto;
   width: 80%;
   min-height: 420px;
   & p {
     margin-left: 3%;
-    font-family: 'PT-serif',sans-serif;
+    font-family: "PT-serif", sans-serif;
     font-style: normal;
     font-weight: normal;
     font-size: 70px;
@@ -22,28 +22,31 @@
     color: #fff;
   }
 }
-.input{
+.input {
   display: flex;
   justify-content: center;
   height: auto;
-  background: url('../../img/commandNameInput.svg') no-repeat;
+  background: url("../../img/commandNameInput.svg") no-repeat;
   width: 90%;
   min-height: 420px;
 
-  & input{
+  & input {
     margin-top: 2%;
     width: 85%;
     height: auto;
     max-height: 140px;
-    font-family: 'Preslav',sans-serif;
+    font-family: "Preslav", sans-serif;
     border: none;
     font-style: normal;
     font-weight: normal;
     font-size: 80px;
     line-height: 126px;
     text-align: center;
-    color: #7B6442;
+    color: #7b6442;
+  }
 }
+.button{
+  
 }
 //1280*680
 @media (max-height: 680px), (max-width: 1280px) {
@@ -54,9 +57,9 @@
       line-height: 50px;
     }
   }
-  .input{
+  .input {
     min-height: 320px;
-    & input{
+    & input {
       max-height: 90px;
       font-size: 70px;
       line-height: 70px;
