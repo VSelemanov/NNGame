@@ -3,6 +3,8 @@ const globalState = {
   isAdmin: false,
   isLogin: false,
   available: 0,
+  isTimerStarted: false,
+  currentPart: 1,
   gameStatus: {
     gameMap:{},
     isActive: false,

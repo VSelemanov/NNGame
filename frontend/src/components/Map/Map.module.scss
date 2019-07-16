@@ -27,9 +27,14 @@
   }
   p {
     font-family: 'PT-serif', sans-serif;
-    color:#654F2F;
+    color:#654F2F; 
     font-size: 20px;
   }
+}
+.duel{
+  position: absolute; 
+  bottom: 10%;
+  left: 30%;
 }
 .command_info_color{
   display: flex;

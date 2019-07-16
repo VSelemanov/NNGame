@@ -1,5 +1,6 @@
 import React from "react";
 import style from "./KeyboardWindowAdmin.module.scss";
+import { startQuestion } from "../../toServer/requests";
 
 class KeyboardWindowAdmin extends React.Component<any, any> {
   constructor(props: any) {
@@ -37,6 +38,9 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
+            <button className={style.next_question} onClick={() => startQuestion()}>
+                Начало опроса
+              </button>
             <p>{this.props.question}</p>
           </div>
           <div className={style.answer}>

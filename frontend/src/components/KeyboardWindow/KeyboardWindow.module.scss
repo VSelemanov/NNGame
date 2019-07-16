@@ -54,10 +54,17 @@
   width: 90%;
   max-width: 620px;
 }
+
 .custom_button{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: -2%;
+  bottom:-68%;
   background: url('../../img/custom_button.svg') no-repeat;
-  height: auto;
-  width: 90%;
+  width: 139px;
+  height: 67px;
 }
 //1280*680
 @keyframes regressAnimation {
@@ -82,9 +89,18 @@
       line-height: 70px;
     }
   }
+  .progress_bar{
+    height: auto;
+    width: 90%;
+    max-width: 28px;
+  }
   .keyboard {
     height: auto;
     width: 90%;
     max-width: 620px;
   }
+}
+.timer{
+  position: absolute;
+  font-size: 24px;
 }
