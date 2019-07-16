@@ -1,5 +1,6 @@
 import { server } from "../server";
 import Boom from "boom";
+import Logger from "../utils/Logger";
 
 interface ITrycatcherOptions {
   logMessage?: string;
@@ -23,7 +24,7 @@ export default function trycatcher(
       const res = await f(...params);
       return res;
     } catch (error) {
-      console.log(error);
+      Logger.error(`${options.logMessage} -----> ${error}`);
       if (options.isRequest) {
         return server.generateHttpError({
           code: error.code || 400,

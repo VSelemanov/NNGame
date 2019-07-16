@@ -23,6 +23,7 @@ import { ITeam } from "./helper/Team/interfaces";
 import { IQuestion } from "./helper/Question/interfaces";
 import { IRoom } from "./helper/Room/interfaces";
 import Nes from "@hapi/nes";
+import Logger from "./utils/Logger";
 import {
   routePath,
   paths,
@@ -64,7 +65,7 @@ class Server {
   public async createServer() {
     try {
       process.on("unhandledRejection", error => {
-        console.log("unhandledRejection --> ", error);
+        Logger.error("unhandledRejection --> ", error);
         process.exit(1);
       });
 
@@ -113,26 +114,20 @@ class Server {
 
       this._server.route(Routes);
     } catch (error) {
-      console.log(error);
+      Logger.log(error);
     }
   }
 
   private async connectToDb() {
     const db = await dbConnect();
     this._dbConnect = db;
-    /*try {
-      console.log("Success connect to DB");
-    } catch (error) {
-      console.error("Error connect to DB", error);
-      console.log(error);
-    }*/
   }
 
   private async dbStop() {
     try {
       await this._dbConnect.close();
     } catch (error) {
-      console.error("DB Stop error", error);
+      Logger.error("DB Stop error", error);
     }
   }
 
@@ -165,7 +160,7 @@ class Server {
 
   public async startServer() {
     await this._server.start();
-    console.log("Server running on: ", this._server.info.uri);
+    Logger.info("Server running on: ", this._server.info.uri);
   }
 
   public async start() {

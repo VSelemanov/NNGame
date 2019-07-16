@@ -1,5 +1,6 @@
 import { connection } from "mongoose";
 import mongoose from "mongoose";
+import Logger from "../utils/Logger";
 const db = connection;
 
 export default async function() {
@@ -11,7 +12,7 @@ export default async function() {
   db.on("error", console.error.bind(console, "connection error:"));
   db.once("open", function() {
     // создать коллекции и т.п.
-    console.log("Success connection");
+    Logger.info("Success connection");
   });
   return db;
 }

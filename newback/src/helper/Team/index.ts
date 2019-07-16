@@ -40,8 +40,6 @@ const methods = {
 
       const teamsInGame = Room.gameStatus.teams;
 
-      // console.log({ teamsInGame });
-
       if (!teamsInGame) {
         throw new Error(ErrorMessages.NOT_FOUND);
       }
@@ -49,17 +47,12 @@ const methods = {
       let Team: ITeam | null = null;
       let teamKey: string | null = null;
       for (const key of Object.keys(teams)) {
-        // console.log({ tic: teamsInGame[key].inviteCode });
-        // console.log({ inviteCode });
         if (teamsInGame[key].inviteCode === inviteCode) {
           Team = teamsInGame[key];
           teamKey = key;
           teamsInGame[key].isLoggedIn = true;
         }
       }
-
-      // console.log({ Team });
-      // console.log({ teamKey });
 
       if (!Team || !teamKey) {
         throw new Error(ErrorMessages.NOT_FOUND);

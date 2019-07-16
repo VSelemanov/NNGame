@@ -1,8 +1,6 @@
 import trycatcher from "../utils/trycatcher";
 import jwt from "jsonwebtoken";
-// import methods from "../helper/GameRoom";
-// import { IGameRoom } from "../helper/GameRoom/interfaces";
-// import GameRoomMethods from "../helper/GameRoom";
+import Logger from "../utils/Logger";
 
 const Auth = {
   // Валидация запросов для системных событий
@@ -30,7 +28,7 @@ const Auth = {
         }
       };
     } catch (error) {
-      console.log("AdminAuth Error -----> ", error);
+      Logger.error("AdminAuth Error -----> ", error);
       return { isValid: false, credentials: {} };
     }
   },
@@ -49,7 +47,7 @@ const Auth = {
         credentials: { ...tokenData, isAdmin: false }
       };
     } catch (error) {
-      console.log("TeamAuth Error -----> ", error);
+      Logger.error("TeamAuth Error -----> ", error);
       return {
         isValid: false,
         credentials: {}
