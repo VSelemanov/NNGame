@@ -3,10 +3,15 @@ import {
 	NavigationContainerComponent,
 	NavigationComponent
 } from "react-navigation";
-import { SCREENS, ActionTypes } from "./enum";
+import { SCREENS, ActionTypes, TEAM } from "./enum";
 import { isDev } from "./constants";
 import { store } from "../store";
 import jwt_decode from "jwt-decode";
+import {
+	IGameMap,
+	IGameStatus
+} from "../../../newback/src/helper/Room/interfaces";
+import { ITeamsInRoom } from "../../../newback/src/helper/Team/interfaces";
 export class Helper {
 	private navigator: NavigationComponent;
 	constructor() {
@@ -56,13 +61,36 @@ export class Helper {
 		});
 	}
 
-	public handleGameStatus(status: any, flags: any) {
-		lg("Handle msg");
-		store.dispatch({
-			key: "session",
-			type: ActionTypes.HANDLE_GAME_STATUS,
-			status
-		});
+	// public handleGameStatus(status: IGameStatus, flags: any) {
+	// 	lg("Handle msg");
+	// 	store.dispatch({
+	// 		key: "session",
+	// 		type: ActionTypes.HANDLE_GAME_STATUS,
+	// 		status
+	// 	});
+	// }
+	public isFirstZoneChoose(teams: ITeamsInRoom, teamKey: string) {
+		switch (teamKey) {
+			case TEAM.WHITE:
+				return teams.team2.zones === 0 && teams.team1.zones === 0;
+			case TEAM.BLUE:
+				return (
+					teams.team1.zones !== 0 &&
+					teams.team2.zones === 0 &&
+					teams.team3.zones === 0
+				);
+			case TEAM.RED:
+				return teams.team2.zones !== 0 && teams.team3.zones === 0;
+		}
+	}
+	public isFirstZoneCompleted(teams: ITeamsInRoom) {
+		if (
+			teams.team1.zones === 1 &&
+			teams.team1.zones === 1 &&
+			teams.team1.zones === 1
+		) {
+			return true;
+		}
 	}
 }
 

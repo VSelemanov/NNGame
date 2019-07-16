@@ -6,8 +6,12 @@ import { config } from "./config";
 import Nes from "nes";
 import { Alert } from "react-native";
 import actions from "../actions/sessionActions";
+import { ActionTypes } from "./enum";
+import { store } from "../store";
+import { IGameStatus } from "../../../newback/src/helper/Room/interfaces";
+import { IAnswerQuestion } from "../interfaces/session";
 
-const ws = new Nes.Client(config.URL.SOCKET_GAME_STATUS);
+export const ws = new Nes.Client(config.URL.SOCKET_GAME_STATUS);
 
 const net: INet = {
 	async connectToSocket() {
@@ -17,12 +21,12 @@ const net: INet = {
 			};
 			ws.onError = err => {
 				lg("Socket errored", true);
-				Alert.alert("Ошибка соединения");
+				// Alert.alert("Ошибка соединения");
 				lg(err);
 			};
 			ws.onDisconnect = () => {
 				lg("Socket disconnected", true);
-				Alert.alert("Соединение разорвано");
+				// Alert.alert("Соединение разорвано");
 			};
 			ws.onUpdate = msg => {
 				lg("Socket messaged", true);
@@ -35,8 +39,6 @@ const net: INet = {
 					}
 				}
 			});
-
-			ws.subscribe("/api/room/gamestatus", helper.handleGameStatus);
 		} catch (e) {
 			lg(e);
 		}
@@ -54,10 +56,37 @@ const net: INet = {
 			return response;
 		} catch (e) {
 			lg(e);
+			return e;
 		}
 	},
-	sendMessage(props) {
-		lg(props);
+	async sendAnswer(props: IAnswerQuestion, token: string) {
+		try {
+			lg(props);
+			lg(token);
+			const response: sa.Response = await sa
+				.post(config.URL.SEND_ANSWER)
+				.set("Authorization", `Bearer ${token}`)
+				.send({
+					...props
+				});
+			return response;
+		} catch (e) {
+			lg(e);
+			return e;
+		}
+	},
+	async chooseZone(zone: string, token: string) {
+		try {
+			const response: sa.Response = await sa
+				.post(`${config.URL.CHOOSE_ZONE}/${zone}`)
+				.set("Authorization", `Bearer ${token}`)
+				.send();
+
+			return response;
+		} catch (e) {
+			lg(e);
+			return e;
+		}
 	}
 };
 

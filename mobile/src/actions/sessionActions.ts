@@ -1,8 +1,9 @@
 import { SCREENS, ActionTypes, TEAM } from "../modules/enum";
-import { ISessionActions } from "../interfaces/session";
+import { ISessionActions, IAnswerQuestion } from "../interfaces/session";
 import helper, { lg } from "../modules/helper";
 import { Alert } from "react-native";
-import net from "../modules/net";
+import net, { ws } from "../modules/net";
+import { IGameStatus } from "../../../newback/src/helper/Room/interfaces";
 
 const key = "session";
 const actions: ISessionActions = {
@@ -72,7 +73,7 @@ const actions: ISessionActions = {
 			});
 			try {
 				let response = await net.sendInviteCode(code);
-				if (response.status !== 200) {
+				if (!response || response.status !== 200) {
 					throw "Ошибка";
 				}
 				dispatch({
@@ -80,7 +81,17 @@ const actions: ISessionActions = {
 					type: ActionTypes.SEND_INVITE_CODE_SUCCESS,
 					token: response.text
 				});
-				helper.pushScreen(SCREENS.GAME_MAP);
+				ws.subscribe(
+					"/api/room/gamestatus",
+					(status: IGameStatus, flags: any) => {
+						lg("Handle msg");
+						dispatch({
+							key: "session",
+							type: ActionTypes.HANDLE_GAME_STATUS,
+							status
+						});
+					}
+				);
 			} catch (e) {
 				Alert.alert(e);
 				dispatch({
@@ -90,6 +101,54 @@ const actions: ISessionActions = {
 			}
 		};
 	},
-	sendEvent() {}
+	sendAnswer(props: IAnswerQuestion, token: string) {
+		return async (dispatch: any) => {
+			dispatch({
+				key,
+				type: ActionTypes.SEND_ANSWER_REQUEST
+			});
+			try {
+				let response = await net.sendAnswer(props, token);
+				if (response.status !== 200) {
+					throw "Ошибка";
+				}
+				dispatch({
+					key,
+					type: ActionTypes.SEND_ANSWER_SUCCESS
+				});
+			} catch (e) {
+				Alert.alert(e);
+				dispatch({
+					key,
+					type: ActionTypes.SEND_ANSWER_FAILURE
+				});
+			}
+		};
+	},
+	chooseZone(zone: string, token: string) {
+		lg(zone);
+		return async (dispatch: any) => {
+			dispatch({
+				key,
+				type: ActionTypes.CHOOSE_ZONE_REQUEST
+			});
+			try {
+				let response = await net.chooseZone(zone, token);
+				if (response.status !== 200) {
+					throw "Ошибка";
+				}
+				dispatch({
+					key,
+					type: ActionTypes.CHOOSE_ZONE_SUCCESS
+				});
+			} catch (e) {
+				Alert.alert(e);
+				dispatch({
+					key,
+					type: ActionTypes.CHOOSE_ZONE_FAILURE
+				});
+			}
+		};
+	}
 };
 export default actions;

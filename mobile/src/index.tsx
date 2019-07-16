@@ -13,7 +13,10 @@ import { store, persistor } from "./store";
 console.log(
 	"------------------------------------------------\n------------------- RUN APP --------------------\n------------------------------------------------"
 );
-YellowBox.ignoreWarnings(["Remote debugger"]);
+YellowBox.ignoreWarnings([
+	"Remote debugger",
+	"Require cycle: src/modules/helper.ts"
+]);
 
 export default class App extends React.Component<{}, { isReady: boolean }> {
 	constructor(props: any) {
@@ -71,7 +74,22 @@ export default class App extends React.Component<{}, { isReady: boolean }> {
 		const fonts = {};
 		const images = [
 			require("../assets/background.jpg"),
-			require("../assets/watch.png")
+			require("../assets/watch.png"),
+			require("../assets/icons/flag_white.png"),
+			require("../assets/icons/flag_blue.png"),
+			require("../assets/icons/flag_red.png"),
+			require("../assets/icons/shield_white.png"),
+			require("../assets/icons/shield_blue.png"),
+			require("../assets/icons/shield_red.png"),
+			require("../assets/icons/swords_white.png"),
+			require("../assets/icons/swords_blue.png"),
+			require("../assets/icons/swords_red.png"),
+			require("../assets/icons/trumpet_white.png"),
+			require("../assets/icons/trumpet_blue.png"),
+			require("../assets/icons/trumpet_red.png"),
+			require("../assets/banners/white.png"),
+			require("../assets/banners/blue.png"),
+			require("../assets/banners/red.png")
 		];
 
 		return new Promise(async (resolve, reject) => {

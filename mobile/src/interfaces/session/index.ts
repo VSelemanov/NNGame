@@ -1,4 +1,5 @@
-import { SCREENS, ActionTypes, TEAM } from "../../modules/enum";
+import { SCREENS, ActionTypes, TEAM, GAME_STEP } from "../../modules/enum";
+import { IGameStatus } from "../../../../newback/src/helper/Room/interfaces/index";
 
 export interface ISessionStore {
 	screen: SCREENS;
@@ -6,18 +7,8 @@ export interface ISessionStore {
 	teamKey: string;
 	token: string;
 	waiting: boolean;
-	teams: {
-		[TEAM.RED]: {
-			name: string;
-		};
-		[TEAM.BLUE]: {
-			name: string;
-		};
-		[TEAM.WHITE]: {
-			name: string;
-		};
-	};
-	status: any;
+	status: IGameStatus;
+	gameStep: GAME_STEP;
 }
 
 export interface ISessionActionsProps {
@@ -26,7 +17,7 @@ export interface ISessionActionsProps {
 	screen: SCREENS;
 	currentTeam: TEAM;
 	token: string;
-	status: any;
+	status: IGameStatus;
 }
 
 export interface ISessionActions {
@@ -35,5 +26,11 @@ export interface ISessionActions {
 	getTeamInfo(k: string): void;
 	connectToSocket(): void;
 	sendInviteCode(n: string): void;
-	sendEvent(props?: object): void;
+	sendAnswer(props: IAnswerQuestion, token: string): void;
+	chooseZone(zone: string, token: string): void;
+}
+
+export interface IAnswerQuestion {
+	response: number;
+	timer: number;
 }

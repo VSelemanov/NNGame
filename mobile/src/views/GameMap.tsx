@@ -8,7 +8,8 @@ import {
 	Image,
 	Animated,
 	Platform,
-	BackHandler
+	BackHandler,
+	Alert
 } from "react-native";
 import { connect } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
@@ -23,15 +24,34 @@ import NNMap from "../components/MapArea/NNMap";
 import MapGrid from "../components/MapGrid";
 import QuestionWindow from "../components/QuestionWindow";
 import InputText from "../components/InputText";
-import { COLORS, TEAM, ActionTypes } from "../modules/enum";
+import { COLORS, TEAM, ActionTypes, GAME_STEP } from "../modules/enum";
 import Constants from "expo-constants";
+import moment from "moment";
 import { HEIGHT, WIDTH, rem } from "../modules/constants";
 import { store } from "../store";
-
-class GameMap extends React.Component<Store> {
+import {
+	ITeamInRoom,
+	ITeam,
+	ITeamBase
+} from "../../../newback/src/helper/Team/interfaces";
+import Pad from "../components/QuestionNumInput";
+import QuestionNumInput from "../components/QuestionNumInput";
+import Spinner from "../components/Spinner";
+interface IS {
+	startTime: moment.Moment;
+	currentTime: moment.Moment;
+	isTimer: boolean;
+}
+class GameMap extends React.Component<Store, IS> {
 	constructor(props: any) {
 		super(props);
+		this.state = {
+			startTime: moment(),
+			currentTime: moment(),
+			isTimer: true
+		};
 		this.onBackButton = this.onBackButton.bind(this);
+		this.submitNumericQuestion = this.submitNumericQuestion.bind(this);
 	}
 	componentDidMount() {
 		// this.props.resetSessionStore();
@@ -56,13 +76,15 @@ class GameMap extends React.Component<Store> {
 		return true;
 	}
 	private renderTeamInfo() {
-		return Object.keys(this.props.session.teams).map((team, i) => {
-			const { name } = this.props.session.teams[team];
+		return Object.keys(this.props.session.status.teams).map((team, i) => {
+			const thisTeam: ITeamInRoom = this.props.session.status.teams[team];
+			const { name, zones } = thisTeam;
 			let gradientColors = [];
 			let borderColors = {
 				light: "",
 				dark: ""
 			};
+			// lg(thisTeam);
 
 			switch (team) {
 				case TEAM.RED:
@@ -80,14 +102,17 @@ class GameMap extends React.Component<Store> {
 					borderColors.light = COLORS.N_WHITE;
 					borderColors.dark = COLORS.D_BROWN;
 					break;
+				default:
+					return;
 			}
+			lg(team);
 			return (
 				<View key={team} style={styles.teamArea}>
 					<View style={styles.teamInfo}>
 						<Text style={styles.teamTitle}>{name}</Text>
 						<View style={styles.teamHaveArea}>
 							<Text style={styles.teamHaveTitle}>Областей:</Text>
-							<Text style={styles.teamHaveNumber}>2</Text>
+							<Text style={styles.teamHaveNumber}>{zones}</Text>
 							<Image
 								source={require("../../assets/banners/red.png")}
 								style={styles.teamHaveImg}
@@ -109,7 +134,43 @@ class GameMap extends React.Component<Store> {
 		});
 	}
 
+	private submitNumericQuestion(num: number, timer: number) {
+		lg(num);
+		lg(timer);
+		this.props.sendAnswer({ response: num, timer }, this.props.session.token);
+	}
+
+	public renderQuestion() {
+		try {
+			const { isNumeric, title } = this.props.session.status.part1.steps[
+				this.props.session.status.part1.steps.length - 1
+			].question;
+
+			return (
+				<QuestionWindow question={title}>
+					<View style={{ flex: 1 }}>
+						<QuestionNumInput onSubmit={this.submitNumericQuestion} />
+					</View>
+				</QuestionWindow>
+			);
+		} catch (e) {
+			lg(e);
+			return (
+				<QuestionWindow question={"Null"}>
+					<Text>Null</Text>
+					{/* <Text>
+						{moment().diff(this.state.startTime.subtract(60, "seconds"))}
+					</Text>
+					<Pad onSubmit={this.submitNumericQuestion} /> */}
+				</QuestionWindow>
+			);
+		}
+	}
+
 	render() {
+		const { status, gameStep } = this.props.session;
+
+		const { steps, currentStep } = status.part1;
 		return (
 			<View style={styles.container}>
 				<MapGrid height={HEIGHT} width={WIDTH} size={rem} isShadowed={false} />
@@ -119,19 +180,31 @@ class GameMap extends React.Component<Store> {
 					<Mavericks2 />
 					<Ship />
 					<Compass />
-					<NNMap />
+					<NNMap
+						token={this.props.session.token}
+						gameMap={this.props.session.status.gameMap}
+						chooseZone={this.props.chooseZone}
+						// chooseZone={this.props.chooseZone}
+					/>
 				</View>
-				{/* <QuestionWindow>
-					<View
-						style={{
-							alignItems: "center",
-							justifyContent: "center",
-							flex: 1
-						}}
-					>
-						<Text>QuestionWindow</Text>
+				{steps &&
+				steps.length > 0 &&
+				gameStep === GAME_STEP.QUESTION &&
+				steps[currentStep].isStarted
+					? this.renderQuestion()
+					: null}
+				{gameStep === GAME_STEP.WAITING_FOR_ADMIN ||
+				gameStep === GAME_STEP.WAITING_FOR_OTHERS ? (
+					<View style={styles.loading}>
+						<View style={styles.loadingBG} />
+						<Spinner size={rem * 4} />
+						<Text style={styles.loadingText}>{`Ожидание ${
+							gameStep === GAME_STEP.WAITING_FOR_ADMIN
+								? "админа"
+								: "других игроков"
+						}...`}</Text>
 					</View>
-				</QuestionWindow> */}
+				) : null}
 			</View>
 		);
 	}
@@ -200,5 +273,27 @@ const styles = StyleSheet.create({
 		width: (WIDTH / 4) * 3,
 		padding: rem * 2,
 		height: HEIGHT
+	},
+	loading: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: WIDTH,
+		height: HEIGHT,
+		alignItems: "center",
+		justifyContent: "center"
+	},
+	loadingBG: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: WIDTH,
+		height: HEIGHT,
+		backgroundColor: `${COLORS.N_BLACK}AA`
+	},
+	loadingText: {
+		padding: rem,
+		fontSize: rem,
+		color: COLORS.N_WHITE
 	}
 });

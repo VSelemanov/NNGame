@@ -1,16 +1,18 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { View, Image, Text } from "react-native";
 import { lg } from "../modules/helper";
 import { WIDTH, rem, HEIGHT } from "../modules/constants";
 import { COLORS } from "../modules/enum";
 import Svg, { Path } from "react-native-svg";
 
-interface IP {}
+interface IP {
+	question: string;
+}
 
 export default class QuestionWindow extends React.Component<IP> {
 	public render() {
 		lg("QuestionWindow rendered");
-		const { children } = this.props;
+		const { children, question } = this.props;
 		return (
 			<View
 				style={{
@@ -51,16 +53,27 @@ export default class QuestionWindow extends React.Component<IP> {
 					style={{
 						position: "absolute",
 						alignItems: "center",
-						justifyContent: "center",
-						flexDirection: "row",
 						top: 0,
 						left: 0,
 						width: WIDTH,
 						height: HEIGHT,
-						paddingVertical: (HEIGHT - 1534 * 0.45) / 2 + 50,
+						paddingVertical: (HEIGHT - 1534 * 0.45) / 2 + 60,
 						paddingHorizontal: (WIDTH - 2301 * 0.5) / 2 + 100
 					}}
 				>
+					<Text
+						style={{
+							marginTop: rem * 0.5,
+							fontSize: rem * 0.9,
+							color: COLORS.N_BLACK,
+							marginBottom: rem * 0.9,
+							textAlign: "center",
+							paddingHorizontal: rem * 1.5,
+							maxHeight: rem * 4
+						}}
+					>
+						{question}
+					</Text>
 					{children}
 				</View>
 			</View>

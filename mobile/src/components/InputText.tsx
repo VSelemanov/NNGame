@@ -6,7 +6,8 @@ import {
 	StyleSheet,
 	Keyboard,
 	LayoutChangeEvent,
-	Alert
+	Alert,
+	KeyboardType
 } from "react-native";
 import { lg } from "../modules/helper";
 import { WIDTH, rem, HEIGHT } from "../modules/constants";
@@ -19,7 +20,7 @@ import { IInputText } from "../interfaces";
 interface IP {
 	width: number;
 	height: number;
-	type?: string;
+	type?: KeyboardType;
 	autoFocus?: boolean;
 	onSubmit?(props?: IInputText): void;
 }

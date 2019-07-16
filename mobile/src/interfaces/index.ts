@@ -1,5 +1,9 @@
 import { PersistPartial } from "redux-persist";
-import { ISessionActions, ISessionStore } from "./session/index";
+import {
+	ISessionActions,
+	ISessionStore,
+	IAnswerQuestion
+} from "./session/index";
 import { NavigationScreenProp, NavigationStateRoute } from "react-navigation";
 import superagent from "superagent";
 export interface IAppStore {
@@ -31,5 +35,9 @@ interface INetProps {
 export interface INet {
 	connectToSocket(): void;
 	sendInviteCode(c: string): Promise<superagent.Response>;
-	sendMessage(props: INetProps): void;
+	sendAnswer(
+		props: IAnswerQuestion,
+		token: string
+	): Promise<superagent.Response>;
+	chooseZone(z: string, t: string): Promise<superagent.Response>;
 }

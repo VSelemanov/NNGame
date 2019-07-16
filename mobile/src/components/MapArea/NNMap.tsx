@@ -5,8 +5,15 @@ import MapArea from "./MapArea";
 import Mavericks1 from "./Mavericks1";
 import { areasSvgInfo } from "../../modules/constants";
 import { lg } from "../../modules/helper";
+import { IGameMap } from "../../../../newback/src/helper/Room/interfaces";
+import { IMapZone } from "../../../../newback/src/interfaces";
 
-export default class Map extends React.Component {
+interface IP {
+	gameMap: IGameMap;
+	token: string;
+	chooseZone(z: string, token): void;
+}
+export default class Map extends React.Component<IP> {
 	public render() {
 		lg("NNMap rendered");
 		return (
@@ -17,8 +24,11 @@ export default class Map extends React.Component {
 							key={el}
 							areaD={areasSvgInfo[el].areaD}
 							name={el}
+							mapZone={this.props.gameMap[el]}
 							nameD={areasSvgInfo[el].nameD}
-							color={"#000000"}
+							disabled={false}
+							token={this.props.token}
+							chooseZone={this.props.chooseZone}
 						/>
 					);
 				})}
