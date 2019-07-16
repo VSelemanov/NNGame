@@ -106,7 +106,7 @@ class Map extends React.Component<any, any> {
 						})
 					}
 					const answers = Object.keys(step.responses).filter(key => step.responses[key].response !== null).length;
-					if(step.isStarted && answers !== 3){
+					if(answers !== 3){
 						this.setState({
 							isNumQuestionModal: true
 						})
@@ -126,14 +126,17 @@ class Map extends React.Component<any, any> {
 					<div className={style.command_info}>
 						<span>{teams.team1 ? teams.team1.name : 'Ожидание команды'}</span>
 						<p>Областей: {teams.team1 ? teams.team1.zones : '-'}</p>
+						<span>{teams.team1 ? teams.team1.inviteCode : '-'}</span>
 					</div>
 					<div className={style.command_info}>
 						<span>{teams.team2 ? teams.team2.name : 'Ожидание команды'}</span>
 						<p>Областей: {teams.team2 ? teams.team2.zones : '-'}</p>
+						<span>{teams.team2 ? teams.team2.inviteCode : '-'}</span>
 					</div>
 					<div className={style.command_info}>
 						<span>{teams.team3 ? teams.team3.name : 'Ожидание команды'}</span>
 						<p>Областей: {teams.team3 ? teams.team3.zones : '-'}</p>
+						<span>{teams.team3 ? teams.team3.inviteCode : '-'}</span>
 					</div>
 				</div>
 				<div className={style.command_info_color}>

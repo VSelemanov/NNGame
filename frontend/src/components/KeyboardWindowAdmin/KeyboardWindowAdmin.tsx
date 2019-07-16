@@ -1,53 +1,47 @@
-import React from "react";
+import React, { Fragment } from "react";
 import style from "./KeyboardWindowAdmin.module.scss";
 import { startTimer } from "../../toServer/requests";
 
 class KeyboardWindowAdmin extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
-  public getResult(teamName: string) {
-
-    return "-";
-	}
-	
-	public getTime(teamName: string) {
-
-    return "-";
-	}
-
+  public getResult(data: any, teamName: string) {
+    const result = data[teamName];
+    return result ? (
+      <Fragment>
+        <span>{result.response ? result.response : "-"}</span>
+        <p className={style.timer}>{result.timer ? result.timer : "-"}</p>
+      </Fragment>
+    ) : (
+      "-"
+    );
+  }
 
   render() {
-    // const results = this.props.part1.results;
+    const { responses, question } = this.props;
+    const answers = responses
+      ? Object.keys(responses).filter(key => responses[key].response !== null).length
+      : 0;
     return (
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
-            <button className={style.next_question} onClick={() => startTimer()}>
-                Начало опроса
-              </button>
-            {/* <p>{this.props.question}</p> */}
+            <p>{question ? question.title : ""}</p>
           </div>
           <div className={style.answer}>
-            {/* <p>{results.length === 3 ? this.props.answer : "Ожидание ответов"}</p> */}
+            <p>{answers === 3 && question ? question.numericAnswer : "Ожидание ответов команд"}</p>
           </div>
           <div className={style.footer}>
-            <div className={style.button_team1}>
-              <p>{this.getResult("team1")}</p>
-              <p>{this.getTime("team1")}</p>
-            </div>
-            <div className={style.button_team2}>
-              <p>{this.getResult("team2")}</p>
-              <p>{this.getTime("team2")}</p>
-            </div>
-            <div className={style.button_team3}>
-              <p>{this.getResult("team3")}</p>
-              <p>{this.getTime("team3")}</p>
-            </div>
+            <div className={style.button_team1}>{answers === 3 ? this.getResult(responses, "team1") : <span>-</span>}</div>
+            <div className={style.button_team2}>{answers === 3 ? this.getResult(responses, "team2") : <span>-</span>}</div>
+            <div className={style.button_team3}>{answers === 3 ? this.getResult(responses, "team3") : <span>-</span>}</div>
           </div>
+          <button className={style.button} onClick={() => startTimer()}>
+            Начало опроса
+          </button>
         </div>
       </div>
     );
