@@ -13,6 +13,14 @@ import RoomMethods from "../Room";
 import { IRoom, IGamePart1Step, IGamePart1 } from "../Room/interfaces";
 
 const methods = {
+  read: trycatcher(
+    async (): Promise<ITeam[]> => {
+      return await server.Team.find({});
+    },
+    {
+      logMessage: `${EntityName} read method error`
+    }
+  ),
   create: trycatcher(
     async (TeamData: ITeamBase): Promise<ITeam> => {
       const Team = await server.Team.create(TeamData);
@@ -20,7 +28,7 @@ const methods = {
       return res;
     },
     {
-      logMessage: `${EntityName} method error`
+      logMessage: `${EntityName} create method error`
     }
   ),
   generateInviteCode: (): string => {

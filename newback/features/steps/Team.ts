@@ -20,17 +20,18 @@ import {
   paths as RoomPaths,
   subscriptionGameStatuspath
 } from "../../src/helper/Room/constants";
-import { getGameToken, getActiveRoom, getTeam } from "./default";
+import { getGameToken, getActiveRoom, getTeam, getAdminLogin } from "./default";
 import { IGameStatus } from "../../src/helper/Room/interfaces";
 import TeamMethods from "../../src/helper/Team";
 import { client } from "./default";
 
 When("я делаю запрос на создание новой команды {string}", async function(name) {
+  const token = await getAdminLogin("admin", "admin");
   const res = await server.server.inject({
     url: `${APIRoute}/${routePath}`,
     method: HTTPMethods.post,
     headers: {
-      Authorization
+      Authorization: token
     },
     payload: {
       name
@@ -45,6 +46,28 @@ Then("в списке команд должна быть команда {string}
 
   expect(Teams).length.greaterThan(0, "Teams are empty");
   expect(Teams[0].name).to.eql(name);
+});
+
+When("я делаю запрос на получения списка команд", async function() {
+  const token = await getAdminLogin("admin", "admin");
+  const res = await server.server.inject({
+    url: `${APIRoute}/${routePath}`,
+    method: HTTPMethods.get,
+    headers: {
+      Authorization: token
+    }
+  });
+
+  setResponse(res);
+});
+
+Then("в ответе должен быть массив команд с комнадой {string}", async function(
+  teamName
+) {
+  const res = getResponse().result;
+
+  expect(res).length.greaterThan(0);
+  expect(res[0].name).to.eql(teamName);
 });
 
 When("я делаю запрос на авторизацию команды {string}", async function(name) {

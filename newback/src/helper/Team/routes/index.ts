@@ -3,16 +3,26 @@ import { APIRoute, HTTPMethods } from "../../../constants";
 import TeamCtrl from "../controllers";
 import { routePath, paths } from "../constants";
 
-import { create, login, colorZone, response, attack } from "../docs";
+import { create, login, colorZone, response, attack, read } from "../docs";
 import Joi from "@hapi/joi";
 
 const routes: ServerRoute[] = [
+  {
+    path: `${APIRoute}/${routePath}`,
+    method: HTTPMethods.get,
+    handler: TeamCtrl.read,
+    options: {
+      ...read,
+      auth: "admin-auth"
+    }
+  },
   {
     path: `${APIRoute}/${routePath}`,
     method: HTTPMethods.post,
     handler: TeamCtrl.create,
     options: {
       ...create,
+      auth: "admin-auth",
       validate: {
         payload: Joi.object().keys({
           name: Joi.string().required()
