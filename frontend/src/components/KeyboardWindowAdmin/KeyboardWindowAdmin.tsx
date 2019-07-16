@@ -21,7 +21,7 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
 
 
   render() {
-    const results = this.props.part1.results;
+    // const results = this.props.part1.results;
     return (
       <div className={style.modal_back}>
         <div className={style.main}>
@@ -29,10 +29,10 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
             <button className={style.next_question} onClick={() => startTimer()}>
                 Начало опроса
               </button>
-            <p>{this.props.question}</p>
+            {/* <p>{this.props.question}</p> */}
           </div>
           <div className={style.answer}>
-            <p>{results.length === 3 ? this.props.answer : "Ожидание ответов"}</p>
+            {/* <p>{results.length === 3 ? this.props.answer : "Ожидание ответов"}</p> */}
           </div>
           <div className={style.footer}>
             <div className={style.button_team1}>

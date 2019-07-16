@@ -69,22 +69,49 @@ class Map extends React.Component<any, any> {
 			});
 			const handler = (message: any, flags: any) => {
 				console.log(message);
+
 				// запись данных о командах
-				if (message.teams && Object.keys(this.state.teams).length === 0) {
+				if (message.teams) {
           const teams = message.teams;
           Object.keys(teams).includes('_id') && delete teams['_id'];
 					this.setState({
 						teams
 					});
 				}
-        // запись данных о вопросах
+
+        // запись данных о карте
         if(message.gameMap){
           const gameMap = message.gameMap;
           Object.keys(gameMap).includes('_id') && delete gameMap['_id'];
           this.setState({
             gameMap
           })
-        }
+				}
+
+				// запись данных о вопросе первого тура
+				if(message.currentPart && message.currentPart === 1 && message.part1 && message.part1.currentStep !== null){
+					const step = message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
+					if(step.question){
+						const question = step.question;
+						Object.keys(question).includes('_id') && delete question['_id'];
+						this.setState({
+							numQuestion: question
+						})
+					}
+					if(step.responses){
+						const responses = step.responses;
+						Object.keys(responses).includes('_id') && delete responses['_id'];
+						this.setState({
+							numResponses: responses
+						})
+					}
+					const answers = Object.keys(step.responses).filter(key => step.responses[key].response !== null).length;
+					if(step.isStarted && answers !== 3){
+						this.setState({
+							isNumQuestionModal: true
+						})
+					}
+				}
 			};
 			client.subscribe('/api/room/gamestatus', handler);
 		};
@@ -128,7 +155,7 @@ class Map extends React.Component<any, any> {
 						>
 							Создать комнату
 						</button>
-						<button className={style.next_question}>Старт Игры</button>
+						<button className={style.next_question} onClick={()=> startGame()}>Старт Игры</button>
 						<button className={style.next_question} onClick={() => getQuestion('numeric')}>
 							Следующий вопрос
 						</button>
@@ -136,10 +163,8 @@ class Map extends React.Component<any, any> {
 					{this.state.isNumQuestionModal && (
 						<KeyboardWindowAdmin
 							teams={this.state.teams}
-							part1={this.state.part1}
-							question={this.state.question.title}
-							isTimerStarted={this.state.isTimerStarted}
-							answer={this.state.question.numericAnswer}
+							question={this.state.numQuestion}
+							responses={this.state.numResponses}
 						/>
 					)}
 					<div className={style.map_wrapper}>

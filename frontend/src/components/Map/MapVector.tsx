@@ -16,12 +16,6 @@ class MapVector extends React.Component <any, any> {
     }
   }
   
-  public closeModalColoredZone(){
-    this.setState({
-      isModalColoredZone: false
-    })
-  }
-  
   public closeFunc = () => {
     this.setState({
       isModalColoredZone: false
@@ -29,7 +23,7 @@ class MapVector extends React.Component <any, any> {
   }
 
   public takeZoneFunc = (_id: string, zoneName: string)=> {
-    takeZone(_id, zoneName)
+    takeZone(_id, zoneName).then(()=> this.setState({isModalColoredZone: false}))
   }
 
   public coloredZone = (zoneName: string) => {
@@ -39,19 +33,23 @@ class MapVector extends React.Component <any, any> {
     })
   }
   
+  public calcColor =(team: string) => {
+    switch(team){
+     case 'team1': return '#F8F3EB';
+     case 'team2': return '#BFC4D4';
+     case 'team3': return '#F4CEC1';
+     default: return "#F1E0C3"
+    }
+  }
+
   public getColor = (zoneName: string) => {
-    const defaultColor = "#F1E0C3"
-    const colors = {team1: '#F8F3EB', team2: '#BFC4D4', team3: '#F4CEC1' };
     const gameMap = this.props.gameMap;
     const teams = this.props.teams;
     if(Object.keys(gameMap).length !== 0 && teams){
-      if(gameMap[zoneName].team === null) {
-        return defaultColor;
-      }
-      const owner = gameMap[zoneName].team ? gameMap[zoneName].team : null;
-      // return typeof(owner) === 'string' ? colors[owner]
+      const owner = gameMap[zoneName] ? gameMap[zoneName].team : null;
+      return this.calcColor(owner);
     }
-    return defaultColor;
+    return "#F1E0C3";
   }
 
   render() {

@@ -61,7 +61,7 @@ export const createRoom = async (theme: string, team1: string, team2: string, te
   }
 };
 
-export const startGame = async (roomId: string) => {
+export const startGame = async () => {
   try {
     return axios.post(GAME_START_URL, {}, config);
   } catch (e) {
