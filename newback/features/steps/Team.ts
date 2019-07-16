@@ -184,13 +184,20 @@ Then(
   "в сокете состояние игры со следующими результатами по выбору доступных зон:",
   async function(dataTable) {
     const res: IGameStatus = getSocketResponse();
-    await client.disconnect();
+    // await client.disconnect();
 
     const allowZones = res.part1.steps[res.part1.currentStep || 0].allowZones;
 
     for (const row of dataTable.hashes() as IAllowZoneForTeam[]) {
       expect(allowZones[row.teamKey]).to.eql(+row.allowZones);
     }
+
+    expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[0]).to.eql(
+      "team2"
+    );
+    expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[1]).to.eql(
+      "team1"
+    );
   }
 );
 
@@ -346,3 +353,60 @@ Then(
     setResponse(res);
   }
 );
+
+When("команда {string} делает запрос на захват зоны {string}", async function(
+  teamName,
+  zoneKey
+) {
+  const token = await getGameToken(teamName);
+
+  const res = await server.server.inject({
+    method: HTTPMethods.post,
+    url: `${APIRoute}/${routePath}/${paths.zone}/${zoneKey}`,
+    headers: {
+      Authorization: token
+    }
+  });
+
+  setResponse(res);
+});
+
+Then("в сокете зона {string} принадлежит команде {string}", async function(
+  zoneKey,
+  teamName
+) {
+  const res: IGameStatus = getSocketResponse();
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(res.gameMap[zoneKey].team).to.eql(teamKey);
+});
+
+Then("счетчик зон доступных для команды {string} равен {int}", async function(
+  teamName: string,
+  zones
+) {
+  const res: IGameStatus = getSocketResponse();
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(
+    res.part1.steps[res.part1.currentStep || 0].allowZones[teamKey]
+  ).to.eql(zones);
+});
+
+Then("команды {string} нет в очереди на текущем шаге", async function(
+  teamName: string
+) {
+  const res: IGameStatus = getSocketResponse();
+  const Team = await getTeam(teamName);
+  const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
+
+  expect(
+    res.part1.steps[res.part1.currentStep || 0].teamQueue.includes(teamKey)
+  ).to.eql(false);
+});
+
+Then("закрываем соединение по сокету", async function() {
+  await client.disconnect();
+});

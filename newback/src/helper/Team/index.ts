@@ -105,7 +105,10 @@ const methods = {
       if (currentPart === 1) {
         const part: IGamePart1 = Room.gameStatus.part1;
         const step = part.steps[part.currentStep || 0];
-        --step.allowZones[teamKey];
+        step.allowZones[teamKey] = step.allowZones[teamKey] - 1;
+        if (step.allowZones[teamKey] === 0) {
+          step.teamQueue.shift();
+        }
         Room.markModified("gameStatus.part1.steps");
         await Room.save();
       }

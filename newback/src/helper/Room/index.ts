@@ -150,7 +150,8 @@ const methods = {
           question: Question,
           allowZones: allowZonesDefault,
           isStarted: false,
-          responses: responsesDefault
+          responses: responsesDefault,
+          teamQueue: []
         }) - 1;
 
       part.currentStep = part.currentStep !== null ? part.currentStep + 1 : 0;
@@ -362,7 +363,7 @@ const methods = {
   },
   checkTeamResponses: (step: IGamePart1Step): boolean => {
     for (const teamKey of Object.keys(teams)) {
-      if (step.responses[teamKey] === null) {
+      if (step.responses[teamKey].response === null) {
         return false;
       }
     }
@@ -408,6 +409,9 @@ const methods = {
       const zones = 2 - i;
       stepElement.allowZones[semiRes[i].teamKey] = zones;
       stepElement.responses[semiRes[i].teamKey].result = zones;
+      if (zones !== 0) {
+        stepElement.teamQueue.push(semiRes[i].teamKey);
+      }
     }
   },
   prepareTeamQueue: async (gameStatus: IGameStatus) => {
@@ -431,7 +435,11 @@ const methods = {
   },
   checkFillMap: (gameMap): boolean => {
     for (const key of Object.keys(mapZones)) {
-      if (gameMap[key].team === "") {
+      if (
+        gameMap[key].team === "" ||
+        gameMap[key].team === null ||
+        gameMap[key].team === undefined
+      ) {
         return false;
       }
     }

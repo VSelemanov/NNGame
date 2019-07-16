@@ -46,6 +46,7 @@ export interface IGamePart1Step {
     [teams.team2]: number | null;
     [teams.team3]: number | null;
   };
+  teamQueue: string[];
   isStarted: boolean;
 }
 
