@@ -1,12 +1,10 @@
 import style from './Map.module.scss';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { takeZone } from '../../toServer/requests';
 import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
 import ModalColoredZone from '../ModalColoredZone/ModalColoredZone';
 
-const defaultColor = "#F1E0C3"
-const colors = ['#F8F3EB', '#BFC4D4', '#F4CEC1' ];
 
 class MapVector extends React.Component <any, any> {
   public duelData: any = [];
@@ -23,38 +21,49 @@ class MapVector extends React.Component <any, any> {
       isModalColoredZone: false
     })
   }
-  public takeZoneFunc = (_id: string, zoneName: string)=> {
-
-    takeZone(_id,zoneName)
+  
+  public closeFunc = () => {
+    this.setState({
+      isModalColoredZone: false
+    })
   }
-  public coloredZone = (zoneName: string) => {
 
-     
+  public takeZoneFunc = (_id: string, zoneName: string)=> {
+    takeZone(_id, zoneName)
+  }
+
+  public coloredZone = (zoneName: string) => {
+    this.setState({
+      isModalColoredZone: true,
+      curZone: zoneName
+    })
   }
   
   public getColor = (zoneName: string) => {
+    const defaultColor = "#F1E0C3"
+    const colors = {team1: '#F8F3EB', team2: '#BFC4D4', team3: '#F4CEC1' };
     const gameMap = this.props.gameMap;
     const teams = this.props.teams;
-    if(gameMap && teams){
-      Object.keys(teams).map((key: any, index: number) => teams[key].color = colors[index]);
-      if(gameMap[zoneName].teamId === '') {
+    if(Object.keys(gameMap).length !== 0 && teams){
+      if(gameMap[zoneName].team === null) {
         return defaultColor;
       }
-      const colorKey = Object.keys(teams).filter((key: any) => teams[key]._id === gameMap[zoneName].teamId)[0]
-      return teams[colorKey].color
+      const owner = gameMap[zoneName].team ? gameMap[zoneName].team : null;
+      // return typeof(owner) === 'string' ? colors[owner]
     }
     return defaultColor;
   }
 
   render() {
     return (
+      <Fragment>
+      {this.state.isModalColoredZone && <ModalColoredZone zoneName={this.state.curZone} func={this.takeZoneFunc} closeFunc={this.closeFunc} teams={this.props.teams}/>}
       <svg
         className={style.map_vector}
         viewBox="0 0 1854 1393"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {this.state.isModalColoredZone && <ModalColoredZone />}
         <path
           onClick={()=>this.coloredZone('pecheri')}
           fill={this.getColor('pecheri')}
@@ -254,6 +263,7 @@ class MapVector extends React.Component <any, any> {
           fill="#232323"
         />
       </svg>
+      </Fragment>
     );
   }
 }

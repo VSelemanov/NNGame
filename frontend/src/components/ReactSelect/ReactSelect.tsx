@@ -61,9 +61,6 @@ const customStyles = {
 
 class ReactSelect extends React.Component<any> {
 	public data: any = [];
-	constructor(props: any) {
-		super(props);
-	}
 
 	public render() {
     const size = this.props.size;

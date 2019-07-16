@@ -48,13 +48,6 @@ class ModalColoredZone extends React.Component<any, any> {
       teamId: ""
     };
   }
-
-  public selectUpdate = (e: any) => {
-    this.setState({
-      teamId: e.value
-    });
-  };
-
   public getTeamData = (teams: any) => {
     const result: any = [];
     Object.keys(teams).map(
@@ -64,6 +57,11 @@ class ModalColoredZone extends React.Component<any, any> {
     result.unshift({ value: null, label: "Нейтральная зона" });
     return result;
   };
+  public selectUpdate = (e: any) => {
+    this.setState({
+      teamId: e.value
+    });
+  };
 
   public render() {
     const { zoneName } = this.props;
@@ -72,7 +70,6 @@ class ModalColoredZone extends React.Component<any, any> {
     return (
       <div
         className={style.modal_back}
-        onClick={(e: any) => e.target.className === style.modal_back && this.props.closeFunc()}
       >
         <div className={style.modalDialog}>
           <div className={style.modal_content}>
@@ -80,12 +77,15 @@ class ModalColoredZone extends React.Component<any, any> {
               <p>Изменить владельца зоны</p>
               <p>{`"${getDistrictName(zoneName)}" на:`}</p>
             </div>
+            <div className={style.select_wrapper}>
+              
             <ReactSelect
               name="team2"
               size="w540"
               func={this.selectUpdate}
               data={this.getTeamData(teams)}
-            />
+              />
+              </div>
             <div className={style.button_wrapper}>
               <button onClick={() => this.props.closeFunc()}>Отмена</button>
               <button onClick={() => this.props.func(teamId, zoneName)}>Применить</button>

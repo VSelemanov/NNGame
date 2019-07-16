@@ -13,7 +13,7 @@ class ModalCreateTeam extends React.Component<any, any> {
 
 	public update = (e: any) => {
 		this.setState({
-			namee: e.target.value
+			teamName: e.target.value
 		});
 	};
 
@@ -23,12 +23,12 @@ class ModalCreateTeam extends React.Component<any, any> {
 				<div className={style.modalDialog}>
 					<div className={style.modal_content}>
 						<div className={style.header}>
-							<p>Введите название команды</p>
+							<h3>Введите название команды</h3>
 						</div>
 						<input type="text" name="name" onChange={this.update} value={this.state.name} />
 						<div className={style.button_wrapper}>
-							<button onClick={() => this.props.closeFunc()}>Отмена</button>
-							<button onClick={() => this.props.func(name)}>Создать</button>
+							<button onClick={() => this.props.closeFunc('isModalTeam')}>Отмена</button>
+							<button onClick={() => this.props.func(this.state.teamName)}>Создать</button>
 						</div>
 					</div>
 				</div>

@@ -27,9 +27,9 @@ const config = {
 	},
 };
 //
-export const takeZone = async (_id: string, zoneName: string) => {
+export const takeZone = async (_id: string, zone: string) => {
   try {
-    return axios.post(ZONE_TAKE_URL,{_id, zoneName},config);
+    return axios.post(ZONE_TAKE_URL,{_id, zone},config);
   } catch (e) {
     return e;
   }
@@ -73,7 +73,7 @@ export const createTeam = async (name: string) => {
   try {
     return axios.post(TEAM_CREATE_URL, {
       name,
-    }, config);
+    }, configBase);
   } catch (e) {
     return e;
   }
