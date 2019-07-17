@@ -74,30 +74,55 @@ export default (
 				newState.gameStep = GAME_STEP.NULL;
 				return newState;
 			}
-			if (
-				currentPart === 1 &&
-				helper.isFirstZoneChoose(teams, newState.teamKey)
-			) {
-				newState.gameStep = GAME_STEP.CHOOSE_ZONE;
-				return newState;
-			} else if (
-				currentPart === 1 &&
-				!helper.isFirstZoneCompleted(teams) &&
-				part1.steps &&
-				part1.steps.length === 0
-			) {
-				newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
-			} else if (
-				currentPart === 1 &&
-				helper.isFirstZoneCompleted(teams) &&
-				part1.steps &&
-				part1.steps.length === 0
-			) {
-				newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
-			}
-
+			const { teamKey } = newState;
+			// выбор первой зоны и ожидание первого вопроса
 			if (currentPart === 1) {
-				lg("------");
+				lg("part 1");
+				if (part1.steps.length === 0) {
+					lg("steps - 0");
+					if (helper.isFirstZoneChoose(teams, teamKey)) {
+						lg("isFirstZoneChoose");
+						newState.gameStep = GAME_STEP.CHOOSE_ZONE;
+						return newState;
+					} else if (!helper.isFirstZoneCompleted(teams)) {
+						lg("!isFirstZoneCompleted");
+						newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+					} else if (helper.isFirstZoneCompleted(teams)) {
+						lg("isFirstZoneCompleted");
+						newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
+					} else {
+						lg("step null");
+						newState.gameStep = GAME_STEP.NULL;
+					}
+					lg("after steps - 0");
+				}
+				// ответ на первый вопрос
+				if (part1.steps.length > 0) {
+					const { steps, currentStep } = part1;
+					lg("steps > 0");
+					if (steps[currentStep].isStarted) {
+						if (helper.isQuestionStartedForTeam(steps[currentStep], teamKey)) {
+							lg("question started for team");
+							newState.gameStep = GAME_STEP.QUESTION;
+						} else if (!helper.isQuestionDoneByAll(steps[currentStep])) {
+							lg("question not done for all");
+							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+						} else if (
+							helper.allowChooseZonePart1(steps[currentStep], teamKey)
+						) {
+							newState.gameStep = GAME_STEP.CHOOSE_ZONE;
+						} else if (!helper.isAllZonesChoosed(steps[currentStep])) {
+							lg("step null");
+							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+						} else {
+							newState.gameStep = GAME_STEP.NULL;
+						}
+					} else {
+						newState.gameStep = GAME_STEP.NULL;
+					}
+				} else {
+					newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
+				}
 			}
 
 			return newState;

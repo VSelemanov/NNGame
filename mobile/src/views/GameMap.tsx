@@ -184,6 +184,7 @@ class GameMap extends React.Component<Store, IS> {
 						token={this.props.session.token}
 						gameMap={this.props.session.status.gameMap}
 						chooseZone={this.props.chooseZone}
+						chooseDisabled={gameStep !== GAME_STEP.CHOOSE_ZONE}
 						// chooseZone={this.props.chooseZone}
 					/>
 				</View>

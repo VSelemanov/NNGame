@@ -9,7 +9,8 @@ import { store } from "../store";
 import jwt_decode from "jwt-decode";
 import {
 	IGameMap,
-	IGameStatus
+	IGameStatus,
+	IGamePart1Step
 } from "../../../newback/src/helper/Room/interfaces";
 import { ITeamsInRoom } from "../../../newback/src/helper/Team/interfaces";
 export class Helper {
@@ -84,13 +85,44 @@ export class Helper {
 		}
 	}
 	public isFirstZoneCompleted(teams: ITeamsInRoom) {
-		if (
+		return (
 			teams.team1.zones === 1 &&
 			teams.team1.zones === 1 &&
 			teams.team1.zones === 1
+		);
+	}
+	public isQuestionStartedForTeam(step: IGamePart1Step, teamKey: string) {
+		return step.responses[teamKey].response === null;
+	}
+	public isQuestionDoneByAll(step: IGamePart1Step) {
+		const { team1, team2, team3 } = step.responses;
+		return team1.response && team2.response && team3.response;
+	}
+	public allowChooseZonePart1(step: IGamePart1Step, teamKey: string) {
+		if (
+			step.teamQueue &&
+			step.allowZones.team1 !== null &&
+			step.allowZones.team2 !== null &&
+			step.allowZones.team3 !== null
 		) {
-			return true;
+			if (step.teamQueue[0] === teamKey && step.allowZones[teamKey] > 0) {
+				return true;
+			} else if (
+				step.teamQueue[1] === teamKey &&
+				step.allowZones[step.teamQueue[0]] == 0 &&
+				step.allowZones[teamKey] > 0
+			) {
+				return true;
+			}
 		}
+		return false;
+	}
+	public isAllZonesChoosed(step: IGamePart1Step) {
+		return (
+			step.allowZones.team1 === 0 &&
+			step.allowZones.team2 === 0 &&
+			step.allowZones.team3 === 0
+		);
 	}
 }
 

@@ -11,6 +11,7 @@ import { IMapZone } from "../../../../newback/src/interfaces";
 interface IP {
 	gameMap: IGameMap;
 	token: string;
+	chooseDisabled: boolean
 	chooseZone(z: string, token): void;
 }
 export default class Map extends React.Component<IP> {
@@ -26,7 +27,7 @@ export default class Map extends React.Component<IP> {
 							name={el}
 							mapZone={this.props.gameMap[el]}
 							nameD={areasSvgInfo[el].nameD}
-							disabled={false}
+							disabled={this.props.chooseDisabled}
 							token={this.props.token}
 							chooseZone={this.props.chooseZone}
 						/>
