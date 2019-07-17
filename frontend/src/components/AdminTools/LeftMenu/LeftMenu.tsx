@@ -12,9 +12,6 @@ export const menuItems = [
 ];
 
 class LeftMenu extends React.Component {
-  constructor(props: {}) {
-    super(props);
-  }
   public render () {
     return(
       <div className={style.main}>

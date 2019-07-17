@@ -4,8 +4,8 @@ import 'react-table/react-table.css';
 import style from "./AdminTools.module.scss";
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
 import { connect } from 'react-redux';
-import store from '../../store';
-import { push } from 'connected-react-router';
+// import store from '../../store';
+// import { push } from 'connected-react-router';
 import { getAllTeams } from '../../toServer/requests';
 
 class ListTeams extends React.Component <any, any>{

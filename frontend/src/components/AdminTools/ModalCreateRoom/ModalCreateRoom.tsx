@@ -1,9 +1,9 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { mapDispatchToProps, mapStateToProps } from "../../exports";
+import { mapDispatchToProps, mapStateToProps } from "../../../exports";
 import style from "./ModalCreateRoom.module.scss";
-import ReactSelect from "../ReactSelect/ReactSelect";
-import { getAllTeams } from "../../toServer/requests";
+import ReactSelect from "../../ReactSelect/ReactSelect";
+import { getAllTeams } from "../../../toServer/requests";
 
 class ModalCreateRoom extends React.Component<any, any> {
   constructor(props: any) {

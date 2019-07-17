@@ -2,7 +2,7 @@ import React from "react";
 import style from "./AdminTools.module.scss";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
-import LeftMenu from "../LeftMenu/LeftMenu";
+import LeftMenu from "./LeftMenu/LeftMenu";
 import AdminToolsRouting from "./AdminToolsRouting";
 
 class MainAdminTools extends React.Component<any, any> {

@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
 import KeyboardWindowAdmin from '../KeyboardWindowAdmin/KeyboardWindowAdmin';
 import store from '../../store';
-import ModalCreateTeam from '../ModalCreateTeam/ModalCreateTeam';
-import ModalCreateRoom from '../ModalCreateRoom/ModalCreateRoom';
+import ModalCreateTeam from '../AdminTools/ModalCreateTeam/ModalCreateTeam';
+import ModalCreateRoom from '../AdminTools/ModalCreateRoom/ModalCreateRoom';
 
 class Map extends React.Component<any, any> {
 	constructor(props: any) {
@@ -19,6 +19,7 @@ class Map extends React.Component<any, any> {
 			isNumQuestionModal: false,
 			numQuestion: [],
 			numResponses: [],
+			numAllowZones: {},
 			isNumStarted: false,
       gameMap: {},
 		};
@@ -115,6 +116,13 @@ class Map extends React.Component<any, any> {
 							isNumQuestionModal: true
 						})
 					}
+					if(answers === 3 && step.allowZones){
+						const numAllowZones = step.allowZones;
+						Object.keys(numAllowZones).includes('_id') && delete numAllowZones['_id'];
+						this.setState({
+							numAllowZones
+						})
+					}
 				}
 			};
 			client.subscribe('/api/room/gamestatus', handler);
@@ -167,12 +175,15 @@ class Map extends React.Component<any, any> {
 							Следующий вопрос
 						</button>
 					</div>
-					{this.state.isNumQuestionModal && (
+			{/* нужно без воскл знака! убери не забудь */}
+					{!this.state.isNumQuestionModal && (
 						<KeyboardWindowAdmin
+							closeFunc={this.closeFunc}
 							teams={this.state.teams}
 							question={this.state.numQuestion}
 							responses={this.state.numResponses}
 							isStarted={this.state.isNumStarted}
+							allowZones={this.state.numAllowZones}
 						/>
 					)}
 					<div className={style.map_wrapper}>

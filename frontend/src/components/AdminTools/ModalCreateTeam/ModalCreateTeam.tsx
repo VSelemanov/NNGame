@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { mapDispatchToProps, mapStateToProps } from '../../exports';
+import { mapDispatchToProps, mapStateToProps } from '../../../exports';
 import style from './ModalCreateTeam.module.scss';
 
 class ModalCreateTeam extends React.Component<any, any> {
