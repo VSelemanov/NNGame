@@ -24,7 +24,7 @@ const ctrl = {
     }
   ),
   colorZone: trycatcher(
-    async (req: IDecoratedRequest<{ _id: string; zone: string }>, h) => {
+    async (req: IDecoratedRequest<{ _id: string | null; zone: string }>, h) => {
       const { _id, zone } = req.payload;
       return await methods.colorZone(_id, zone);
     },
