@@ -3,6 +3,10 @@ import Select from 'react-select';
 import style from './ReactSelect.module.scss';
 
 const customStyles = {
+	valueContainer: (styles: any) => ({
+		...styles,
+		height: 46
+	}),
 	control: (styles: any, { isFocused, isDisabled }: any) => ({
 		...styles,
 		// backgroundColor: isDisabled ? '#F5F5F5' : 'white',
@@ -10,10 +14,11 @@ const customStyles = {
 		// borderRadius: '4px',
 		// borderStyle: 'solid',
 		// borderWidth: 1,
-    // padding: '0',
-    // height: '30px',
-    fontFamily: "Preslav",
-    // fontSize: "20px",
+		// padding: '0',
+		// height: '30px',
+		fontFamily: 'Preslav',
+		height: 46
+		// fontSize: "20px",
 		// color: isDisabled ? '#F5F5F5' : '#000000',
 		// boxShadow: null,
 		// '&:hover': {
@@ -21,10 +26,10 @@ const customStyles = {
 		// }
 	}),
 	option: (styles: any, { isSelected }: any) => ({
-    ...styles,
-		fontFamily: "Preslav",
-    // fontSize: "20px",
-    // height: '30px',
+		...styles,
+		fontFamily: 'Preslav'
+		// fontSize: "20px",
+		// height: '30px',
 		// backgroundColor: isSelected ? '#D6D6D6' : 'white',
 		// color: '#5b5b5b',
 		// textOverflow: 'ellipsis',
@@ -34,7 +39,7 @@ const customStyles = {
 		// 	backgroundColor: isSelected ? '#D6D6D6' : '#F3F3F3',
 		// 	whiteSpace: 'normal'
 		// }
-	}),
+	})
 	// dropdownIndicator: (styles: any) => ({
 	// 	...styles,
 	// 	padding: '8px 4px'
@@ -63,15 +68,16 @@ class ReactSelect extends React.Component<any> {
 	public data: any = [];
 
 	public render() {
-    const size = this.props.size;
-    // console.log('ReactSelect', this.props.data)
+		const size = this.props.size;
+		// console.log('ReactSelect', this.props.data)
 		return (
 			<div className={size !== undefined ? `${style.main} ${style[size]}` : style.main}>
 				<div className={style.field}>
 					<Select
-            options={this.props.data}
-            styles={customStyles}
-            defaultValue={this.props.data[0]}
+						className={'react-select'}
+						options={this.props.data}
+						styles={customStyles}
+						defaultValue={this.props.data[0]}
 						onChange={this.props.func}
 						isSearchable={true}
 						// isDisabled={this.props.disabled}
