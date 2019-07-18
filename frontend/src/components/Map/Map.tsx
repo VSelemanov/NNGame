@@ -77,7 +77,7 @@ class Map extends React.Component<any, any> {
 				auth: { headers: { authorization: `Bearer ${store.getState().global.appToken}` } }
 			});
 			const handler = (message: any, flags: any) => {
-				console.log(message);
+				// console.log(message);
 
 				// запись данных о командах
 				if (message.teams) {
@@ -100,7 +100,6 @@ class Map extends React.Component<any, any> {
 				// запись данных о вопросе первого тура
 				if(message.currentPart && message.currentPart === 1 && message.part1 && message.part1.currentStep !== null){
 					const step = message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
-					console.log(step)
 					if(step.question){
 						const question = step.question;
 						Object.keys(question).includes('_id') && delete question['_id'];
