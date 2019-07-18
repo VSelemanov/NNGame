@@ -45,7 +45,7 @@ class ModalColoredZone extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      teamId: ""
+      teamId: null
     };
   }
   public getTeamData = (teams: any) => {
