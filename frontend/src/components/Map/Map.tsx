@@ -176,7 +176,7 @@ class Map extends React.Component<any, any> {
 						</button>
 					</div>
 			{/* нужно без воскл знака! убери не забудь */}
-					{!this.state.isNumQuestionModal && (
+					{this.state.isNumQuestionModal && (
 						<KeyboardWindowAdmin
 							closeFunc={this.closeFunc}
 							teams={this.state.teams}
