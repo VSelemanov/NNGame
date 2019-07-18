@@ -15,7 +15,8 @@ import {
   ErrorMessages,
   allowZonesDefault,
   responsesDefault,
-  winnerCheckResults
+  winnerCheckResults,
+  subscriptionGameStatuspath
 } from "./constants";
 import { roomDefault } from "./constants";
 import { teams, mapZones } from "../../constants";
@@ -63,7 +64,11 @@ const methods = {
           teams: TeamsInRoom
         }
       } as IRoomBase);
+
       const res = await Room.save();
+
+      // await server.server.publish(subscriptionGameStatuspath, res.gameStatus);
+
       return res;
     },
     {

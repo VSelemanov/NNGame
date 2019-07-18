@@ -103,7 +103,7 @@ const methods = {
     async (zoneKey: string, teamKey: string) => {
       const Room: IRoom = await RoomMethods.colorZone(zoneKey, teamKey);
       const currentPart = Room.gameStatus.currentPart;
-      if (currentPart === 1) {
+      if (currentPart === 1 && Room.gameStatus.part1.steps.length > 0) {
         const part: IGamePart1 = Room.gameStatus.part1;
         const step = part.steps[part.currentStep || 0];
         step.allowZones[teamKey] = step.allowZones[teamKey] - 1;
