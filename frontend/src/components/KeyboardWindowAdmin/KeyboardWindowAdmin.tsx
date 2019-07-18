@@ -73,7 +73,7 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
           {this.props.isStarted && answers === 3 && (
             <button
               className={style.button}
-              onClick={() => this.props.closeFunc("isNumQuestionModal")}
+              onClick={() => this.props.closeFunc()}
             >
               Закрыть
             </button>

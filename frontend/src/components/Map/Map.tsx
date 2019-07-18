@@ -31,6 +31,13 @@ class Map extends React.Component<any, any> {
 		});
 	};
 
+	public closeFuncNumModal = () => {
+		this.setState({
+			isNumQuestionModal: false,
+			numAllowZones: {}
+		});
+	};
+
 	public createRoom = (theme: string, team1: string, team2: string, team3: string) => {
 		createRoom(theme, team1, team2, team3).then(() =>
 			this.setState({
@@ -93,6 +100,7 @@ class Map extends React.Component<any, any> {
 				// запись данных о вопросе первого тура
 				if(message.currentPart && message.currentPart === 1 && message.part1 && message.part1.currentStep !== null){
 					const step = message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
+					console.log(step)
 					if(step.question){
 						const question = step.question;
 						Object.keys(question).includes('_id') && delete question['_id'];
@@ -116,7 +124,7 @@ class Map extends React.Component<any, any> {
 							isNumQuestionModal: true
 						})
 					}
-					if(answers === 3 && step.allowZones){
+					if(answers === 3 && step.allowZones && step.isStarted){
 						const numAllowZones: any ={};
 						Object.keys(step.responses).map(key => numAllowZones[key]= step.responses[key].result );
 						this.setState({
@@ -178,7 +186,7 @@ class Map extends React.Component<any, any> {
 			{/* нужно без воскл знака! убери не забудь */}
 					{this.state.isNumQuestionModal && (
 						<KeyboardWindowAdmin
-							closeFunc={this.closeFunc}
+							closeFunc={this.closeFuncNumModal}
 							teams={this.state.teams}
 							question={this.state.numQuestion}
 							responses={this.state.numResponses}
