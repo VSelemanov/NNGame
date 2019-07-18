@@ -14,9 +14,9 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
   public getStyle(allowZones: any, teamName: string) {
     if(allowZones && Object.keys(allowZones).length === 3 && allowZones[teamName] !== null){
       switch(allowZones[teamName]){
-        case '2': return style.first;
-        case '1': return '';
-        case '0': return style.third;
+        case 2: return style.first;
+        case 1: return '';
+        case 0: return style.third;
         default: return ''
       } 
     }
@@ -36,7 +36,8 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
   }
 
   render() {
-    const { responses, question, allowZones } = this.props;
+    const { responses, question } = this.props;
+    const { allowZones } = this.props;
     const answers = responses
       ? Object.keys(responses).filter(key => responses[key].response !== null).length
       : 0;
