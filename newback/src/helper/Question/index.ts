@@ -22,7 +22,7 @@ const methods = {
         where[key] = params[key];
       }
       const minCount = (await server.Question.find(where)
-        .sort({ count: -1 })
+        .sort({ count: 1 })
         .limit(1))[0].count;
 
       const Questions = await server.Question.find({
