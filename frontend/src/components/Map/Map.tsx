@@ -117,8 +117,8 @@ class Map extends React.Component<any, any> {
 						})
 					}
 					if(answers === 3 && step.allowZones){
-						const numAllowZones = step.allowZones;
-						Object.keys(numAllowZones).includes('_id') && delete numAllowZones['_id'];
+						const numAllowZones: any ={};
+						Object.keys(step.responses).map(key => numAllowZones[key]= step.responses[key].result );
 						this.setState({
 							numAllowZones
 						})
@@ -176,7 +176,7 @@ class Map extends React.Component<any, any> {
 						</button>
 					</div>
 			{/* нужно без воскл знака! убери не забудь */}
-					{this.state.isNumQuestionModal && (
+					{!this.state.isNumQuestionModal && (
 						<KeyboardWindowAdmin
 							closeFunc={this.closeFunc}
 							teams={this.state.teams}

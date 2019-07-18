@@ -12,6 +12,7 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
   }
 
   public getStyle(allowZones: any, teamName: string) {
+    console.log(allowZones)
     if(allowZones && Object.keys(allowZones).length === 3 && allowZones[teamName] !== null){
       switch(allowZones[teamName]){
         case 2: return style.first;
@@ -74,7 +75,7 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
               className={style.button}
               onClick={() => this.props.closeFunc("isNumQuestionModal")}
             >
-              Закрыть окно
+              Закрыть
             </button>
           )}
         </div>
