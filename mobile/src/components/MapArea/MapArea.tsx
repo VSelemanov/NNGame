@@ -6,6 +6,7 @@ import { IMapZone } from "../../../../newback/src/interfaces";
 import { TEAM, COLORS } from "../../modules/enum";
 
 interface IP {
+	currentPart: number;
 	name: string;
 	nameD: string;
 	areaD: string;
@@ -25,7 +26,8 @@ export default class MapArea extends React.Component<IP> {
 			chooseZone,
 			disabled,
 			mapZone,
-			token
+			token,
+			currentPart
 		} = this.props;
 		let color = COLORS.LL_BROWN;
 		switch (mapZone.team) {
@@ -50,7 +52,7 @@ export default class MapArea extends React.Component<IP> {
 					strokeWidth="3"
 					strokeLinejoin="round"
 					onPress={() => chooseZone(name, token)}
-					disabled={disabled}
+					disabled={disabled && !mapZone.team && currentPart !== 1}
 				/>
 				<Path d={nameD} fill={"#232323"} />
 			</Svg>

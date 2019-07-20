@@ -79,6 +79,8 @@ class GameMap extends React.Component<Store, IS> {
 		return Object.keys(this.props.session.status.teams).map((team, i) => {
 			const thisTeam: ITeamInRoom = this.props.session.status.teams[team];
 			const { name, zones } = thisTeam;
+			const { currentStep, steps } = this.props.session.status.part1;
+
 			let gradientColors = [];
 			let borderColors = {
 				light: "",
@@ -110,13 +112,21 @@ class GameMap extends React.Component<Store, IS> {
 				<View key={team} style={styles.teamArea}>
 					<View style={styles.teamInfo}>
 						<Text style={styles.teamTitle}>{name}</Text>
+						<Text style={styles.teamHaveAllowZones}>
+							{this.props.session.status.currentPart === 1 &&
+							steps &&
+							steps[currentStep] &&
+							steps[currentStep].allowZones[team]
+								? `Доступно: ${steps[currentStep].allowZones[team]}`
+								: ""}
+						</Text>
 						<View style={styles.teamHaveArea}>
 							<Text style={styles.teamHaveTitle}>Областей:</Text>
 							<Text style={styles.teamHaveNumber}>{zones}</Text>
-							<Image
+							{/* <Image
 								source={require("../../assets/banners/red.png")}
 								style={styles.teamHaveImg}
-							/>
+							/> */}
 						</View>
 					</View>
 					<LinearGradient
@@ -184,6 +194,7 @@ class GameMap extends React.Component<Store, IS> {
 						token={this.props.session.token}
 						gameMap={this.props.session.status.gameMap}
 						chooseZone={this.props.chooseZone}
+						currentPart={this.props.session.status.currentPart}
 						chooseDisabled={gameStep !== GAME_STEP.CHOOSE_ZONE}
 						// chooseZone={this.props.chooseZone}
 					/>
@@ -250,6 +261,10 @@ const styles = StyleSheet.create({
 	teamTitle: {
 		fontSize: rem * 0.8,
 		color: COLORS.N_WHITE
+	},
+	teamHaveAllowZones: {
+		fontSize: rem * 0.6,
+		color: COLORS.NN_WHITE
 	},
 	teamHaveArea: {
 		// flex: 1,

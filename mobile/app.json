@@ -2,7 +2,7 @@
   "expo": {
     "name": "Битва за Нижний",
     "slug": "nn_game",
-    "privacy": "public",
+    "privacy": "unlisted",
     "sdkVersion": "33.0.0",
     "platforms": [
       "ios",
@@ -10,7 +10,7 @@
     ],
     "version": "1.0.0",
     "orientation": "landscape",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/appIcon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -24,6 +24,10 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "ru.romatur.nngame",
+      "versionCode": 1
     }
   }
 }

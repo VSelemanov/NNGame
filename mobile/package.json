@@ -2,10 +2,9 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "test": "node_modules/.bin/jest test/**/*.spec.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "build:android": "expo build:android --release-channel prod"
   },
   "dependencies": {
     "@types/superagent": "^4.1.3",
