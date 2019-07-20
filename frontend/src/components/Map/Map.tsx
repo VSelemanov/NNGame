@@ -175,7 +175,7 @@ class Map extends React.Component<any, any> {
         </div>
         <div className={style.right_panel}>
           <div className={style.button_div}>
-            {/* <button
+            <button
               className={style.next_question}
               onClick={() => this.setState({ isModalTeam: true })}
             >
@@ -186,7 +186,7 @@ class Map extends React.Component<any, any> {
               onClick={() => this.setState({ isModalRoom: true })}
             >
               Создать комнату
-            </button> */}
+            </button>
             {!this.state.isGameStarted && (
               <button className={style.next_question} onClick={() => startGame()}>
                 Старт Игры
