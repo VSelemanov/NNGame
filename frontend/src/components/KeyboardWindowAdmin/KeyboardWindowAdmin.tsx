@@ -11,19 +11,30 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
     };
   }
 
-  public getStyle(allowZones: any, teamName: string) {
-    console.log(allowZones)
-    if(allowZones && Object.keys(allowZones).length === 3 && allowZones[teamName] !== null){
-      switch(allowZones[teamName]){
-        case 2: return style.first;
-        case 1: return '';
-        case 0: return style.third;
-        default: return ''
-      } 
+  public getStyle(responses: any, teamName: string) {
+    const allowZones: any = {};
+    Object.keys(responses).map(key => (allowZones[key] = responses[key].result));
+    if (Object.keys(allowZones).length === 3 && allowZones[teamName] !== null) {
+      switch (allowZones[teamName]) {
+        case 2:
+          return style.first;
+        case 1:
+          return "";
+        case 0:
+          return style.third;
+        default:
+          return "";
+      }
     }
     return "";
   }
-
+  // if(answers === 3 && step.allowZones && step.isStarted){
+  //   const numAllowZones: any ={};
+  //   Object.keys(step.responses).map(key => numAllowZones[key]= step.responses[key].result );
+  //   this.setState({
+  //     numAllowZones
+  //   })
+  // }
   public getResult(data: any, teamName: string) {
     const result = data[teamName];
     return result ? (
@@ -38,7 +49,6 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
 
   render() {
     const { responses, question } = this.props;
-    const { allowZones } = this.props;
     const answers = responses
       ? Object.keys(responses).filter(key => responses[key].response !== null).length
       : 0;
@@ -52,32 +62,31 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
             <p>{answers === 3 && question ? question.numericAnswer : "Ожидание ответов команд"}</p>
           </div>
           <div className={style.footer}>
-            <div className={`${style.button_team1} ${this.getStyle(allowZones, "team1")}`}>
+            <div className={`${style.button_team1} ${this.getStyle(responses, "team1")}`}>
               {answers === 3 ? this.getResult(responses, "team1") : <span>-</span>}
             </div>
-            <div className={`${style.button_team2} ${this.getStyle(allowZones, "team2")}`}>
+            <div className={`${style.button_team2} ${this.getStyle(responses, "team2")}`}>
               {answers === 3 ? this.getResult(responses, "team2") : <span>-</span>}
             </div>
-            <div className={`${style.button_team3} ${this.getStyle(allowZones, "team3")}`}>
+            <div className={`${style.button_team3} ${this.getStyle(responses, "team3")}`}>
               {answers === 3 ? this.getResult(responses, "team3") : <span>-</span>}
             </div>
           </div>
-          {!this.props.isStarted && (
-            <button className={style.button} onClick={() => startTimer()}>
-              Начало опроса
-            </button>
-          )}
-          {this.props.isStarted && answers !== 3 && (
-            <img className={style.clock} src={img} alt="clock" />
-          )}
-          {this.props.isStarted && answers === 3 && (
-            <button
-              className={style.button}
-              onClick={() => this.props.closeFunc()}
-            >
-              Закрыть
-            </button>
-          )}
+          <div className={style.button_wrapper}>
+            {!this.props.isStarted && (
+              <button className={style.button} onClick={() => startTimer()}>
+                Начало опроса
+              </button>
+            )}
+            {this.props.isStarted && answers !== 3 && (
+              <img className={style.clock} src={img} alt="clock" />
+            )}
+            {this.props.isStarted && answers === 3 && (
+              <button className={style.button} onClick={() => this.props.closeFunc()}>
+                Закрыть
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );

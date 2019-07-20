@@ -52,7 +52,7 @@
       height: 40%;
       width: 30%;
       position: relative;
-      top:0;
+      top: 0;
       background: url("../../img/result_team1_bg.svg") no-repeat;
       display: flex;
       flex-direction: column;
@@ -82,7 +82,7 @@
       height: 40%;
       width: 30%;
       position: relative;
-      top:0;
+      top: 0;
       background: url("../../img/result_team2_bg.svg") no-repeat;
       display: flex;
       justify-content: flex-start;
@@ -113,7 +113,7 @@
       height: 40%;
       width: 30%;
       position: relative;
-      top:0;
+      top: 0;
       background: url("../../img/result_team3_bg.svg") no-repeat;
       display: flex;
       justify-content: flex-start;
@@ -148,20 +148,22 @@
     animation: third 3s 1 ease;
     animation-fill-mode: forwards;
   }
-  .button {
-    height: 60px;
-    width: 300px;
-    border-radius: 4px;
-    background: #e7b777;
-    border: 2px solid #3f3f3f;
-    font-family: "Preslav", sans-serif;
-    font-size: 30px;
-  }
-  .clock {
-    position: relative;
-    bottom: 7%;
-    width: 120px;
-    animation: rotate 3s infinite linear;
+  .button_wrapper {
+    .button {
+      height: 60px;
+      width: 300px;
+      border-radius: 4px;
+      background: #e7b777;
+      border: 2px solid #3f3f3f;
+      font-family: "Preslav", sans-serif;
+      font-size: 30px;
+    }
+    .clock {
+      position: relative;
+      bottom: 50%;
+      width: 120px;
+      animation: rotate 3s infinite linear;
+    }
   }
 }
 
@@ -182,18 +184,18 @@
 }
 @keyframes first {
   0% {
-    top: 0
+    top: 0;
   }
   100% {
-    top: -20%
+    top: -20%;
   }
 }
 @keyframes third {
   0% {
-    top: 0
+    top: 0;
   }
   100% {
-    top: 20%
+    top: 20%;
   }
 }
 
@@ -266,7 +268,6 @@
     .clock {
       height: 7vw;
       bottom: 4vw;
-
     }
   }
 }
