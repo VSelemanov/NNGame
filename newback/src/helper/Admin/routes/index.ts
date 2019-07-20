@@ -49,7 +49,9 @@ const routes: ServerRoute[] = [
       ...colorZone,
       validate: {
         payload: Joi.object({
-          _id: Joi.string().required(),
+          _id: Joi.string()
+            .required()
+            .allow(null),
           zone: Joi.string().required()
         })
       },

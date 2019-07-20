@@ -5,6 +5,15 @@ import methods from "../";
 import { EntityName } from "../constants";
 
 const ctrl = {
+  read: trycatcher(
+    async (req: IDecoratedRequest<{}>, h) => {
+      return await methods.read();
+    },
+    {
+      logMessage: `${EntityName} read request`,
+      isRequest: true
+    }
+  ),
   create: trycatcher(
     async (req: IDecoratedRequest<ITeamBase>, h) => {
       const TeamData: ITeamBase = req.payload;
@@ -42,7 +51,7 @@ const ctrl = {
   response: trycatcher(
     async (
       req: IDecoratedRequest<
-        { response: number; timer: number },
+        { response: number; timer?: number },
         {},
         {},
         ITeamCredentials

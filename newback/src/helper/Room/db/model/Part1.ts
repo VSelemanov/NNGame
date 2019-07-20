@@ -53,6 +53,11 @@ const Part1 = new Schema({
       question: QuestionSchema,
       responses: Part1ResponsesSchema,
       allowZones: Part1AllowZonesSchema,
+      teamQueue: [
+        {
+          type: String
+        }
+      ],
       isStarted: {
         type: Boolean,
         default: false

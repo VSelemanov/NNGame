@@ -3,14 +3,17 @@ import { getAdminLogin } from "./default";
 import { server } from "../../src/server";
 import { APIRoute, HTTPMethods } from "../../src/constants";
 import { routePath } from "../../src/helper/Question/constants";
-import { IQuestionBase } from "../../src/helper/Question/interfaces";
+import { IQuestionBase, IQuestion } from "../../src/helper/Question/interfaces";
 import { setResponse } from "./lib/response";
 import { expect } from "chai";
+import QuestionMethods from "../../src/helper/Question";
 
 When(
   "я делаю запрос создания цифрового вопроса от лица админа l={string} p={string}",
   async function(name, password) {
     const token = await getAdminLogin(name, password);
+
+    const Questions = await server.Question.find();
 
     const res = await server.server.inject({
       url: `${APIRoute}/${routePath}`,
@@ -20,7 +23,7 @@ When(
       },
       payload: {
         isNumeric: true,
-        title: "вопрос",
+        title: `вопрос${Questions.length}`,
         numericAnswer: 100
       } as IQuestionBase
     });
@@ -84,4 +87,14 @@ Then("в списке вопросов появился вариативный �
 
   expect(Question[0].isNumeric).to.eql(false);
   expect((Question[0].answers || []).length).to.eql(4);
+});
+
+const randomQuestions: IQuestion[] = [];
+When("я запрашиваю случайный числовой вопрос", async function() {
+  const res = await QuestionMethods.random({ isNumeric: true });
+  randomQuestions.push(res);
+});
+
+Then("это должны быть два разных вопроса", async function() {
+  expect(randomQuestions[0]._id === randomQuestions[1]._id).to.eql(false);
 });

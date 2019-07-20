@@ -1,5 +1,15 @@
 import { routePath } from "../constants";
 
+export const read = {
+  description: "Получить список команд",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};
+
 export const create = {
   description: "Создать команду",
   /*notes:

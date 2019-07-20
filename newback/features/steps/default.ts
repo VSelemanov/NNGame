@@ -1,4 +1,11 @@
-import { Given, BeforeAll, AfterAll, Then, setDefaultTimeout } from "cucumber";
+import {
+  Given,
+  BeforeAll,
+  AfterAll,
+  Then,
+  setDefaultTimeout,
+  When
+} from "cucumber";
 import { server } from "../../src/server";
 import { expect } from "chai";
 import utils from "../../src/utils";
@@ -125,4 +132,14 @@ Given("активен тур номер {int}", async function(partNumber) {
   Room.gameStatus.currentPart = 1;
 
   await Room.save();
+});
+
+const randomResults: number[] = [];
+
+When("я запускаю генератор случайных чисел с сохранением ответа", function() {
+  randomResults.push(utils.getRandomInt(0, 100));
+});
+
+Then("эти ответы не должны быть равны", function() {
+  expect(randomResults[0] === randomResults[1]).to.eql(false);
 });

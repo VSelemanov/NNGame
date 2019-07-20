@@ -11,7 +11,8 @@ const ctrl = {
       return await methods.create(RoomData);
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} create request`,
+      isRequest: true
     }
   )
 };

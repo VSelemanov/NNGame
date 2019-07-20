@@ -18,6 +18,11 @@ TeamInRoomSchema.add({
   }
 });
 
+TeamInRoomSchema.path("name", {
+  type: String,
+  required: true
+});
+
 export const teamsInRoom = new Schema({
   ...baseFlds,
   [teams.team1]: TeamInRoomSchema,
