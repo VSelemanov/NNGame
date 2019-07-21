@@ -9,8 +9,8 @@
     width: 280px;
 		min-height: 680px;
 		height: 100%;
-    background: #b09770;
 		.command_info {
+			background: #b09770;
 			border-bottom: 2px solid #bea47e;
 			height: 33%;
 			min-height: 225px;
@@ -70,19 +70,24 @@
 		min-height: 420px;
 		.button_div {
 			position: relative;
+			z-index: 3;
 			top: 70%;
 			height: 200px;
 			display: flex;
 			flex-direction: column;
 			justify-content: flex-start;
+			a{
+				text-decoration: none;
+				color: #000;
+			}
 			.next_question {
-				z-index: 2;
 				background-color: #e7c999;
 				border: 2px solid #3f3f3f;
 				width: 150px;
 				height: 30px;
 				margin: 3px;
 				border-radius: 4px;
+				cursor: pointer;
 			}
 			.next_question:hover {
 				background-color: #fff;

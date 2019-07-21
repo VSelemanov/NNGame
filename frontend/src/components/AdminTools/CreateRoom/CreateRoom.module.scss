@@ -1,0 +1,57 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  margin: 20px;
+  h3 {
+    font-family: "Preslav", sans-serif;
+    font-size: 30px;
+    text-align: center;
+  }
+  input {
+    height: 40px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: 1ps solid black;
+    margin-bottom: 20px;
+    font-family: "Preslav", sans-serif;
+    font-size: 32px;
+  }
+  .button_wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    button {
+      height: 45px;
+      width: 220px;
+      border-radius: 4px;
+      background: #e7b777;
+      border: 2px solid #3f3f3f;
+      font-family: "Preslav", sans-serif;
+      font-size: 22px;
+    }
+  }
+}
+
+.select_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+.team {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    font-family: "Preslav", sans-serif;
+    font-size: 28px;
+  }
+  select {
+    height: 30px;
+    border-radius: 4px;
+    font-family: "Preslav", sans-serif;
+    font-size: 28px;
+  }
+}

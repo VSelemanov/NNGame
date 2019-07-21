@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import style from "./KeyboardWindowAdmin.module.scss";
+import style from "./NumQuestionWindowAdmin.module.scss";
 import { startTimer } from "../../toServer/requests";
 import img from "../../img/awaiting_clock.svg";
 

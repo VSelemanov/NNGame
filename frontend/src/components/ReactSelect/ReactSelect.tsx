@@ -80,8 +80,8 @@ class ReactSelect extends React.Component<any> {
 						defaultValue={this.props.data[0]}
 						onChange={this.props.func}
 						isSearchable={true}
-						// isDisabled={this.props.disabled}
-					/>
+						placeholder='Выберите'
+/>
 				</div>
 			</div>
 		);
