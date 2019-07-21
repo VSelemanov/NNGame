@@ -175,7 +175,7 @@ class Map extends React.Component<any, any> {
         </div>
         <div className={style.right_panel}>
           <div className={style.button_div}>
-            <button
+            {/* <button
               className={style.next_question}
               onClick={() => this.setState({ isModalTeam: true })}
             >
@@ -186,7 +186,7 @@ class Map extends React.Component<any, any> {
               onClick={() => this.setState({ isModalRoom: true })}
             >
               Создать комнату
-            </button>
+            </button> */}
             {!this.state.isGameStarted && (
               <button className={style.next_question} onClick={() => startGame()}>
                 Старт Игры
@@ -210,7 +210,7 @@ class Map extends React.Component<any, any> {
           <div className={style.map_wrapper}>
             <MapVector teams={this.state.teams} gameMap={this.state.gameMap} />
           </div>
-          {this.state.isModalTeam && (
+          {/* {this.state.isModalTeam && (
             <ModalCreateTeam func={this.createTeam} closeFunc={this.closeFunc} />
           )}
           {this.state.isModalRoom && (
@@ -219,7 +219,7 @@ class Map extends React.Component<any, any> {
               func={this.createRoom}
               closeFunc={this.closeFunc}
             />
-          )}
+          )} */}
         </div>
       </div>
     );
