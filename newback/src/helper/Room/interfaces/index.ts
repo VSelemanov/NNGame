@@ -84,6 +84,7 @@ export interface IGameStatus {
   part1: IGamePart1;
   part2: IGamePart2;
   isStarted: boolean;
+  gameWinner: string | null;
 }
 
 export interface IRoomCreateRequest {

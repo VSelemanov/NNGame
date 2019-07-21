@@ -60,7 +60,8 @@ export const roomDefault: IRoomBase = {
     part2: {
       steps: [],
       teamQueue: []
-    }
+    },
+    gameWinner: null
   },
   isActive: true,
   theme: null

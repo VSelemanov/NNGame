@@ -20,6 +20,9 @@ const RoomSchema = new Schema({
     type: Boolean,
     required: true,
     default: false
+  },
+  gameWinner: {
+    type: String
   }
 });
 

@@ -15,8 +15,7 @@ import {
   ErrorMessages,
   allowZonesDefault,
   responsesDefault,
-  winnerCheckResults,
-  subscriptionGameStatuspath
+  winnerCheckResults
 } from "./constants";
 import { roomDefault } from "./constants";
 import { teams, mapZones } from "../../constants";
@@ -26,6 +25,7 @@ import QuestionMethods from "../Question";
 import TeamMethods from "../Team";
 import { IQuestion } from "../Question/interfaces";
 import utils from "../../utils";
+import { isFunction } from "util";
 
 const methods = {
   create: trycatcher(
@@ -328,6 +328,12 @@ const methods = {
         }
         if (step.winner && step.winner !== winnerCheckResults.draw) {
           part.teamQueue.shift();
+          if (part.steps.length === 3 && part.teamQueue.length === 0) {
+            methods.checkGameWinner(Room.gameStatus);
+            if (Room.gameStatus.gameWinner) {
+              Room.isActive = false;
+            }
+          }
         }
         Room.markModified("gameStatus.part2.teamQueue");
         Room.markModified("gameStatus.part2.steps");
@@ -484,7 +490,17 @@ const methods = {
     {
       logMessage: `${EntityName} team attack method`
     }
-  )
+  ),
+  checkGameWinner: (gameStatus: IGameStatus) => {
+    let firstPlace = Object.keys(teams)[0];
+    for (const key of Object.keys(teams)) {
+      if (gameStatus.teams[firstPlace].zones < gameStatus.teams[key].zones) {
+        firstPlace = key;
+      }
+    }
+    console.log({ firstPlace });
+    gameStatus.gameWinner = firstPlace;
+  }
 };
 
 export default methods;
