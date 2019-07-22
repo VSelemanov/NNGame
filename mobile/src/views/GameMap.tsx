@@ -200,6 +200,8 @@ class GameMap extends React.Component<Store, IS> {
 						chooseZone={this.props.chooseZone}
 						currentPart={this.props.session.status.currentPart}
 						chooseDisabled={gameStep !== GAME_STEP.CHOOSE_ZONE}
+						allowZones={this.props.session.allowZones}
+
 						// chooseZone={this.props.chooseZone}
 					/>
 					{gameStep === GAME_STEP.WAITING_FOR_START_OF_GAME ||
@@ -218,7 +220,7 @@ class GameMap extends React.Component<Store, IS> {
 								gameStep={gameStep}
 								color={
 									waiting.title === strings.redTeam
-										? COLORS.N_RED
+										? COLORS.D_RED
 										: waiting.title === strings.blueTeam
 										? COLORS.N_BLUE
 										: waiting.title === strings.whiteTeam

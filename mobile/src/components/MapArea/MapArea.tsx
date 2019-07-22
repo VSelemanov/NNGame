@@ -11,9 +11,10 @@ interface IP {
 	nameD: string;
 	areaD: string;
 	mapZone: IMapZone;
-	chooseZone(n: string, t: string): void;
+	chooseZone(n: string, t: string, a: number): void;
 	disabled: boolean;
 	token: string;
+	allowZones: number;
 }
 
 export default class MapArea extends React.Component<IP> {
@@ -27,8 +28,11 @@ export default class MapArea extends React.Component<IP> {
 			disabled,
 			mapZone,
 			token,
-			currentPart
+			currentPart,
+			allowZones
 		} = this.props;
+		lg("----------------");
+		lg(mapZone.team);
 		let color = COLORS.LL_BROWN;
 		switch (mapZone.team) {
 			case TEAM.WHITE:
@@ -51,8 +55,12 @@ export default class MapArea extends React.Component<IP> {
 					stroke={"#9F835A"}
 					strokeWidth="3"
 					strokeLinejoin="round"
-					onPress={() => chooseZone(name, token)}
-					disabled={disabled && !mapZone.team && currentPart !== 1}
+					onPress={() =>
+						allowZones > 0
+							? chooseZone(name, token, allowZones)
+							: lg("not allowed")
+					}
+					disabled={disabled || (mapZone.team !== null && currentPart === 1)}
 				/>
 				<Path d={nameD} fill={"#232323"} />
 			</Svg>

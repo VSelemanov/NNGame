@@ -12,6 +12,7 @@ export interface ISessionStore {
 	};
 	status: IGameStatus;
 	gameStep: GAME_STEP;
+	allowZones: number;
 }
 
 export interface ISessionActionsProps {
@@ -21,6 +22,7 @@ export interface ISessionActionsProps {
 	currentTeam: TEAM;
 	token: string;
 	status: IGameStatus;
+	allowZones: number;
 }
 
 export interface ISessionActions {
@@ -30,7 +32,7 @@ export interface ISessionActions {
 	connectToSocket(): void;
 	sendInviteCode(n: string): void;
 	sendAnswer(props: IAnswerQuestion, token: string): void;
-	chooseZone(zone: string, token: string): void;
+	chooseZone(zone: string, token: string, allowZones: number): void;
 }
 
 export interface IAnswerQuestion {

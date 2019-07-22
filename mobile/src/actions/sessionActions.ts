@@ -125,12 +125,13 @@ const actions: ISessionActions = {
 			}
 		};
 	},
-	chooseZone(zone: string, token: string) {
+	chooseZone(zone: string, token: string, allowZones: number) {
 		lg(zone);
 		return async (dispatch: any) => {
 			dispatch({
 				key,
-				type: ActionTypes.CHOOSE_ZONE_REQUEST
+				type: ActionTypes.CHOOSE_ZONE_REQUEST,
+				allowZones
 			});
 			try {
 				let response = await net.chooseZone(zone, token);
@@ -145,7 +146,8 @@ const actions: ISessionActions = {
 				Alert.alert(e);
 				dispatch({
 					key,
-					type: ActionTypes.CHOOSE_ZONE_FAILURE
+					type: ActionTypes.CHOOSE_ZONE_FAILURE,
+					allowZones
 				});
 			}
 		};

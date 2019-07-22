@@ -13,14 +13,15 @@ interface IP {
 	gameMap: IGameMap;
 	token: string;
 	chooseDisabled: boolean;
-	chooseZone(z: string, token): void;
+	chooseZone(z: string, token: string): void;
+	allowZones: number;
 }
 export default class Map extends React.Component<IP> {
 	public render() {
 		lg("NNMap rendered");
 		return (
 			<Svg height="100%" width="100%" viewBox="0 0 1854 1393" fill="none">
-				{Object.keys(areasSvgInfo).map((el: string, i: number) => {
+				{Object.keys(areasSvgInfo).map((el: string) => {
 					return (
 						<MapArea
 							key={el}
@@ -32,6 +33,7 @@ export default class Map extends React.Component<IP> {
 							disabled={this.props.chooseDisabled}
 							token={this.props.token}
 							chooseZone={this.props.chooseZone}
+							allowZones={this.props.allowZones}
 						/>
 					);
 				})}

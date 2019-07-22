@@ -128,7 +128,11 @@ export class Helper {
 	}
 	public isQuestionDoneByAll(step: IGamePart1Step) {
 		const { team1, team2, team3 } = step.responses;
-		return team1.response && team2.response && team3.response;
+		return (
+			team1.response !== null &&
+			team2.response !== null &&
+			team3.response !== null
+		);
 	}
 	public allowChooseZonePart1(step: IGamePart1Step, teamKey: TEAM): boolean {
 		const { allowZones, teamQueue } = step;

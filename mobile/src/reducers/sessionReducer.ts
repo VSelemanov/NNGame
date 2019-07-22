@@ -13,7 +13,8 @@ export const defaultState: ISessionStore = {
 	status: {},
 	teamKey: TEAM.WHITE,
 	token: "",
-	gameStep: GAME_STEP.ENTRANCE
+	gameStep: GAME_STEP.ENTRANCE,
+	allowZones: 0
 };
 
 export default (
@@ -89,6 +90,7 @@ export default (
 					lg("steps - 0");
 					if (teamKey === helper.teamChoosingFirstZone(teams)) {
 						lg("isFirstZoneChoose");
+						newState.allowZones = 1;
 						newState.gameStep = GAME_STEP.CHOOSE_ZONE;
 						newState.waiting = {
 							title: "",
@@ -144,8 +146,10 @@ export default (
 							lg("question not done for all");
 							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
 						} else if (
-							helper.allowChooseZonePart1(steps[currentStep], teamKey)
+							helper.allowChooseZonePart1(steps[currentStep], teamKey) &&
+							steps[currentStep].allowZones[teamKey] !== null
 						) {
+							newState.allowZones = steps[currentStep].allowZones[teamKey];
 							newState.waiting = {
 								title: "Ваша команда",
 								msg: "выбирает территорию"
@@ -195,6 +199,12 @@ export default (
 			return newState;
 		case ActionTypes.SEND_ANSWER_FAILURE:
 			// newState.waiting = false;
+			return newState;
+		case ActionTypes.CHOOSE_ZONE_REQUEST:
+			newState.allowZones = --action.allowZones;
+			return newState;
+		case ActionTypes.CHOOSE_ZONE_FAILURE:
+			newState.allowZones = ++action.allowZones;
 			return newState;
 		default:
 			return newState;
