@@ -6,10 +6,14 @@ export enum SCREENS {
 export enum GAME_STEP {
 	ENTRANCE = "entrance",
 	NULL = "null",
+	WAITING_FOR_START_OF_GAME = "waiting_for_start_of_game",
+	WAITING_FOR_TEAM = "waiting_for_team",
 	WAITING_FOR_OTHERS = "waiting_for_others",
 	WAITING_FOR_ADMIN = "waiting_for_admin",
+	WAITING_FOR_QUESTION = "waiting_for_question",
 	CHOOSE_ZONE = "choose zone",
-	QUESTION = "question"
+	QUESTION = "question",
+	QUESTION_DESC = "question_desc"
 }
 
 export enum TEAM {
@@ -17,6 +21,7 @@ export enum TEAM {
 	RED = "team3",
 	BLUE = "team2"
 }
+
 export enum COLORS {
 	N_WHITE = "#FFFFFF",
 	NN_WHITE = "#F8F3EB",

@@ -17,7 +17,7 @@ import NNMap from "../components/MapArea/NNMap";
 import MapGrid from "../components/MapGrid";
 import InputText from "../components/InputText";
 import Spinner from "../components/Spinner";
-import { COLORS } from "../modules/enum";
+import { COLORS, GAME_STEP } from "../modules/enum";
 import { HEIGHT, WIDTH, rem } from "../modules/constants";
 
 class Entrance extends React.Component<Store> {
@@ -71,7 +71,7 @@ class Entrance extends React.Component<Store> {
 					autoFocus={true}
 					type={"numeric"}
 				/>
-				{this.props.session.waiting ? (
+				{this.props.session.gameStep === GAME_STEP.WAITING_FOR_OTHERS ? (
 					<View style={styles.loading}>
 						<View style={styles.loadingBG} />
 						<Spinner size={rem * 4} />

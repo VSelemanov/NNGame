@@ -4,9 +4,12 @@ import { IGameStatus } from "../../../../newback/src/helper/Room/interfaces/inde
 export interface ISessionStore {
 	screen: SCREENS;
 	currentTeam: TEAM;
-	teamKey: string;
+	teamKey: TEAM;
 	token: string;
-	waiting: boolean;
+	waiting: {
+		title: string;
+		msg: string;
+	};
 	status: IGameStatus;
 	gameStep: GAME_STEP;
 }

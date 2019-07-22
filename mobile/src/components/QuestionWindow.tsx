@@ -64,7 +64,7 @@ export default class QuestionWindow extends React.Component<IP> {
 					<Text
 						style={{
 							marginTop: rem * 0.5,
-							fontSize: rem * 0.9,
+							fontSize: rem * 0.8,
 							color: COLORS.N_BLACK,
 							marginBottom: rem * 0.9,
 							textAlign: "center",

@@ -29,6 +29,19 @@ export const isDev =
 		? Constants.manifest.packagerOpts.dev
 		: false;
 
+export const strings = {
+	enterInviteCode: "Введите инвайт код",
+	waitingForOthers: "Ожидание других игроков...",
+	waitingForStartOfGame: "Ожидание старта игры",
+	zones: "Областей",
+	redTeam: "Красная команда",
+	blueTeam: "Синяя команда",
+	whiteTeam: "Белая команда",
+	isChoosingZone: "выбирает территорию",
+	chooseZone: "Выберите территорию",
+	waitNewQuestion: "Ожидайте новый вопрос"
+};
+
 export const areasSvgInfo: IAreaInfo = {
 	moscow: {
 		areaD:

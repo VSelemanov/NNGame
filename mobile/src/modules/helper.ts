@@ -3,16 +3,14 @@ import {
 	NavigationContainerComponent,
 	NavigationComponent
 } from "react-navigation";
-import { SCREENS, ActionTypes, TEAM } from "./enum";
+import { SCREENS, TEAM } from "./enum";
 import { isDev } from "./constants";
-import { store } from "../store";
-import jwt_decode from "jwt-decode";
 import {
-	IGameMap,
-	IGameStatus,
-	IGamePart1Step
+	IGamePart1Step,
+	IGameMap
 } from "../../../newback/src/helper/Room/interfaces";
 import { ITeamsInRoom } from "../../../newback/src/helper/Team/interfaces";
+import { IMapZone } from "../../../newback/src/interfaces";
 export class Helper {
 	private navigator: NavigationComponent;
 	constructor() {
@@ -73,56 +71,110 @@ export class Helper {
 	public isFirstZoneChoose(teams: ITeamsInRoom, teamKey: string) {
 		switch (teamKey) {
 			case TEAM.WHITE:
-				return teams.team2.zones === 0 && teams.team1.zones === 0;
+				return (
+					teams.team2 &&
+					teams.team2.zones === 0 &&
+					teams.team1 &&
+					teams.team1.zones === 0
+				);
 			case TEAM.BLUE:
 				return (
+					teams.team1 &&
 					teams.team1.zones !== 0 &&
+					teams.team2 &&
 					teams.team2.zones === 0 &&
+					teams.team3 &&
 					teams.team3.zones === 0
 				);
 			case TEAM.RED:
-				return teams.team2.zones !== 0 && teams.team3.zones === 0;
+				return (
+					teams.team2 &&
+					teams.team2.zones !== 0 &&
+					teams.team3 &&
+					teams.team3.zones === 0
+				);
 		}
+	}
+	public teamChoosingFirstZone(allTeams: ITeamsInRoom): TEAM | null {
+		const { team1, team2, team3 } = allTeams;
+		if (team2 && team2.zones === 0 && team1 && team1.zones === 0) {
+			return TEAM.WHITE;
+		} else if (
+			team1 &&
+			team1.zones !== 0 &&
+			team2 &&
+			team2.zones === 0 &&
+			team3 &&
+			team3.zones === 0
+		) {
+			return TEAM.BLUE;
+		} else if (team2 && team2.zones !== 0 && team3 && team3.zones === 0) {
+			return TEAM.RED;
+		}
+		return null;
 	}
 	public isFirstZoneCompleted(teams: ITeamsInRoom) {
 		return (
+			teams.team1 &&
 			teams.team1.zones === 1 &&
-			teams.team1.zones === 1 &&
-			teams.team1.zones === 1
+			teams.team2 &&
+			teams.team2.zones === 1 &&
+			teams.team3 &&
+			teams.team3.zones === 1
 		);
 	}
-	public isQuestionStartedForTeam(step: IGamePart1Step, teamKey: string) {
+	public isQuestionStartedForTeam(step: IGamePart1Step, teamKey: TEAM) {
 		return step.responses[teamKey].response === null;
 	}
 	public isQuestionDoneByAll(step: IGamePart1Step) {
 		const { team1, team2, team3 } = step.responses;
 		return team1.response && team2.response && team3.response;
 	}
-	public allowChooseZonePart1(step: IGamePart1Step, teamKey: string) {
+	public allowChooseZonePart1(step: IGamePart1Step, teamKey: TEAM): boolean {
+		const { allowZones, teamQueue } = step;
 		if (
-			step.teamQueue &&
-			step.allowZones.team1 !== null &&
-			step.allowZones.team2 !== null &&
-			step.allowZones.team3 !== null
+			allowZones &&
+			teamQueue &&
+			allowZones.team1 !== null &&
+			allowZones.team2 !== null &&
+			allowZones.team3 !== null
 		) {
-			if (step.teamQueue[0] === teamKey && step.allowZones[teamKey] > 0) {
-				return true;
-			} else if (
-				step.teamQueue[1] === teamKey &&
-				step.allowZones[step.teamQueue[0]] == 0 &&
-				step.allowZones[teamKey] > 0
+			if (
+				(step.teamQueue[0] === teamKey && allowZones[teamKey] > 0) ||
+				(teamQueue[1] === teamKey &&
+					allowZones[teamQueue[0]] === 0 &&
+					allowZones[teamKey] > 0)
 			) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	public teamChoosingZonePar1(step: IGamePart1Step): string | null {
+		const { teamQueue, allowZones } = step;
+		if (teamQueue && allowZones) {
+			return allowZones[teamQueue[0]] > 0 ? teamQueue[0] : teamQueue[1];
+		}
+
+		return null;
+	}
+
 	public isAllZonesChoosed(step: IGamePart1Step) {
 		return (
 			step.allowZones.team1 === 0 &&
 			step.allowZones.team2 === 0 &&
 			step.allowZones.team3 === 0
 		);
+	}
+
+	public isAllMapChoosed(gameMap: IGameMap): boolean {
+		Object.keys(gameMap).forEach((el: string) => {
+			if (!gameMap[el].team) {
+				return false;
+			}
+		});
+		return true;
 	}
 }
 

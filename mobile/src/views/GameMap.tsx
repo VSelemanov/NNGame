@@ -27,7 +27,7 @@ import InputText from "../components/InputText";
 import { COLORS, TEAM, ActionTypes, GAME_STEP } from "../modules/enum";
 import Constants from "expo-constants";
 import moment from "moment";
-import { HEIGHT, WIDTH, rem } from "../modules/constants";
+import { HEIGHT, WIDTH, rem, strings } from "../modules/constants";
 import { store } from "../store";
 import {
 	ITeamInRoom,
@@ -37,6 +37,7 @@ import {
 import Pad from "../components/QuestionNumInput";
 import QuestionNumInput from "../components/QuestionNumInput";
 import Spinner from "../components/Spinner";
+import WaitingMsg from "../components/WaitingMsg";
 interface IS {
 	startTime: moment.Moment;
 	currentTime: moment.Moment;
@@ -115,6 +116,7 @@ class GameMap extends React.Component<Store, IS> {
 						<Text style={styles.teamHaveAllowZones}>
 							{this.props.session.status.currentPart === 1 &&
 							steps &&
+							currentStep !== null &&
 							steps[currentStep] &&
 							steps[currentStep].allowZones[team]
 								? `Доступно: ${steps[currentStep].allowZones[team]}`
@@ -159,7 +161,9 @@ class GameMap extends React.Component<Store, IS> {
 			return (
 				<QuestionWindow question={title}>
 					<View style={{ flex: 1 }}>
-						<QuestionNumInput onSubmit={this.submitNumericQuestion} />
+						{this.props.session.gameStep === GAME_STEP.QUESTION ? (
+							<QuestionNumInput onSubmit={this.submitNumericQuestion} />
+						) : null}
 					</View>
 				</QuestionWindow>
 			);
@@ -178,7 +182,7 @@ class GameMap extends React.Component<Store, IS> {
 	}
 
 	render() {
-		const { status, gameStep } = this.props.session;
+		const { status, gameStep, waiting } = this.props.session;
 
 		const { steps, currentStep } = status.part1;
 		return (
@@ -198,11 +202,36 @@ class GameMap extends React.Component<Store, IS> {
 						chooseDisabled={gameStep !== GAME_STEP.CHOOSE_ZONE}
 						// chooseZone={this.props.chooseZone}
 					/>
+					{gameStep === GAME_STEP.WAITING_FOR_START_OF_GAME ||
+					gameStep === GAME_STEP.WAITING_FOR_TEAM ||
+					gameStep === GAME_STEP.CHOOSE_ZONE ||
+					gameStep === GAME_STEP.WAITING_FOR_QUESTION ? (
+						<View
+							style={[
+								styles.waitingZone,
+								{ width: gameStep === GAME_STEP.CHOOSE_ZONE ? 0 : WIDTH }
+							]}
+						>
+							<WaitingMsg
+								title={waiting.title}
+								msg={waiting.msg}
+								gameStep={gameStep}
+								color={
+									waiting.title === strings.redTeam
+										? COLORS.N_RED
+										: waiting.title === strings.blueTeam
+										? COLORS.N_BLUE
+										: waiting.title === strings.whiteTeam
+										? COLORS.N_WHITE
+										: COLORS.N_BLACK
+								}
+							/>
+						</View>
+					) : null}
 				</View>
-				{steps &&
-				steps.length > 0 &&
-				gameStep === GAME_STEP.QUESTION &&
-				steps[currentStep].isStarted
+
+				{(steps && steps.length > 0 && gameStep === GAME_STEP.QUESTION) ||
+				(steps && steps.length > 0 && gameStep === GAME_STEP.QUESTION_DESC)
 					? this.renderQuestion()
 					: null}
 				{gameStep === GAME_STEP.WAITING_FOR_ADMIN ||
@@ -311,5 +340,15 @@ const styles = StyleSheet.create({
 		padding: rem,
 		fontSize: rem,
 		color: COLORS.N_WHITE
+	},
+	waitingZone: {
+		width: WIDTH,
+		height: HEIGHT,
+		position: "absolute",
+		top: 0,
+		left: 0,
+		backgroundColor: `${COLORS.N_BLACK}66`,
+		justifyContent: "center",
+		paddingTop: HEIGHT / 5
 	}
 });
