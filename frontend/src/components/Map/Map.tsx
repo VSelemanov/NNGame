@@ -4,10 +4,9 @@ import MapVector from "./MapVector";
 import { createRoom, startGame, getQuestion, createTeam } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
-import KeyboardWindowAdmin from "../KeyboardWindowAdmin/KeyboardWindowAdmin";
+import KeyboardWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
 import store from "../../store";
-import ModalCreateTeam from "../AdminTools/ModalCreateTeam/ModalCreateTeam";
-import ModalCreateRoom from "../AdminTools/ModalCreateRoom/ModalCreateRoom";
+import { Link } from "react-router-dom";
 
 class Map extends React.Component<any, any> {
   constructor(props: any) {
@@ -99,16 +98,11 @@ class Map extends React.Component<any, any> {
           });
         }
 
-        // запись данных о вопросе первого тура
-        if (
-          message.currentPart &&
-          message.currentPart === 1 &&
-          message.part1 &&
-          message.part1.currentStep !== null
-        ) {
-          const step =
-            message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
-          console.log("step", step);
+        
+        // ПЕРВЫЙ ТУР
+        if (message.currentPart && message.currentPart === 1 && message.part1 && message.part1.currentStep !== null) {
+          const step = message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
+          // запись данных о вопросе первого тура
           if (step.question) {
             const question = step.question;
             Object.keys(question).includes("_id") && delete question["_id"];
@@ -125,15 +119,18 @@ class Map extends React.Component<any, any> {
               isNumStarted: step.isStarted
             });
           }
-          const answers = Object.keys(step.responses).filter(
-            key => step.responses[key].response !== null
-          ).length;
+          const answers = Object.keys(step.responses).filter(key => step.responses[key].response !== null).length;
           // проверяем, если ответов не 3 в текущем вопросе то открываем модалку админа
           if (answers !== 3) {
             this.setState({
               isNumQuestionModal: true
             });
           }
+        }
+
+        // ВТОРОЙ ТУР
+        if (message.currentPart && message.currentPart === 2 && message.part2 && message.part2.currentStep !== null) {
+          
         }
       };
       client.subscribe("/api/room/gamestatus", handler);
@@ -174,25 +171,18 @@ class Map extends React.Component<any, any> {
           <div className={style.color3} />
         </div>
         <div className={style.right_panel}>
+          <div className={style.game_status} />
           <div className={style.button_div}>
-            <button
-              className={style.next_question}
-              onClick={() => this.setState({ isModalTeam: true })}
-            >
-              Создать команду
-            </button>
-            <button
-              className={style.next_question}
-              onClick={() => this.setState({ isModalRoom: true })}
-            >
-              Создать комнату
+            <button className={style.next_question}>
+              <Link to={"/admin-tools/listTeams"}>
+                Админ панель
+              </Link>
             </button>
             {!this.state.isGameStarted && (
               <button className={style.next_question} onClick={() => startGame()}>
                 Старт Игры
               </button>
             )}
-
             <button className={style.next_question} onClick={() => getQuestion("numeric")}>
               Следующий вопрос
             </button>
@@ -210,16 +200,6 @@ class Map extends React.Component<any, any> {
           <div className={style.map_wrapper}>
             <MapVector teams={this.state.teams} gameMap={this.state.gameMap} />
           </div>
-          {this.state.isModalTeam && (
-            <ModalCreateTeam func={this.createTeam} closeFunc={this.closeFunc} />
-          )}
-          {this.state.isModalRoom && (
-            <ModalCreateRoom
-              teamsData={this.getTeamData()}
-              func={this.createRoom}
-              closeFunc={this.closeFunc}
-            />
-          )}
         </div>
       </div>
     );
