@@ -4,15 +4,6 @@ import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
 
 class ModalSecondTour extends React.Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      startTime: "",
-      endTime: null,
-      time: 0
-    };
-  }
-
   render() {
     return (
       <div className={style.modal_back}>

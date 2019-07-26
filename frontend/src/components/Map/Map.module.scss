@@ -62,16 +62,22 @@
 	}
 	.right_panel {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		background: url("../../img/map_bg.svg") no-repeat;
 		height: 680px;
 		width: 80%;
-		max-width: 1000px;
+		// max-width: 1000px;
 		min-height: 420px;
+		.game_status{
+			position: absolute;
+			top: 0;
+			left: 50%;
+		}
 		.button_div {
 			position: relative;
 			z-index: 3;
-			top: 70%;
+			// top: 70%;
 			height: 200px;
 			display: flex;
 			flex-direction: column;
@@ -95,13 +101,13 @@
 		}
 		.map_wrapper {
 			display: flex;
-			justify-content: center;
+			// justify-content: center;
 			width: 100%;
-			max-width: 830px;
+			// max-width: 830px;
 			.map_vector {
 				height: auto;
-				position: relative;
-				left: -15%;
+				// position: relative;
+				// left: -15%;
 				width: 100%;
 				max-width: 830px;
 			}

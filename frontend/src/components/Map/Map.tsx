@@ -7,6 +7,7 @@ import { mapStateToProps, mapDispatchToProps } from "../../exports";
 import KeyboardWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
 import store from "../../store";
 import { Link } from "react-router-dom";
+import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
 
 class Map extends React.Component<any, any> {
   constructor(props: any) {
@@ -171,7 +172,7 @@ class Map extends React.Component<any, any> {
           <div className={style.color3} />
         </div>
         <div className={style.right_panel}>
-          <div className={style.game_status} />
+          <div className={style.game_status}>Статус игры</div>
           <div className={style.button_div}>
             <button className={style.next_question}>
               <Link to={"/admin-tools/listTeams"}>
@@ -197,6 +198,7 @@ class Map extends React.Component<any, any> {
               isStarted={this.state.isNumStarted}
             />
           )}
+          <ModalSecondTour />
           <div className={style.map_wrapper}>
             <MapVector teams={this.state.teams} gameMap={this.state.gameMap} />
           </div>
