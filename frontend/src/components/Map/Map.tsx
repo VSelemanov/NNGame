@@ -4,7 +4,7 @@ import MapVector from "./MapVector";
 import { createRoom, startGame, getQuestion, createTeam } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
-import KeyboardWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
+import NumQuestionWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
 import store from "../../store";
 import { Link } from "react-router-dom";
 import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
@@ -190,7 +190,7 @@ class Map extends React.Component<any, any> {
           </div>
           {/* нужно без воскл знака! убери не забудь */}
           {this.state.isNumQuestionModal && (
-            <KeyboardWindowAdmin
+            <NumQuestionWindowAdmin
               closeFunc={this.closeFuncNumModal}
               teams={this.state.teams}
               question={this.state.numQuestion}

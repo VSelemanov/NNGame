@@ -1,76 +1,187 @@
 .modal_back {
-  z-index: 2;
-	width: 100vw;
-	height: 100vh;
-	top: 0;
-	left: 0;
+  z-index: 5;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
   background: rgba(41, 31, 16, 0.5);
   backdrop-filter: blur(40px);
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.main{
-  height: 100%;
-  width: 80%;
-  background: url('../../img/keboard_bg.svg') no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  height: 60%;
-  width: 80%;
-}
-.keyboard {
-  height: auto;
-  width: 80%;
-  max-width: 500px;
-  margin: 10px;
-}
-.left_part {
-  // display: flex;
-  // justify-content: flex-start;
-  // align-items: center;
-  width: auto;
-  & p {
-    color:  #7B6442;
-    text-align: center;
-    font-size: 24px;
-  }
-}
-.rigth_part{
-  display: flex;
-  flex-direction: column;
-  // align-items: center;
-  & p {
-    color:  #7B6442;
-    text-align: center;
-    font-size: 24px;
-  }
-}
-
-//1280*680
-
-@media (max-height: 680px), (max-width: 1280px) {
-  .question_text{
-    max-width: 600px;
-    height: 100px;
-    font-size: 32px;
-    & p{
-      margin: 5px;
-      text-align: center;
+  .main {
+    height: 80%;
+    width: 80%;
+    max-width: 1000px;
+    background: url("../../img/keboard_bg.svg") no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 5%;
+    .question_text {
+      width: 80%;
+      max-height: 150px;
+      margin-top: 7%;
+      & p {
+        font-size: 3.5vw;
+        margin: 5px;
+        text-align: center;
+        font-family: "PT-Serif", sans-serif;
+      }
+    }
+    .content {
+      width: 90%;
+      max-width: 900px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      .left_part {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        .flag {
+          background: url("../../img/white_flag.svg") no-repeat;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          img {
+            height: 6vw;
+            max-width: 76px;
+          }
+          & .red {
+            background: url("../../img/red_flag.svg") no-repeat;
+          }
+          & .blue {
+            background: url("../../img/blue_flag.svg") no-repeat;
+          }
+        }
+        p {
+          font-family: "Preslav", sans-serif;
+          color: #7b6442;
+          text-align: center;
+          width: 80%;
+          margin: 0;
+        }
+      }
+      .center_part {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .one_answer {
+          font-family: "PT-sans", sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: #ffe4b5;
+          border-radius: 1px;
+          height: 6.5vw;
+          max-height: 81px;
+          width: 38vw;
+          max-width: 475px;
+          margin: 3px 0;
+          font-size: 2.5vw;
+          line-height: 130%px;
+          color: #7b6442;
+          padding: 2px;
+        }
+        .white {
+          background: #efeae1;
+          border: 2px solid #63a647;
+          padding: 0;
+        }
+        .red {
+          background: #b01d1d;
+          border: 2px solid #63a647;
+          color: #fff;
+          padding: 0;
+        }
+        .blue {
+          background: #31427c;
+          border: 2px solid #63a647;
+          color: #fff;
+          padding: 0;
+        }
+        .white_blue {
+          background: url("../../img/white-blue_flag.svg") no-repeat top;
+          border: 2px solid #63a647;
+          padding: 0;
+          background-size: cover;
+          color: #fff;
+        }
+        .white_red {
+          background: url("../../img/white-red_flag.svg") no-repeat top;
+          border: 2px solid #63a647;
+          padding: 0;
+          background-size: cover;
+          color: #fff;
+        }
+        .red_blue {
+          background: url("../../img/red-blue_flag.svg") no-repeat top;
+          border: 2px solid #63a647;
+          padding: 0;
+          background-size: cover;
+          color: #fff;
+        }
+      }
+      .rigth_part {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        .flag {
+          background: url("../../img/white_flag.svg") no-repeat;
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          span {
+            color: #fff;
+          }
+          img {
+            height: 6vw;
+            max-width: 76px;
+          }
+        }
+        .blue {
+          background: url("../../img/blue_flag.svg") no-repeat;
+        }
+        .red {
+          background: url("../../img/red_flag.svg") no-repeat;
+        }
+        p {
+          font-family: "Preslav", sans-serif;
+          color: #7b6442;
+          text-align: center;
+          width: 80%;
+          margin: 0;
+        }
+      }
     }
   }
-  .keyboard {
-    height: auto;
-    width: 90%;
-    max-width: 620px;
+}
+
+@media screen and (max-width: 1280px) {
+  .main {
+    .question_text {
+      width: 80%;
+      height: 10vw;
+      & p {
+        font-size: 2.5vw;
+        margin: 5px;
+        text-align: center;
+      }
+    }
   }
 }
