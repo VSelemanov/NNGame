@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { WIDTH, rem } from "../modules/constants";
+import { WIDTH, rem } from "../constants/constants";
 import Spinner from "./Spinner";
-import { COLORS, GAME_STEP } from "../modules/enum";
+import { COLORS, GAME_STEP, FONTS } from "../constants/enum";
 
 interface IP {
 	title: string;
@@ -65,10 +65,14 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: rem * 0.55,
 		color: COLORS.L_RED,
+		fontFamily: FONTS.preslav,
 		marginBottom: 2
 	},
 	msg: {
+		maxWidth: rem * 6,
+		textAlign: "center",
 		fontSize: rem * 0.55,
-		color: COLORS.N_BLACK
+		color: COLORS.N_BLACK,
+		fontFamily: FONTS.preslav
 	}
 });

@@ -3,14 +3,15 @@ import {
 	NavigationContainerComponent,
 	NavigationComponent
 } from "react-navigation";
-import { SCREENS, TEAM } from "./enum";
-import { isDev } from "./constants";
+import { SCREENS, TEAM } from "../constants/enum";
+import { isDev } from "../constants/constants";
 import {
 	IGamePart1Step,
 	IGameMap
 } from "../../../newback/src/helper/Room/interfaces";
 import { ITeamsInRoom } from "../../../newback/src/helper/Team/interfaces";
 import { IMapZone } from "../../../newback/src/interfaces";
+import { mapZones } from "../../../newback/src/constants";
 export class Helper {
 	private navigator: NavigationComponent;
 	constructor() {
@@ -60,14 +61,7 @@ export class Helper {
 		});
 	}
 
-	// public handleGameStatus(status: IGameStatus, flags: any) {
-	// 	lg("Handle msg");
-	// 	store.dispatch({
-	// 		key: "session",
-	// 		type: ActionTypes.HANDLE_GAME_STATUS,
-	// 		status
-	// 	});
-	// }
+	// * PART 1
 	public isFirstZoneChoose(teams: ITeamsInRoom, teamKey: string) {
 		switch (teamKey) {
 			case TEAM.WHITE:
@@ -179,6 +173,25 @@ export class Helper {
 			}
 		});
 		return true;
+	}
+
+	// * PART 2
+	public getEnabledZonesForAttack(gameMap: any, teamKey: TEAM): string[] {
+		const obj: { [key: string]: boolean } = {};
+		let arr: string[] = [];
+		const arr1 = Object.keys(gameMap);
+		arr1.forEach((val: string, i: number) => {
+			if (gameMap[val].team === teamKey) {
+				arr = arr.concat(gameMap[val].nearby);
+			}
+		});
+		arr.forEach((val: string) => {
+			if (val) {
+				obj[val] = true;
+			}
+		});
+
+		return Object.keys(obj);
 	}
 }
 

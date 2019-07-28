@@ -6,6 +6,8 @@ import {
 } from "./session/index";
 import { NavigationScreenProp, NavigationStateRoute } from "react-navigation";
 import superagent from "superagent";
+import { TEAM } from "../constants/enum";
+import { ImageSourcePropType } from "react-native";
 export interface IAppStore {
 	session: ISessionStore & PersistPartial;
 }
@@ -40,4 +42,17 @@ export interface INet {
 		token: string
 	): Promise<superagent.Response>;
 	chooseZone(z: string, t: string): Promise<superagent.Response>;
+	attackZone(a: string, d: string, t: string): Promise<superagent.Response>;
+}
+
+export interface IIconImgs {
+	shutter: ImageSourcePropType;
+	teams: {
+		[key: string]: {
+			choose: ImageSourcePropType;
+			attack: ImageSourcePropType;
+			defence: ImageSourcePropType;
+			union: ImageSourcePropType;
+		};
+	};
 }

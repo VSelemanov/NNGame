@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Image, Text } from "react-native";
-import { lg } from "../modules/helper";
-import { WIDTH, rem, HEIGHT } from "../modules/constants";
-import { COLORS } from "../modules/enum";
+import { lg } from "../utils/helper";
+import { WIDTH, rem, HEIGHT } from "../constants/constants";
+import { COLORS, FONTS } from "../constants/enum";
 import Svg, { Path } from "react-native-svg";
 
 interface IP {
@@ -66,6 +66,7 @@ export default class QuestionWindow extends React.Component<IP> {
 							marginTop: rem * 0.5,
 							fontSize: rem * 0.8,
 							color: COLORS.N_BLACK,
+							fontFamily: FONTS.preslav,
 							marginBottom: rem * 0.9,
 							textAlign: "center",
 							paddingHorizontal: rem * 1.5,

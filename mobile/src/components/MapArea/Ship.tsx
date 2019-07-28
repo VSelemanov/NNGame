@@ -1,12 +1,12 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
-import { rem, WIDTH } from "../../modules/constants";
-import { lg } from "../../modules/helper";
+import { rem, WIDTH } from "../../constants/constants";
+import { lg } from "../../utils/helper";
 
 interface IP {}
 
 export default class Mavericks2 extends React.Component<IP> {
-	render() {
+	public render() {
 		lg("Ship rendered");
 		return (
 			<Svg

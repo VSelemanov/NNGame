@@ -1,6 +1,7 @@
 import Constants from "expo-constants";
-import { IAreaInfo } from "../interfaces";
+import { IAreaInfo, IIconImgs } from "../interfaces";
 import { Dimensions } from "react-native";
+import { TEAM } from "./enum";
 
 const { width, height } = Dimensions.get("window");
 export const WIDTH = width;
@@ -39,9 +40,34 @@ export const strings = {
 	whiteTeam: "Белая команда",
 	isChoosingZone: "выбирает территорию",
 	chooseZone: "Выберите территорию",
-	waitNewQuestion: "Ожидайте новый вопрос"
+	waitNewQuestion: "Ожидайте новый вопрос",
+	chooseZoneFromAttack: "Выберите зону из которой вы нападаете",
+	teamGoingToAttack: "Команда выбирает зону для атаки"
 };
 
+export const iconImgs: IIconImgs = {
+	shutter: require("../../assets/unions/shutter.png"),
+	teams: {
+		[TEAM.WHITE]: {
+			choose: require("../../assets/icons/trumpet_white.png"),
+			attack: require("../../assets/icons/swords_white.png"),
+			defence: require("../../assets/icons/shield_white.png"),
+			union: require("../../assets/unions/white.png")
+		},
+		[TEAM.BLUE]: {
+			choose: require("../../assets/icons/trumpet_blue.png"),
+			attack: require("../../assets/icons/swords_blue.png"),
+			defence: require("../../assets/icons/shield_blue.png"),
+			union: require("../../assets/unions/blue.png")
+		},
+		[TEAM.RED]: {
+			choose: require("../../assets/icons/trumpet_red.png"),
+			attack: require("../../assets/icons/swords_red.png"),
+			defence: require("../../assets/icons/shield_red.png"),
+			union: require("../../assets/unions/red.png")
+		}
+	}
+};
 export const areasSvgInfo: IAreaInfo = {
 	moscow: {
 		areaD:

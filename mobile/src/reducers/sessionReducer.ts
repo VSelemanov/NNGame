@@ -1,8 +1,8 @@
-import { SCREENS, ActionTypes, TEAM, GAME_STEP } from "../modules/enum";
+import { SCREENS, ActionTypes, TEAM, GAME_STEP } from "../constants/enum";
 import { ISessionStore, ISessionActionsProps } from "../interfaces/session";
-import helper, { lg } from "../modules/helper";
+import helper, { lg } from "../utils/helper";
 import jwt_decode from "jwt-decode";
-import { strings } from "../modules/constants";
+import { strings } from "../constants/constants";
 export const defaultState: ISessionStore = {
 	screen: SCREENS.ENTRANCE,
 	currentTeam: TEAM.RED,
@@ -14,7 +14,12 @@ export const defaultState: ISessionStore = {
 	teamKey: TEAM.WHITE,
 	token: "",
 	gameStep: GAME_STEP.ENTRANCE,
-	allowZones: 0
+	allowZones: 0,
+	enabledZonesForAttack: [],
+	attack: {
+		attackingZone: "",
+		defenderZone: ""
+	}
 };
 
 export default (
@@ -77,15 +82,17 @@ export default (
 				}, 1500);
 			}
 
-			const { teams, currentPart, isStarted, part1 } = action.status;
+			const { teams, currentPart, isStarted } = action.status;
 			if (isStarted && currentPart === 0) {
 				newState.gameStep = GAME_STEP.NULL;
 				return newState;
 			}
 			const { teamKey } = newState;
-			// выбор первой зоны и ожидание первого вопроса
+
+			// * PART 1
 			if (currentPart === 1) {
 				lg("part 1");
+				const { part1 } = action.status;
 				if (part1.steps.length === 0) {
 					lg("steps - 0");
 					if (teamKey === helper.teamChoosingFirstZone(teams)) {
@@ -191,6 +198,64 @@ export default (
 				}
 			}
 
+			// * PART 2
+			if (currentPart === 2) {
+				newState.gameStep = GAME_STEP.NULL;
+				const { steps, teamQueue } = action.status.part2;
+
+				if (steps.length === 0 && teamQueue) {
+					newState.enabledZonesForAttack = helper.getEnabledZonesForAttack(
+						newState.status.gameMap,
+						teamQueue[0]
+					);
+					if (`${teamQueue[0]}` === teamKey) {
+						newState.gameStep = GAME_STEP.CHOOSE_ATTACKING_ZONE;
+						newState.allowZones = 2;
+						newState.waiting = {
+							title: "",
+							msg: strings.chooseZoneFromAttack
+						};
+					} else {
+						newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+						let team = "";
+						switch (`${teamQueue[0]}`) {
+							case TEAM.BLUE:
+								team = strings.blueTeam;
+								break;
+							case TEAM.RED:
+								team = strings.redTeam;
+								break;
+							case TEAM.WHITE:
+								team = strings.whiteTeam;
+								break;
+						}
+						newState.waiting = {
+							title: team,
+							msg: strings.waitingForOthers
+						};
+					}
+				}
+				if (steps.length > 0) {
+					const currentStep = steps[steps.length - 1];
+					if (
+						currentStep.attacking !== teamKey &&
+						currentStep.defender !== teamKey
+					) {
+						newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+						newState.waiting = {
+							title: "",
+							msg: strings.waitingForOthers
+						};
+					} else {
+						if (!currentStep.isStarted) {
+							newState.gameStep = GAME_STEP.QUESTION_DESC;
+						} else {
+							newState.gameStep = GAME_STEP.QUESTION;
+						}
+					}
+				}
+			}
+
 			return newState;
 		case ActionTypes.SEND_ANSWER_REQUEST:
 			// newState.waiting = true;
@@ -203,8 +268,18 @@ export default (
 		case ActionTypes.CHOOSE_ZONE_REQUEST:
 			newState.allowZones = --action.allowZones;
 			return newState;
+		case ActionTypes.CHOOSE_ZONE_SUCCESS:
+			return newState;
 		case ActionTypes.CHOOSE_ZONE_FAILURE:
 			newState.allowZones = ++action.allowZones;
+			return newState;
+		case ActionTypes.ATTACKING_ZONE_CHOOSE:
+			newState.attack.attackingZone = action.attackingZone;
+			newState.enabledZonesForAttack =
+				newState.status.gameMap[action.attackingZone].nearby;
+			return newState;
+		case ActionTypes.DEFENDER_ZONE_CHOOSE:
+			newState.attack.defenderZone = action.defenderZone;
 			return newState;
 		default:
 			return newState;

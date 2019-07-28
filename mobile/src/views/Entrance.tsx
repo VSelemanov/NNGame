@@ -12,13 +12,13 @@ import {
 import { connect } from "react-redux";
 import { actions } from "../actions";
 import { mapStateToProps } from "../reducers";
-import { lg } from "../modules/helper";
+import { lg } from "../utils/helper";
 import NNMap from "../components/MapArea/NNMap";
 import MapGrid from "../components/MapGrid";
 import InputText from "../components/InputText";
 import Spinner from "../components/Spinner";
-import { COLORS, GAME_STEP } from "../modules/enum";
-import { HEIGHT, WIDTH, rem } from "../modules/constants";
+import { COLORS, GAME_STEP, FONTS } from "../constants/enum";
+import { HEIGHT, WIDTH, rem } from "../constants/constants";
 
 class Entrance extends React.Component<Store> {
 	constructor(props: any) {
@@ -106,7 +106,8 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		top: 0,
 		fontSize: rem * 1.1,
-		color: COLORS.N_WHITE
+		color: COLORS.N_WHITE,
+		fontFamily: FONTS.preslav
 	},
 	loading: {
 		position: "absolute",

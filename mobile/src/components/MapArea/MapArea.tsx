@@ -1,9 +1,9 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
-import { lg } from "../../modules/helper";
+import { lg } from "../../utils/helper";
 import { Alert } from "react-native";
 import { IMapZone } from "../../../../newback/src/interfaces";
-import { TEAM, COLORS } from "../../modules/enum";
+import { TEAM, COLORS } from "../../constants/enum";
 
 interface IP {
 	currentPart: number;
@@ -11,15 +11,26 @@ interface IP {
 	nameD: string;
 	areaD: string;
 	mapZone: IMapZone;
-	chooseZone(n: string, t: string, a: number): void;
+	chooseZone(
+		n: string,
+		t: string,
+		a: number,
+		c: number,
+		at?: string,
+		de?: string
+	): void;
 	disabled: boolean;
 	token: string;
 	allowZones: number;
+	dim: boolean;
+	smallDim: boolean;
+	attackingZone?: string;
+	defenderZone?: string;
 }
 
 export default class MapArea extends React.Component<IP> {
-	render() {
-		lg("MapArea rendered");
+	public render() {
+		// lg("MapArea rendered");
 		const {
 			areaD,
 			nameD,
@@ -29,10 +40,14 @@ export default class MapArea extends React.Component<IP> {
 			mapZone,
 			token,
 			currentPart,
-			allowZones
+			allowZones,
+			dim,
+			smallDim,
+			attackingZone,
+			defenderZone
 		} = this.props;
-		lg("----------------");
-		lg(mapZone.team);
+		// lg("----------------");
+		// lg(mapZone.team);
 		let color = COLORS.LL_BROWN;
 		switch (mapZone.team) {
 			case TEAM.WHITE:
@@ -47,22 +62,35 @@ export default class MapArea extends React.Component<IP> {
 			default:
 				break;
 		}
+
 		return (
 			<Svg key={name} fill="none">
 				<Path
 					d={areaD}
-					fill={color}
-					stroke={"#9F835A"}
+					fill={`${dim ? "#AAAAAA33" : smallDim ? "#CCCCCCAA" : color}`}
+					stroke={`${dim ? "#9F835A55" : "#9F835A"}`}
 					strokeWidth="3"
 					strokeLinejoin="round"
 					onPress={() =>
 						allowZones > 0
-							? chooseZone(name, token, allowZones)
+							? chooseZone(
+									name,
+									token,
+									allowZones,
+									currentPart,
+									attackingZone,
+									defenderZone
+							  )
 							: lg("not allowed")
 					}
-					disabled={disabled || (mapZone.team !== null && currentPart === 1)}
+					disabled={
+						disabled ||
+						(mapZone.team !== null && currentPart === 1) ||
+						dim ||
+						smallDim
+					}
 				/>
-				<Path d={nameD} fill={"#232323"} />
+				<Path d={nameD} fill={`${dim ? "#232323BB" : "#232323"}`} />
 			</Svg>
 		);
 	}

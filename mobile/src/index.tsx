@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import AppNavigator from "./navigator";
 import { NavigationContainerComponent } from "react-navigation";
-import helper from "./modules/helper";
+import helper from "./utils/helper";
 import { store, persistor } from "./store";
 
 console.log(
@@ -58,20 +58,22 @@ export default class App extends React.Component<{}, { isReady: boolean }> {
 	// для предварительной загрузки всех assets
 	private async _cacheResourcesAsync(): Promise<void> {
 		function cacheImages(iel: any[]) {
-			iel.map((el: any) => {
+			iel.map(async (el: any) => {
 				if (typeof el === "string") {
-					Image.prefetch(el);
+					await Image.prefetch(el);
 				} else {
-					Asset.fromModule(el).downloadAsync();
+					await Asset.fromModule(el).downloadAsync();
 				}
 			});
 		}
 
-		function cacheFonts(fel: any) {
-			Font.loadAsync(fel);
+		async function cacheFonts(fel: any) {
+			await Font.loadAsync(fel);
 		}
 
-		const fonts = {};
+		const fonts = {
+			preslav: require("../assets/fonts/preslav.otf")
+		};
 		const images = [
 			require("../assets/background.jpg"),
 			require("../assets/watch.png"),
@@ -93,8 +95,8 @@ export default class App extends React.Component<{}, { isReady: boolean }> {
 		];
 
 		return new Promise(async (resolve, reject) => {
-			cacheFonts(fonts);
-			cacheImages(images);
+			await cacheFonts(fonts);
+			await cacheImages(images);
 			resolve();
 		});
 	}

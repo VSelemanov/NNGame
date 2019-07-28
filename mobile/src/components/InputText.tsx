@@ -9,9 +9,9 @@ import {
 	Alert,
 	KeyboardType
 } from "react-native";
-import { lg } from "../modules/helper";
-import { WIDTH, rem, HEIGHT } from "../modules/constants";
-import { COLORS } from "../modules/enum";
+import { lg } from "../utils/helper";
+import { WIDTH, rem, HEIGHT } from "../constants/constants";
+import { COLORS, FONTS } from "../constants/enum";
 import { Svg, G, Path, Defs } from "react-native-svg";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import KeyboardShift from "./KeyboardShift";
@@ -58,7 +58,8 @@ export default class InputText extends React.Component<IP, IS> {
 						paddingHorizontal: rem,
 						position: "absolute",
 						fontSize: rem * 1.5,
-						textAlign: "center"
+						textAlign: "center",
+						fontFamily: FONTS.preslav
 					}}
 					multiline={false}
 					maxLength={20}

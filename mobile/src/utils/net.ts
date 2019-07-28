@@ -2,11 +2,11 @@ import sa, { SuperAgent, SuperAgentRequest } from "superagent";
 import { INet } from "../interfaces";
 
 import helper, { lg } from "./helper";
-import { config } from "./config";
+import { config } from "../constants/config";
 import Nes from "nes";
 import { Alert } from "react-native";
 import actions from "../actions/sessionActions";
-import { ActionTypes } from "./enum";
+import { ActionTypes } from "../constants/enum";
 import { store } from "../store";
 import { IGameStatus } from "../../../newback/src/helper/Room/interfaces";
 import { IAnswerQuestion } from "../interfaces/session";
@@ -81,6 +81,26 @@ const net: INet = {
 				.post(`${config.URL.CHOOSE_ZONE}/${zone}`)
 				.set("Authorization", `Bearer ${token}`)
 				.send();
+
+			return response;
+		} catch (e) {
+			lg(e);
+			return e;
+		}
+	},
+	async attackZone(attackingZone: string, defenderZone: string, token: string) {
+		try {
+			lg({
+				attackingZone,
+				defenderZone
+			});
+			const response: sa.Response = await sa
+				.post(`${config.URL.ATTACK_ZONE}`)
+				.set("Authorization", `Bearer ${token}`)
+				.send({
+					attackingZone,
+					defenderZone
+				});
 
 			return response;
 		} catch (e) {

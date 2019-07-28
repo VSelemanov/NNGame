@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Animated, Keyboard, StyleSheet, View } from "react-native";
-import { HEIGHT, WIDTH } from "../modules/constants";
+import { HEIGHT, WIDTH } from "../constants/constants";
 
 interface P {
 	anchor: { width: number; height: number; x: number; y: number };

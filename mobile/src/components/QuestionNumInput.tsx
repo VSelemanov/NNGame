@@ -8,9 +8,9 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
-import { rem } from "../modules/constants";
-import { COLORS } from "../modules/enum";
-import { lg } from "../modules/helper";
+import { rem } from "../constants/constants";
+import { COLORS, FONTS } from "../constants/enum";
+import { lg } from "../utils/helper";
 import moment from "moment";
 
 interface IP {
@@ -196,7 +196,8 @@ const styles = StyleSheet.create({
 	},
 	outputText: {
 		color: COLORS.N_BLACK,
-		fontSize: rem * 1.3
+		fontSize: rem * 1.3,
+		fontFamily: FONTS.preslav,
 	},
 	inputNumField: {
 		width: rem * 3,
@@ -223,13 +224,15 @@ const styles = StyleSheet.create({
 	},
 	inputNumFieldText: {
 		color: COLORS.DDDDD_BROWN,
-		fontSize: rem * 1.1
+		fontSize: rem * 1.1,
+		fontFamily: FONTS.preslav
 	},
 	timer: {
 		color: COLORS.DDDDD_BROWN,
 		fontSize: rem,
 		marginRight: rem,
 		position: "absolute",
-		left: -rem * 3
+		left: -rem * 3,
+		fontFamily: FONTS.preslav
 	}
 });

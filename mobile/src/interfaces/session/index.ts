@@ -1,5 +1,6 @@
-import { SCREENS, ActionTypes, TEAM, GAME_STEP } from "../../modules/enum";
+import { SCREENS, ActionTypes, TEAM, GAME_STEP } from "../../constants/enum";
 import { IGameStatus } from "../../../../newback/src/helper/Room/interfaces/index";
+import { mapZones } from "../../../../newback/src/constants";
 
 export interface ISessionStore {
 	screen: SCREENS;
@@ -13,6 +14,11 @@ export interface ISessionStore {
 	status: IGameStatus;
 	gameStep: GAME_STEP;
 	allowZones: number;
+	enabledZonesForAttack: string[];
+	attack: {
+		attackingZone: string;
+		defenderZone: string;
+	};
 }
 
 export interface ISessionActionsProps {
@@ -23,6 +29,8 @@ export interface ISessionActionsProps {
 	token: string;
 	status: IGameStatus;
 	allowZones: number;
+	attackingZone: string;
+	defenderZone: string;
 }
 
 export interface ISessionActions {
@@ -32,7 +40,14 @@ export interface ISessionActions {
 	connectToSocket(): void;
 	sendInviteCode(n: string): void;
 	sendAnswer(props: IAnswerQuestion, token: string): void;
-	chooseZone(zone: string, token: string, allowZones: number): void;
+	chooseZone(
+		zone: string,
+		token: string,
+		allowZones: number,
+		part: number,
+		attackingZone?: string,
+		defenderZone?: string
+	): void;
 }
 
 export interface IAnswerQuestion {

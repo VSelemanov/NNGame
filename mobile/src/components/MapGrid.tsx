@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Image } from "react-native";
-import { lg } from "../modules/helper";
-import { WIDTH, rem, HEIGHT } from "../modules/constants";
-import { COLORS } from "../modules/enum";
+import { lg } from "../utils/helper";
+import { WIDTH, rem, HEIGHT } from "../constants/constants";
+import { COLORS } from "../constants/enum";
 
 interface IP {
 	width: number;

@@ -1,8 +1,8 @@
-import { SCREENS, ActionTypes, TEAM } from "../modules/enum";
+import { SCREENS, ActionTypes, TEAM } from "../constants/enum";
 import { ISessionActions, IAnswerQuestion } from "../interfaces/session";
-import helper, { lg } from "../modules/helper";
+import helper, { lg } from "../utils/helper";
 import { Alert } from "react-native";
-import net, { ws } from "../modules/net";
+import net, { ws } from "../utils/net";
 import { IGameStatus } from "../../../newback/src/helper/Room/interfaces";
 
 const key = "session";
@@ -125,18 +125,56 @@ const actions: ISessionActions = {
 			}
 		};
 	},
-	chooseZone(zone: string, token: string, allowZones: number) {
+	chooseZone(
+		zone: string,
+		token: string,
+		allowZones: number,
+		part: number,
+		attackingZone?: string,
+		defenderZone?: string
+	) {
 		lg(zone);
+
 		return async (dispatch: any) => {
 			dispatch({
 				key,
 				type: ActionTypes.CHOOSE_ZONE_REQUEST,
-				allowZones
+				allowZones:
+					part === 1
+						? allowZones
+						: attackingZone && attackingZone !== ""
+						? 1
+						: 2
 			});
 			try {
-				let response = await net.chooseZone(zone, token);
-				if (response.status !== 200) {
-					throw "Ошибка";
+				if (part === 1) {
+					const response = await net.chooseZone(zone, token);
+
+					if (response.status !== 200) {
+						throw "Ошибка";
+					}
+				} else if (part === 2) {
+					if (attackingZone === "") {
+						dispatch({
+							key,
+							type: ActionTypes.ATTACKING_ZONE_CHOOSE,
+							attackingZone: zone
+						});
+					} else {
+						const response = await net.attackZone(
+							attackingZone || "",
+							zone || "",
+							token
+						);
+						if (response.status !== 200) {
+							throw "Ошибка";
+						}
+						dispatch({
+							key,
+							type: ActionTypes.DEFENDER_ZONE_CHOOSE,
+							defenderZone: zone
+						});
+					}
 				}
 				dispatch({
 					key,
@@ -147,7 +185,12 @@ const actions: ISessionActions = {
 				dispatch({
 					key,
 					type: ActionTypes.CHOOSE_ZONE_FAILURE,
-					allowZones
+					allowZones:
+						part === 1
+							? allowZones
+							: attackingZone && attackingZone !== ""
+							? 0
+							: 1
 				});
 			}
 		};

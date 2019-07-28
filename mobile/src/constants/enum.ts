@@ -13,13 +13,23 @@ export enum GAME_STEP {
 	WAITING_FOR_QUESTION = "waiting_for_question",
 	CHOOSE_ZONE = "choose zone",
 	QUESTION = "question",
-	QUESTION_DESC = "question_desc"
+	QUESTION_DESC = "question_desc",
+	QUESTION_RESULT = "question_result",
+
+	CHOOSE_ATTACKING_ZONE = "CHOOSE_ATTACKING_ZONE"
 }
 
 export enum TEAM {
 	WHITE = "team1",
 	RED = "team3",
 	BLUE = "team2"
+}
+
+export enum TEAM_ACTION_STATE_PART_2 {
+	ATTACK = "attack",
+	DEFENCE = "defence",
+	NULL = "null",
+	CHOOSE = "choose"
 }
 
 export enum COLORS {
@@ -48,6 +58,10 @@ export enum COLORS {
 	N_GREEN = "#63A647"
 }
 
+export enum FONTS {
+	preslav = "preslav"
+}
+
 export enum ActionTypes {
 	RESET_SESSION_STORE = "RESET_SESSION_STORE",
 	PUSH_SCREEN = "PUSH_SCREEN",
@@ -73,6 +87,9 @@ export enum ActionTypes {
 	CHOOSE_ZONE_REQUEST = "CHOOSE_ZONE_REQUEST",
 	CHOOSE_ZONE_SUCCESS = "CHOOSE_ZONE_SUCCESS",
 	CHOOSE_ZONE_FAILURE = "CHOOSE_ZONE_FAILURE",
+
+	ATTACKING_ZONE_CHOOSE = "ATTACKING_ZONE_CHOOSE",
+	DEFENDER_ZONE_CHOOSE = "DEFENDER_ZONE_CHOOSE",
 
 	HANDLE_GAME_STATUS = "HANDLE_GAME_STATUS"
 }

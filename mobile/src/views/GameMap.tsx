@@ -9,13 +9,14 @@ import {
 	Animated,
 	Platform,
 	BackHandler,
-	Alert
+	Alert,
+	ImageSourcePropType
 } from "react-native";
 import { connect } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
 import { actions } from "../actions";
 import { mapStateToProps } from "../reducers";
-import { lg } from "../modules/helper";
+import { lg } from "../utils/helper";
 import Mavericks1 from "../components/MapArea/Mavericks1";
 import Mavericks2 from "../components/MapArea/Mavericks2";
 import Ship from "../components/MapArea/Ship";
@@ -24,10 +25,17 @@ import NNMap from "../components/MapArea/NNMap";
 import MapGrid from "../components/MapGrid";
 import QuestionWindow from "../components/QuestionWindow";
 import InputText from "../components/InputText";
-import { COLORS, TEAM, ActionTypes, GAME_STEP } from "../modules/enum";
+import {
+	COLORS,
+	TEAM,
+	ActionTypes,
+	GAME_STEP,
+	TEAM_ACTION_STATE_PART_2,
+	FONTS
+} from "../constants/enum";
 import Constants from "expo-constants";
 import moment from "moment";
-import { HEIGHT, WIDTH, rem, strings } from "../modules/constants";
+import { HEIGHT, WIDTH, rem, strings, iconImgs } from "../constants/constants";
 import { store } from "../store";
 import {
 	ITeamInRoom,
@@ -36,8 +44,13 @@ import {
 } from "../../../newback/src/helper/Team/interfaces";
 import Pad from "../components/QuestionNumInput";
 import QuestionNumInput from "../components/QuestionNumInput";
+import QuestionVariantsInput from "../components/QuestionVariantsInput";
 import Spinner from "../components/Spinner";
 import WaitingMsg from "../components/WaitingMsg";
+import {
+	IGamePart1Step,
+	IGamePart2Step
+} from "../../../newback/src/helper/Room/interfaces";
 interface IS {
 	startTime: moment.Moment;
 	currentTime: moment.Moment;
@@ -53,8 +66,9 @@ class GameMap extends React.Component<Store, IS> {
 		};
 		this.onBackButton = this.onBackButton.bind(this);
 		this.submitNumericQuestion = this.submitNumericQuestion.bind(this);
+		this.submitBattleQuestion = this.submitBattleQuestion.bind(this);
 	}
-	componentDidMount() {
+	public componentDidMount() {
 		// this.props.resetSessionStore();
 		// this.props.getTeamInfo("");
 
@@ -82,6 +96,8 @@ class GameMap extends React.Component<Store, IS> {
 			const { name, zones } = thisTeam;
 			const { currentStep, steps } = this.props.session.status.part1;
 
+			let actionState: TEAM_ACTION_STATE_PART_2 =
+				TEAM_ACTION_STATE_PART_2.DEFENCE;
 			let gradientColors = [];
 			let borderColors = {
 				light: "",
@@ -94,6 +110,7 @@ class GameMap extends React.Component<Store, IS> {
 					gradientColors = [COLORS.D_RED, COLORS.DD_RED];
 					borderColors.light = COLORS.L_RED;
 					borderColors.dark = COLORS.DD_RED;
+
 					break;
 				case TEAM.BLUE:
 					gradientColors = [COLORS.N_BLUE, COLORS.D_BLUE];
@@ -108,7 +125,21 @@ class GameMap extends React.Component<Store, IS> {
 				default:
 					return;
 			}
-			lg(team);
+
+			// switch (actionState) {
+			// 	case TEAM_ACTION_STATE_PART_2.CHOOSE:
+			// 		actionStateImg = require("./../assets/icons/flag_white.png");
+			// 		break;
+			// 	case TEAM_ACTION_STATE_PART_2.ATTACK:
+			// 		actionStateImg = require("./../assets/icons/flag_white.png");
+			// 		break;
+			// 	case TEAM_ACTION_STATE_PART_2.DEFENCE:
+			// 		actionStateImg = require("./../assets/icons/flag_white.png");
+			// 		break;
+			// }
+
+			// lg(team);
+
 			return (
 				<View key={team} style={styles.teamArea}>
 					<View style={styles.teamInfo}>
@@ -125,10 +156,10 @@ class GameMap extends React.Component<Store, IS> {
 						<View style={styles.teamHaveArea}>
 							<Text style={styles.teamHaveTitle}>Областей:</Text>
 							<Text style={styles.teamHaveNumber}>{zones}</Text>
-							{/* <Image
-								source={require("../../assets/banners/red.png")}
+							<Image
+								source={iconImgs.teams[team][actionState]}
 								style={styles.teamHaveImg}
-							/> */}
+							/>
 						</View>
 					</View>
 					<LinearGradient
@@ -147,22 +178,44 @@ class GameMap extends React.Component<Store, IS> {
 	}
 
 	private submitNumericQuestion(num: number, timer: number) {
-		lg(num);
-		lg(timer);
 		this.props.sendAnswer({ response: num, timer }, this.props.session.token);
+	}
+
+	private submitBattleQuestion(num: number) {
+		this.props.sendAnswer(
+			{ response: num, timer: 0 },
+			this.props.session.token
+		);
 	}
 
 	public renderQuestion() {
 		try {
-			const { isNumeric, title } = this.props.session.status.part1.steps[
-				this.props.session.status.part1.steps.length - 1
-			].question;
+			const { gameStep, status } = this.props.session;
+
+			let lastStep: IGamePart1Step | IGamePart2Step;
+
+			if (status.currentPart === 1 && status.part1.steps.length > 0) {
+				lastStep = status.part1.steps[status.part1.steps.length - 1];
+			} else if (status.currentPart === 2 && status.part2.steps.length > 0) {
+				lastStep = status.part2.steps[status.part2.steps.length - 1];
+			} else {
+				throw "Wrong lastStep";
+			}
+
+			const { isNumeric, title } = lastStep.question;
 
 			return (
 				<QuestionWindow question={title}>
 					<View style={{ flex: 1 }}>
-						{this.props.session.gameStep === GAME_STEP.QUESTION ? (
-							<QuestionNumInput onSubmit={this.submitNumericQuestion} />
+						{gameStep === GAME_STEP.QUESTION ? (
+							isNumeric ? (
+								<QuestionNumInput onSubmit={this.submitNumericQuestion} />
+							) : (
+								<QuestionVariantsInput
+									lastStep={lastStep}
+									onSubmit={this.submitBattleQuestion}
+								/>
+							)
 						) : null}
 					</View>
 				</QuestionWindow>
@@ -181,8 +234,17 @@ class GameMap extends React.Component<Store, IS> {
 		}
 	}
 
-	render() {
-		const { status, gameStep, waiting } = this.props.session;
+	public render() {
+		const {
+			status,
+			gameStep,
+			waiting,
+			token,
+			allowZones,
+			teamKey,
+			enabledZonesForAttack,
+			attack
+		} = this.props.session;
 
 		const { steps, currentStep } = status.part1;
 		return (
@@ -195,23 +257,35 @@ class GameMap extends React.Component<Store, IS> {
 					<Ship />
 					<Compass />
 					<NNMap
-						token={this.props.session.token}
-						gameMap={this.props.session.status.gameMap}
+						token={token}
+						gameMap={status.gameMap}
 						chooseZone={this.props.chooseZone}
-						currentPart={this.props.session.status.currentPart}
-						chooseDisabled={gameStep !== GAME_STEP.CHOOSE_ZONE}
-						allowZones={this.props.session.allowZones}
-
-						// chooseZone={this.props.chooseZone}
+						currentPart={status.currentPart}
+						chooseDisabled={
+							gameStep !== GAME_STEP.CHOOSE_ZONE &&
+							gameStep !== GAME_STEP.CHOOSE_ATTACKING_ZONE
+						}
+						allowZones={allowZones}
+						teamKey={teamKey}
+						enabledZonesForAttack={enabledZonesForAttack}
+						attackingZone={attack.attackingZone}
+						defenderZone={attack.defenderZone}
 					/>
 					{gameStep === GAME_STEP.WAITING_FOR_START_OF_GAME ||
 					gameStep === GAME_STEP.WAITING_FOR_TEAM ||
 					gameStep === GAME_STEP.CHOOSE_ZONE ||
+					gameStep === GAME_STEP.CHOOSE_ATTACKING_ZONE ||
 					gameStep === GAME_STEP.WAITING_FOR_QUESTION ? (
 						<View
 							style={[
 								styles.waitingZone,
-								{ width: gameStep === GAME_STEP.CHOOSE_ZONE ? 0 : WIDTH }
+								{
+									width:
+										gameStep === GAME_STEP.CHOOSE_ZONE ||
+										GAME_STEP.CHOOSE_ATTACKING_ZONE
+											? 0
+											: WIDTH
+								}
 							]}
 						>
 							<WaitingMsg
@@ -291,11 +365,13 @@ const styles = StyleSheet.create({
 	},
 	teamTitle: {
 		fontSize: rem * 0.8,
-		color: COLORS.N_WHITE
+		color: COLORS.N_WHITE,
+		fontFamily: FONTS.preslav
 	},
 	teamHaveAllowZones: {
 		fontSize: rem * 0.6,
-		color: COLORS.NN_WHITE
+		color: COLORS.NN_WHITE,
+		fontFamily: FONTS.preslav
 	},
 	teamHaveArea: {
 		// flex: 1,
@@ -305,11 +381,13 @@ const styles = StyleSheet.create({
 	teamHaveTitle: {
 		fontSize: rem * 0.7,
 		color: COLORS.DDD_BROWN,
+		fontFamily: FONTS.preslav,
 		marginRight: rem * 0.4
 	},
 	teamHaveNumber: {
 		fontSize: rem * 1,
 		color: COLORS.DDD_BROWN,
+		fontFamily: FONTS.preslav,
 		flex: 1
 	},
 	teamHaveImg: {
@@ -341,7 +419,8 @@ const styles = StyleSheet.create({
 	loadingText: {
 		padding: rem,
 		fontSize: rem,
-		color: COLORS.N_WHITE
+		color: COLORS.N_WHITE,
+		fontFamily: FONTS.preslav
 	},
 	waitingZone: {
 		width: WIDTH,
