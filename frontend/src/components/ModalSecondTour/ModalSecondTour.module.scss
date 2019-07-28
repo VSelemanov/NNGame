@@ -22,10 +22,10 @@
     margin-top: 5%;
     .question_text {
       width: 80%;
-      max-height: 150px;
-      margin-top: 7%;
+      height: 150px;
+      margin-top: 3%;
       & p {
-        font-size: 3.5vw;
+        font-size: 32px;
         margin: 5px;
         text-align: center;
         font-family: "PT-Serif", sans-serif;
@@ -54,13 +54,23 @@
           width: 100%;
           img {
             height: 6vw;
+            max-height: 76px;
             max-width: 76px;
           }
-          & .red {
-            background: url("../../img/red_flag.svg") no-repeat;
+          span {
+            color: black;
           }
-          & .blue {
-            background: url("../../img/blue_flag.svg") no-repeat;
+        }
+        .red {
+          background: url("../../img/red_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
+        }
+        .blue {
+          background: url("../../img/blue_flag.svg") no-repeat;
+          span {
+            color: #fff;
           }
         }
         p {
@@ -147,18 +157,25 @@
           height: 100%;
           width: 100%;
           span {
-            color: #fff;
+            color: black;
           }
           img {
             height: 6vw;
+            max-height: 76px;
             max-width: 76px;
           }
         }
         .blue {
           background: url("../../img/blue_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
         }
         .red {
           background: url("../../img/red_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
         }
         p {
           font-family: "Preslav", sans-serif;
@@ -167,6 +184,21 @@
           width: 80%;
           margin: 0;
         }
+      }
+    }
+    .button_wrapper {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      .button {
+        height: 50px;
+        width: 250px;
+        border-radius: 4px;
+        background: #e7b777;
+        border: 2px solid #3f3f3f;
+        font-family: "Preslav", sans-serif;
+        font-size: 30px;
+        cursor: pointer;
       }
     }
   }

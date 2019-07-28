@@ -1,7 +1,7 @@
 import * as React from "react";
 import style from "./Map.module.scss";
 import MapVector from "./MapVector";
-import { createRoom, startGame, getQuestion, createTeam } from "../../toServer/requests";
+import { startGame, getQuestion } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
 import NumQuestionWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
@@ -22,7 +22,10 @@ class Map extends React.Component<any, any> {
       numAllowZones: {},
       isNumStarted: false,
       gameMap: {},
-      isGameStarted: false
+      isGameStarted: false,
+      isPart2Started: false,
+      attack: "",
+      defend: "",
     };
   }
 
@@ -39,35 +42,12 @@ class Map extends React.Component<any, any> {
     });
   };
 
-  public createRoom = (theme: string, team1: string, team2: string, team3: string) => {
-    createRoom(theme, team1, team2, team3).then(() =>
-      this.setState({
-        isModalRoom: false
-      })
-    );
-  };
-
-  public createTeam = (name: string) => {
-    createTeam(name).then(() => this.setState({ isModalTeam: false }));
-  };
-
   public parseJwt = (token: string) => {
     try {
       return JSON.parse(atob(token.split(".")[1]));
     } catch (e) {
       return null;
     }
-  };
-
-  public getTeamData = () => {
-    const teams = this.state.teams;
-    const result: any = [];
-    Object.keys(teams).map(
-      (key: string) =>
-        teams[key].name && result.push({ value: teams[key]._id, label: teams[key].name })
-    );
-    result.unshift({ value: null, label: "Выберите команду" });
-    return result;
   };
 
   public componentDidMount() {
@@ -99,10 +79,15 @@ class Map extends React.Component<any, any> {
           });
         }
 
-        
         // ПЕРВЫЙ ТУР
-        if (message.currentPart && message.currentPart === 1 && message.part1 && message.part1.currentStep !== null) {
-          const step = message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
+        if (
+          message.currentPart &&
+          message.currentPart === 1 &&
+          message.part1 &&
+          message.part1.currentStep !== null
+        ) {
+          const step =
+            message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
           // запись данных о вопросе первого тура
           if (step.question) {
             const question = step.question;
@@ -120,7 +105,9 @@ class Map extends React.Component<any, any> {
               isNumStarted: step.isStarted
             });
           }
-          const answers = Object.keys(step.responses).filter(key => step.responses[key].response !== null).length;
+          const answers = Object.keys(step.responses).filter(
+            key => step.responses[key].response !== null
+          ).length;
           // проверяем, если ответов не 3 в текущем вопросе то открываем модалку админа
           if (answers !== 3) {
             this.setState({
@@ -130,8 +117,24 @@ class Map extends React.Component<any, any> {
         }
 
         // ВТОРОЙ ТУР
-        if (message.currentPart && message.currentPart === 2 && message.part2 && message.part2.currentStep !== null) {
-          
+        if (
+          message.currentPart &&
+          message.currentPart === 2 &&
+          message.part2 &&
+          message.part2.currentStep !== null
+        ) {
+          console.log("Начинаем второй тур");
+          const step = message.part2.steps.length !== 0 ? message.part2.steps[0] : [];
+          // запись данных о вопросе первого тура
+          if (step.question && step.attacking && step.defender) {
+            const question = step.question;
+            Object.keys(question).includes("_id") && delete question["_id"];
+            this.setState({
+              part2Question: question,
+              attack: step.attacking,
+              defend: step.defender
+            });
+          }
         }
       };
       client.subscribe("/api/room/gamestatus", handler);
@@ -175,9 +178,7 @@ class Map extends React.Component<any, any> {
           <div className={style.game_status}>Статус игры</div>
           <div className={style.button_div}>
             <button className={style.next_question}>
-              <Link to={"/admin-tools/listTeams"}>
-                Админ панель
-              </Link>
+              <Link to={"/admin-tools/listTeams"}>Админ панель</Link>
             </button>
             {!this.state.isGameStarted && (
               <button className={style.next_question} onClick={() => startGame()}>
@@ -198,7 +199,13 @@ class Map extends React.Component<any, any> {
               isStarted={this.state.isNumStarted}
             />
           )}
-          <ModalSecondTour />
+          <ModalSecondTour
+            teams={this.state.teams}
+            question={this.state.part2Question}
+            isStarted={this.state.isPart2Started}
+            attack={this.state.attack}
+            defend={this.state.defend}
+          />
           <div className={style.map_wrapper}>
             <MapVector teams={this.state.teams} gameMap={this.state.gameMap} />
           </div>
