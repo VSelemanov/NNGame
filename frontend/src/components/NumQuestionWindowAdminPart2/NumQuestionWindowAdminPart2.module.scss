@@ -1,5 +1,5 @@
 .modal_back {
-  z-index: 2;
+  z-index: 4;
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -47,10 +47,10 @@
     justify-content: space-between;
     align-items: center;
     height: 28%;
-    width: 80%;
+    width: 60%;
     .button_team1 {
       height: 40%;
-      width: 30%;
+      width: 40%;
       position: relative;
       top: 0;
       background: url("../../img/result_team1_bg.svg") no-repeat;
@@ -80,7 +80,7 @@
     }
     .button_team2 {
       height: 40%;
-      width: 30%;
+      width: 40%;
       position: relative;
       top: 0;
       background: url("../../img/result_team2_bg.svg") no-repeat;
@@ -111,7 +111,7 @@
 
     .button_team3 {
       height: 40%;
-      width: 30%;
+      width: 40%;
       position: relative;
       top: 0;
       background: url("../../img/result_team3_bg.svg") no-repeat;
@@ -200,74 +200,76 @@
 }
 
 @media screen and (max-width: 1280px) {
-  .main {
-    .question_text {
-      width: 80%;
-      height: 10vw;
-      & p {
+  .modal_back {
+    .main {
+      .question_text {
+        width: 80%;
+        height: 10vw;
+        & p {
+          font-size: 2.5vw;
+          margin: 5px;
+          text-align: center;
+        }
+      }
+      .answer {
+        & p {
+          font-size: 3.5vw;
+        }
+      }
+      .footer {
+        height: 18vw;
+        .button_team1 {
+          & span {
+            font-size: 2.5vw;
+            margin: 1px;
+          }
+          & p.timer {
+            font-size: 1.5vw;
+            margin: 1px;
+          }
+          p.timer::before {
+            height: 2vw;
+            width: 2vw;
+          }
+        }
+        .button_team2 {
+          & span {
+            font-size: 2.5vw;
+            margin: 1px;
+          }
+          & p.timer {
+            font-size: 1.5vw;
+            margin: 1px;
+          }
+          p.timer::before {
+            height: 2vw;
+            width: 2vw;
+          }
+        }
+        .button_team3 {
+          & span {
+            font-size: 2.5vw;
+            margin: 1px;
+          }
+          & p.timer {
+            font-size: 1.5vw;
+            margin: 1px;
+          }
+          p.timer::before {
+            height: 2vw;
+            width: 2vw;
+          }
+        }
+      }
+      .button {
+        height: 5vw;
+        width: 20vw;
         font-size: 2.5vw;
-        margin: 5px;
-        text-align: center;
       }
-    }
-    .answer {
-      & p {
-        font-size: 3.5vw;
+      .clock {
+        height: 7vw;
+        bottom: 4vw;
       }
-    }
-    .footer {
-      height: 18vw;
-      .button_team1 {
-        & span {
-          font-size: 2.5vw;
-          margin: 1px;
-        }
-        & p.timer {
-          font-size: 1.5vw;
-          margin: 1px;
-        }
-        p.timer::before {
-          height: 2vw;
-          width: 2vw;
-        }
-      }
-      .button_team2 {
-        & span {
-          font-size: 2.5vw;
-          margin: 1px;
-        }
-        & p.timer {
-          font-size: 1.5vw;
-          margin: 1px;
-        }
-        p.timer::before {
-          height: 2vw;
-          width: 2vw;
-        }
-      }
-      .button_team3 {
-        & span {
-          font-size: 2.5vw;
-          margin: 1px;
-        }
-        & p.timer {
-          font-size: 1.5vw;
-          margin: 1px;
-        }
-        p.timer::before {
-          height: 2vw;
-          width: 2vw;
-        }
-      }
-    }
-    .button {
-      height: 5vw;
-      width: 20vw;
-      font-size: 2.5vw;
-    }
-    .clock {
-      height: 7vw;
-      bottom: 4vw;
     }
   }
 }

@@ -25,7 +25,7 @@
       height: 150px;
       margin-top: 3%;
       & p {
-        font-size: 32px;
+        font-size: 28px;
         margin: 5px;
         text-align: center;
         font-family: "PT-Serif", sans-serif;
@@ -93,52 +93,44 @@
           background: #ffe4b5;
           border-radius: 1px;
           height: 6.5vw;
-          max-height: 81px;
+          max-height: 77px;
           width: 38vw;
-          max-width: 475px;
+          max-width: 471px;
           margin: 3px 0;
-          font-size: 2.5vw;
+          font-size: 32px;
           line-height: 130%px;
           color: #7b6442;
-          padding: 2px;
+          padding: 4px;
         }
-        .white {
+        .team1 {
           background: #efeae1;
-          border: 2px solid #63a647;
-          padding: 0;
         }
-        .red {
-          background: #b01d1d;
-          border: 2px solid #63a647;
-          color: #fff;
-          padding: 0;
-        }
-        .blue {
+        .team2 {
           background: #31427c;
-          border: 2px solid #63a647;
           color: #fff;
-          padding: 0;
         }
-        .white_blue {
+        .team3 {
+          background: #b01d1d;
+          color: #fff;
+        }
+        .team1_team2, .team2_team1 {
           background: url("../../img/white-blue_flag.svg") no-repeat top;
-          border: 2px solid #63a647;
-          padding: 0;
           background-size: cover;
           color: #fff;
         }
-        .white_red {
+        .team1_team3, .team3_team1 {
           background: url("../../img/white-red_flag.svg") no-repeat top;
-          border: 2px solid #63a647;
-          padding: 0;
           background-size: cover;
           color: #fff;
         }
-        .red_blue {
+        .team2_team3, .team3_team2 {
           background: url("../../img/red-blue_flag.svg") no-repeat top;
-          border: 2px solid #63a647;
-          padding: 0;
           background-size: cover;
           color: #fff;
+        }
+        .isRight{
+          border: 4px solid #63a647;
+          padding: 0;
         }
       }
       .rigth_part {
@@ -205,14 +197,30 @@
 }
 
 @media screen and (max-width: 1280px) {
-  .main {
-    .question_text {
-      width: 80%;
-      height: 10vw;
-      & p {
-        font-size: 2.5vw;
-        margin: 5px;
-        text-align: center;
+  .modal_back{
+    .main {
+      .question_text {
+        width: 80%;
+        height: 10vw;
+        & p {
+          font-size: 2.5vw;
+          margin: 5px;
+          text-align: center;
+        }
+      }
+      .content{
+        .center_part{
+          .one_answer{
+            font-size: 2.5vw;
+          }
+        }
+      }
+      .button_wrapper{
+        .button{
+          height: 3.5vw;
+          width: 20vw;
+          font-size: 2vw;
+        }
       }
     }
   }

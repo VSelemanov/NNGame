@@ -8,6 +8,7 @@ import NumQuestionWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowA
 import store from "../../store";
 import { Link } from "react-router-dom";
 import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
+import NumQuestionWindowAdminPart2 from "../NumQuestionWindowAdminPart2/NumQuestionWindowAdminPart2";
 
 class Map extends React.Component<any, any> {
   constructor(props: any) {
@@ -24,8 +25,10 @@ class Map extends React.Component<any, any> {
       gameMap: {},
       isGameStarted: false,
       isPart2Started: false,
+      attackingResponse: '',
+      defenderResponse: '',
       attack: "",
-      defend: "",
+      defend: ""
     };
   }
 
@@ -117,14 +120,11 @@ class Map extends React.Component<any, any> {
         }
 
         // ВТОРОЙ ТУР
-        if (
-          message.currentPart &&
-          message.currentPart === 2 &&
-          message.part2 &&
-          message.part2.currentStep !== null
-        ) {
+        if (message.currentPart && message.currentPart === 2 && message.part2) {
           console.log("Начинаем второй тур");
-          const step = message.part2.steps.length !== 0 ? message.part2.steps[0] : [];
+          const length = message.part2.steps ? message.part2.steps.length : 0;
+          // const step = length !== 0 ? message.part2.steps[length - 1] : [];
+          const step = length !== 0 ? message.part2.steps[length - 1] : [];
           // запись данных о вопросе первого тура
           if (step.question && step.attacking && step.defender) {
             const question = step.question;
@@ -134,6 +134,24 @@ class Map extends React.Component<any, any> {
               attack: step.attacking,
               defend: step.defender
             });
+          }
+          // ищем активный вопрос
+          if (length !== 0 && !step.winner && step.attackingResponse && step.defenderResponse) {
+            this.setState({
+              isPart2QuestionModal: true,
+              attackingResponse: '',
+              defenderResponse: ''
+            });
+          }
+          if(step.attackingResponse !== undefined){
+            this.setState({
+              attackingResponse: step.attackingResponse
+            })
+          }
+          if(step.defenderResponse !== undefined){
+            this.setState({
+              defenderResponse: step.defenderResponse
+            })
           }
         }
       };
@@ -199,15 +217,29 @@ class Map extends React.Component<any, any> {
               isStarted={this.state.isNumStarted}
             />
           )}
-          <ModalSecondTour
-            teams={this.state.teams}
-            question={this.state.part2Question}
-            isStarted={this.state.isPart2Started}
+          {/* {this.state.isPart2QuestionModal && ( */}
+            <ModalSecondTour
+              teams={this.state.teams}
+              question={this.state.part2Question}
+              isStarted={this.state.isPart2Started}
+              attack={this.state.attack}
+              defend={this.state.defend}
+              attackingResponse={this.state.attackingResponse}
+              defenderResponse={this.state.defenderResponse}
+            />
+            {/* )} */}
+
+          {/* <NumQuestionWindowAdminPart2
+            question={"this.state.isPart2QuestionModal"}
             attack={this.state.attack}
             defend={this.state.defend}
-          />
+          /> */}
           <div className={style.map_wrapper}>
-            <MapVector teams={this.state.teams} gameMap={this.state.gameMap} />
+            <MapVector
+              teams={this.state.teams}
+              gameMap={this.state.gameMap}
+              isStarted={this.state.isNumStarted}
+            />
           </div>
         </div>
       </div>

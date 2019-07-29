@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import style from "./NumQuestionWindowAdmin.module.scss";
+import style from "./NumQuestionWindowAdminPart2.module.scss";
 import { startTimer } from "../../toServer/requests";
 import img from "../../img/awaiting_clock.svg";
 
@@ -9,6 +9,15 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
     this.state = {
       isClock: false
     };
+  }
+
+  public getColor(team: string) {
+    switch(team){
+      case 'team1': return `${style.button_team1} ${style.first}`;
+      case 'team2': return style.button_team2;
+      case 'team3': return style.button_team3;
+      default: return style.button_team1;
+    }
   }
 
   public getStyle(responses: any, teamName: string) {
@@ -28,13 +37,7 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
     }
     return "";
   }
-  // if(answers === 3 && step.allowZones && step.isStarted){
-  //   const numAllowZones: any ={};
-  //   Object.keys(step.responses).map(key => numAllowZones[key]= step.responses[key].result );
-  //   this.setState({
-  //     numAllowZones
-  //   })
-  // }
+
   public getResult(data: any, teamName: string) {
     const result = data[teamName];
     return result ? (
@@ -48,7 +51,7 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
   }
 
   render() {
-    const { responses, question } = this.props;
+    const { responses, question, attack, defend } = this.props;
     const answers = responses
       ? Object.keys(responses).filter(key => responses[key].response !== null).length
       : 0;
@@ -56,21 +59,19 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
-            <p>{question ? question.title : ""}</p>
+            <p>{question ? question : ""}</p>
           </div>
           <div className={style.answer}>
             <p>{answers === 3 && question ? question.numericAnswer : "Ожидание ответов команд"}</p>
           </div>
           <div className={style.footer}>
-            <div className={`${style.button_team1} ${this.getStyle(responses, "team1")}`}>
+            <div className={this.getColor(attack)}>
               {answers === 3 ? this.getResult(responses, "team1") : <span>-</span>}
             </div>
-            <div className={`${style.button_team2} ${this.getStyle(responses, "team2")}`}>
+            <div className={this.getColor(defend)}>
               {answers === 3 ? this.getResult(responses, "team2") : <span>-</span>}
             </div>
-            <div className={`${style.button_team3} ${this.getStyle(responses, "team3")}`}>
-              {answers === 3 ? this.getResult(responses, "team3") : <span>-</span>}
-            </div>
+
           </div>
           <div className={style.button_wrapper}>
             {!this.props.isStarted && (
@@ -85,7 +86,7 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
               <button className={style.button} onClick={() => this.props.closeFunc()}>
                 Закрыть
               </button>
-            )}
+            )} 
           </div>
         </div>
       </div>
