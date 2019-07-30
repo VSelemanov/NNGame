@@ -192,6 +192,12 @@
         font-size: 30px;
         cursor: pointer;
       }
+      .clock {
+        position: relative;
+        bottom: 0%;
+        width: 60px;
+        animation: rotate 3s infinite linear;
+      }
     }
   }
 }
@@ -221,7 +227,25 @@
           width: 20vw;
           font-size: 2vw;
         }
+        .clock {
+          height: 5vw;
+          bottom: 1vw;
+        }
       }
     }
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(180deg);
+  }
+  70% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

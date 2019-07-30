@@ -4,31 +4,36 @@ import MapVector from "./MapVector";
 import { startGame, getQuestion } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
-import NumQuestionWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
+import NumQuestionPart1 from "../NumQuestionPart1/NumQuestionPart1";
 import store from "../../store";
 import { Link } from "react-router-dom";
 import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
-import NumQuestionWindowAdminPart2 from "../NumQuestionWindowAdminPart2/NumQuestionWindowAdminPart2";
+import NumQuestionPart2 from "../NumQuestionPart2/NumQuestionPart2";
 
 class Map extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       teams: {},
-      isModalTeam: false,
-      isModalRoom: false,
+      gameMap: {},
+      isGameStarted: false,
+      // первый тур
       isNumQuestionModal: false,
+      isNumStarted: false,
       numQuestion: [],
       numResponses: [],
       numAllowZones: {},
-      isNumStarted: false,
-      gameMap: {},
-      isGameStarted: false,
+      // второй тур не цифровой вопрос
+      isPart2QuestionModal: false,
       isPart2Started: false,
-      attackingResponse: '',
-      defenderResponse: '',
+      attackingResponse: "",
+      defenderResponse: "",
       attack: "",
-      defend: ""
+      defend: "",
+      // второй тур цифровой вопрос
+      numQuestionPart2: {},
+      isNumPart2QuestionModal: false,
+      isNumPart2Started: false
     };
   }
 
@@ -139,19 +144,32 @@ class Map extends React.Component<any, any> {
           if (length !== 0 && !step.winner && step.attackingResponse && step.defenderResponse) {
             this.setState({
               isPart2QuestionModal: true,
-              attackingResponse: '',
-              defenderResponse: ''
+              attackingResponse: "",
+              defenderResponse: ""
             });
           }
-          if(step.attackingResponse !== undefined){
+          if (step.attackingResponse !== undefined) {
             this.setState({
               attackingResponse: step.attackingResponse
-            })
+            });
           }
-          if(step.defenderResponse !== undefined){
+          if (step.defenderResponse !== undefined) {
             this.setState({
               defenderResponse: step.defenderResponse
-            })
+            });
+          }
+          if (step.isStarted) {
+            this.setState({
+              isPart2Started: true
+            });
+          }
+          if (step.numericQuestion) {
+            console.log('второй тур - цифровой вопрос')
+            this.setState({
+              numQuestionPart2: step.numericQuestion,
+              isNumPart2QuestionModal: true,
+              isNumPart2Started: step.numericIsStarted
+            });
           }
         }
       };
@@ -207,9 +225,10 @@ class Map extends React.Component<any, any> {
               Следующий вопрос
             </button>
           </div>
+
           {/* нужно без воскл знака! убери не забудь */}
           {this.state.isNumQuestionModal && (
-            <NumQuestionWindowAdmin
+            <NumQuestionPart1
               closeFunc={this.closeFuncNumModal}
               teams={this.state.teams}
               question={this.state.numQuestion}
@@ -217,7 +236,9 @@ class Map extends React.Component<any, any> {
               isStarted={this.state.isNumStarted}
             />
           )}
-          {/* {this.state.isPart2QuestionModal && ( */}
+
+          {/* нужно без воскл знака! убери не забудь */}
+          {this.state.isPart2QuestionModal && (
             <ModalSecondTour
               teams={this.state.teams}
               question={this.state.part2Question}
@@ -226,14 +247,18 @@ class Map extends React.Component<any, any> {
               defend={this.state.defend}
               attackingResponse={this.state.attackingResponse}
               defenderResponse={this.state.defenderResponse}
+              closeFunc={this.closeFunc}
             />
-            {/* )} */}
+          )}
 
-          {/* <NumQuestionWindowAdminPart2
-            question={"this.state.isPart2QuestionModal"}
-            attack={this.state.attack}
-            defend={this.state.defend}
-          /> */}
+          {this.state.isNumPart2QuestionModal && (
+            <NumQuestionPart2
+              question={this.state.numQuestionPart2}
+              attack={this.state.attack}
+              defend={this.state.defend}
+              isStarted={this.state.isNumPart2Started}
+            />
+          )}
           <div className={style.map_wrapper}>
             <MapVector
               teams={this.state.teams}

@@ -1,19 +1,13 @@
 import React, { Fragment } from "react";
-import style from "./NumQuestionWindowAdminPart2.module.scss";
+import style from "./NumQuestionPart2.module.scss";
 import { startTimer } from "../../toServer/requests";
 import img from "../../img/awaiting_clock.svg";
 
-class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      isClock: false
-    };
-  }
+class NumQuestionPart2 extends React.Component<any, any> {
 
   public getColor(team: string) {
     switch(team){
-      case 'team1': return `${style.button_team1} ${style.first}`;
+      case 'team1': return `${style.button_team1}`;
       case 'team2': return style.button_team2;
       case 'team3': return style.button_team3;
       default: return style.button_team1;
@@ -59,7 +53,7 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
-            <p>{question ? question : ""}</p>
+            <p>{question ? question.title : ""}</p>
           </div>
           <div className={style.answer}>
             <p>{answers === 3 && question ? question.numericAnswer : "Ожидание ответов команд"}</p>
@@ -94,4 +88,4 @@ class NumQuestionWindowAdminPart2 extends React.Component<any, any> {
   }
 }
 
-export default NumQuestionWindowAdminPart2;
+export default NumQuestionPart2;

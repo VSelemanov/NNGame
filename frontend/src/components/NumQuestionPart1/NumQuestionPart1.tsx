@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
-import style from "./NumQuestionWindowAdmin.module.scss";
+import style from "./NumQuestionPart1.module.scss";
 import { startTimer } from "../../toServer/requests";
 import img from "../../img/awaiting_clock.svg";
 
-class KeyboardWindowAdmin extends React.Component<any, any> {
+class NumQuestionPart1 extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -93,4 +93,4 @@ class KeyboardWindowAdmin extends React.Component<any, any> {
   }
 }
 
-export default KeyboardWindowAdmin;
+export default NumQuestionPart1;
