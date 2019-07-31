@@ -69,7 +69,7 @@ class ModalSecondTour extends React.Component<any, any> {
     if (resp2 === Number(answer)) {
       return team === "defend" ? "+1" : "-1";
     }
-    return "0";
+    return "";
   }
 
   checkWinner(index: number) {
@@ -81,7 +81,7 @@ class ModalSecondTour extends React.Component<any, any> {
         : null;
     const resp1 = this.props.attackingResponse;
     const resp2 = this.props.defenderResponse;
-    if (answer && resp1 !== undefined && resp1 !== "" && resp2 !== undefined && resp2 !== "") {
+    if (answer && resp1 !== undefined && resp1  && resp2 !== undefined && resp2 ) {
       return Number(answer) === index ? style.isRight : "";
     }
     return "";
@@ -137,11 +137,11 @@ class ModalSecondTour extends React.Component<any, any> {
                 Начало опроса
               </button>
             )}
-            {this.props.isStarted && (resp1 === undefined || resp1 === "" || resp2 === undefined || resp2 === "" ) && (
+            {this.props.isStarted && (!resp1 || !resp2) && (
               <img className={style.clock} src={img} alt="clock" />
             )}
-            {this.props.isStarted && resp1 !== undefined && resp1 !== "" && resp2 !== undefined && resp2 !== "" && (
-              <button className={style.button} onClick={() => this.props.closeFunc('isPart2QuestionModal')}>
+            {this.props.isStarted && resp1  && resp2 && (
+              <button className={style.button} onClick={() => this.props.closeFunc()}>
                 Закрыть
               </button>
             )}

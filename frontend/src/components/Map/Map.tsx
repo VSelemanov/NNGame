@@ -26,14 +26,17 @@ class Map extends React.Component<any, any> {
       // второй тур не цифровой вопрос
       isPart2QuestionModal: false,
       isPart2Started: false,
-      attackingResponse: "",
-      defenderResponse: "",
-      attack: "",
-      defend: "",
+      attackingResponse: null,
+      defenderResponse: null,
+      attack: null,
+      defend: null,
       // второй тур цифровой вопрос
       numQuestionPart2: {},
       isNumPart2QuestionModal: false,
-      isNumPart2Started: false
+      isNumPart2Started: false,
+      attackingNumericResponse: null,
+      defenderNumericResponse: null,
+      winner: null
     };
   }
 
@@ -42,7 +45,26 @@ class Map extends React.Component<any, any> {
       [param]: false
     });
   };
-
+  public closeFuncNumPart2 = () =>{
+    this.setState({
+      numQuestionPart2: {},
+      isNumPart2QuestionModal: false,
+      isNumPart2Started: false,
+      attackingNumericResponse: null,
+      defenderNumericResponse: null,
+      winner: null
+    });
+  }
+  public closeFuncSecondTourModal = () =>{
+    this.setState({
+      isPart2QuestionModal: false,
+      isPart2Started: false,
+      attackingResponse: null,
+      defenderResponse: null,
+      attack: null,
+      defend: null,
+    });
+  }
   public closeFuncNumModal = () => {
     this.setState({
       isNumQuestionModal: false,
@@ -130,14 +152,16 @@ class Map extends React.Component<any, any> {
           const length = message.part2.steps ? message.part2.steps.length : 0;
           // const step = length !== 0 ? message.part2.steps[length - 1] : [];
           const step = length !== 0 ? message.part2.steps[length - 1] : [];
-          // запись данных о вопросе первого тура
-          if (step.question && step.attacking && step.defender) {
+          // запись данных о вопросе второго тура
+          if (step.question && step.attacking && step.defender && !step.attackingResponse && !step.defenderResponse) {
+            console.log(step)
             const question = step.question;
             Object.keys(question).includes("_id") && delete question["_id"];
             this.setState({
               part2Question: question,
               attack: step.attacking,
-              defend: step.defender
+              defend: step.defender,
+              isPart2QuestionModal: true
             });
           }
           // ищем активный вопрос
@@ -167,8 +191,13 @@ class Map extends React.Component<any, any> {
             console.log('второй тур - цифровой вопрос')
             this.setState({
               numQuestionPart2: step.numericQuestion,
-              isNumPart2QuestionModal: true,
-              isNumPart2Started: step.numericIsStarted
+              isNumPart2QuestionModal: step.winner === 'draw' && true ,
+              isNumPart2Started: step.numericIsStarted,
+              attackingNumericResponse: step.attackingNumericResponse ? step.attackingNumericResponse : null,
+              defenderNumericResponse: step.defenderNumericResponse ? step.defenderNumericResponse : null,
+              winner: step.winner ? step.winner : null,
+              attack: step.attacking,
+              defend: step.defender,
             });
           }
         }
@@ -247,7 +276,7 @@ class Map extends React.Component<any, any> {
               defend={this.state.defend}
               attackingResponse={this.state.attackingResponse}
               defenderResponse={this.state.defenderResponse}
-              closeFunc={this.closeFunc}
+              closeFunc={this.closeFuncSecondTourModal}
             />
           )}
 
@@ -257,6 +286,10 @@ class Map extends React.Component<any, any> {
               attack={this.state.attack}
               defend={this.state.defend}
               isStarted={this.state.isNumPart2Started}
+              attackResponse={this.state.attackingNumericResponse}
+              defendResponse={this.state.defenderNumericResponse}
+              winner={this.state.winner}
+              closeFunc={this.closeFuncNumPart2}
             />
           )}
           <div className={style.map_wrapper}>
