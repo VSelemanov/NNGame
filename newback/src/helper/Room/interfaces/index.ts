@@ -77,12 +77,23 @@ export interface IGamePart2 {
   steps: IGamePart2Step[];
 }
 
+export interface IGamePart3 {
+  question: IQuestion | null;
+  responses: {
+    [teams.team1]: ITeamResponsePart1 | null;
+    [teams.team2]: ITeamResponsePart1 | null;
+    [teams.team3]: ITeamResponsePart1 | null;
+  };
+  isStarted: boolean;
+}
+
 export interface IGameStatus {
   teams: ITeamsInRoom;
   gameMap: IGameMap;
   currentPart: number;
   part1: IGamePart1;
   part2: IGamePart2;
+  part3: IGamePart3;
   isStarted: boolean;
   gameWinner: string | null;
 }

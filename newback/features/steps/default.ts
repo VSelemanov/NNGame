@@ -9,7 +9,7 @@ import {
 import { server } from "../../src/server";
 import { expect } from "chai";
 import utils from "../../src/utils";
-import { getResponse } from "./lib/response";
+import { getResponse, getSocketResponse } from "./lib/response";
 import { APIRoute, HTTPMethods, teams } from "../../src/constants";
 // import { routePath as TeamRoutePath } from "../../src/helper/Team/constants";
 import {
@@ -27,7 +27,7 @@ import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
 
 import TeamMethods from "../../src/helper/Team";
-import { IRoom } from "../../src/helper/Room/interfaces";
+import { IRoom, IGameStatus } from "../../src/helper/Room/interfaces";
 import { ITeam } from "../../src/helper/Team/interfaces";
 import RoomMethods from "../../src/helper/Room";
 import { Client } from "@hapi/nes";
@@ -221,4 +221,13 @@ Given("в очереди второго тура осталась только �
   Room.gameStatus.part2.teamQueue = [teamKey];
 
   await Room.save();
+});
+
+Then("запускается тур номер {int} с командами {string}", async function(
+  partNumber: number,
+  teamsString: string
+) {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.currentPart).to.eql(partNumber);
 });

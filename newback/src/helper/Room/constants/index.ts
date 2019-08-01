@@ -47,6 +47,15 @@ export const roomDefault: IRoomBase = {
   gameStatus: {
     isStarted: false,
     currentPart: 0,
+    part3: {
+      isStarted: false,
+      question: null,
+      responses: {
+        [teams.team1]: null,
+        [teams.team2]: null,
+        [teams.team3]: null
+      }
+    },
     teams: {
       [teams.team1]: null,
       [teams.team2]: null,
