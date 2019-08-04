@@ -17,6 +17,7 @@ class Map extends React.Component<any, any> {
       teams: {},
       gameMap: {},
       isGameStarted: false,
+      gameStatus: 0,
       // первый тур
       isNumQuestionModal: false,
       isNumStarted: false,
@@ -45,7 +46,7 @@ class Map extends React.Component<any, any> {
       [param]: false
     });
   };
-  public closeFuncNumPart2 = () =>{
+  public closeFuncNumPart2 = () => {
     this.setState({
       numQuestionPart2: {},
       isNumPart2QuestionModal: false,
@@ -54,17 +55,17 @@ class Map extends React.Component<any, any> {
       defenderNumericResponse: null,
       winner: null
     });
-  }
-  public closeFuncSecondTourModal = () =>{
+  };
+  public closeFuncSecondTourModal = () => {
     this.setState({
       isPart2QuestionModal: false,
       isPart2Started: false,
       attackingResponse: null,
       defenderResponse: null,
       attack: null,
-      defend: null,
+      defend: null
     });
-  }
+  };
   public closeFuncNumModal = () => {
     this.setState({
       isNumQuestionModal: false,
@@ -80,6 +81,22 @@ class Map extends React.Component<any, any> {
     }
   };
 
+  public getTeamStatus = (team: string) => {
+    return <div className={style[team]} />;
+  };
+
+  public getGameStatus = () => {
+    switch (this.state.gameStatus) {
+      case 0:
+        return <p>Выбор стартовых зон</p>;
+      case 1:
+        return <p>Первый тур</p>;
+      case 2:
+        return <p>Второй тур</p>;
+      default:
+        return <p>{""}</p>;
+    }
+  };
   public componentDidMount() {
     const Nes = require("nes");
     const client = new Nes.Client("ws://188.68.210.120:3000");
@@ -96,7 +113,8 @@ class Map extends React.Component<any, any> {
           Object.keys(teams).includes("_id") && delete teams["_id"];
           this.setState({
             teams,
-            isGameStarted: message.isStarted
+            isGameStarted: message.isStarted,
+            gameStatus: message.currentPart ? message.currentPart : 0
           });
         }
 
@@ -153,8 +171,14 @@ class Map extends React.Component<any, any> {
           // const step = length !== 0 ? message.part2.steps[length - 1] : [];
           const step = length !== 0 ? message.part2.steps[length - 1] : [];
           // запись данных о вопросе второго тура
-          if (step.question && step.attacking && step.defender && !step.attackingResponse && !step.defenderResponse) {
-            console.log(step)
+          if (
+            step.question &&
+            step.attacking &&
+            step.defender &&
+            !step.attackingResponse &&
+            !step.defenderResponse
+          ) {
+            console.log(step);
             const question = step.question;
             Object.keys(question).includes("_id") && delete question["_id"];
             this.setState({
@@ -188,16 +212,20 @@ class Map extends React.Component<any, any> {
             });
           }
           if (step.numericQuestion) {
-            console.log('второй тур - цифровой вопрос')
+            console.log("второй тур - цифровой вопрос");
             this.setState({
               numQuestionPart2: step.numericQuestion,
-              isNumPart2QuestionModal: step.winner === 'draw' && true ,
+              isNumPart2QuestionModal: step.winner === "draw" && true,
               isNumPart2Started: step.numericIsStarted,
-              attackingNumericResponse: step.attackingNumericResponse ? step.attackingNumericResponse : null,
-              defenderNumericResponse: step.defenderNumericResponse ? step.defenderNumericResponse : null,
+              attackingNumericResponse: step.attackingNumericResponse
+                ? step.attackingNumericResponse
+                : null,
+              defenderNumericResponse: step.defenderNumericResponse
+                ? step.defenderNumericResponse
+                : null,
               winner: step.winner ? step.winner : null,
               attack: step.attacking,
-              defend: step.defender,
+              defend: step.defender
             });
           }
         }
@@ -213,6 +241,7 @@ class Map extends React.Component<any, any> {
       <div className={style.main}>
         <div className={style.left_panel}>
           <div className={style.command_info}>
+            {this.getTeamStatus("team1")}
             <span>
               {teams.team1 && teams.team1.isLoggedIn ? teams.team1.name : "Ожидание команды"}
             </span>
@@ -220,6 +249,8 @@ class Map extends React.Component<any, any> {
             <span>{teams.team1 ? teams.team1.inviteCode : "-"}</span>
           </div>
           <div className={style.command_info}>
+            {this.getTeamStatus("team2")}
+
             <span>
               {teams.team2 && teams.team2.isLoggedIn ? teams.team2.name : "Ожидание команды"}
             </span>
@@ -227,6 +258,7 @@ class Map extends React.Component<any, any> {
             <span>{teams.team2 ? teams.team2.inviteCode : "-"}</span>
           </div>
           <div className={style.command_info}>
+            {this.getTeamStatus("team3")}
             <span>
               {teams.team3 && teams.team3.isLoggedIn ? teams.team3.name : "Ожидание команды"}
             </span>
@@ -240,7 +272,7 @@ class Map extends React.Component<any, any> {
           <div className={style.color3} />
         </div>
         <div className={style.right_panel}>
-          <div className={style.game_status}>Статус игры</div>
+          <div className={style.game_status}>{this.getGameStatus()}</div>
           <div className={style.button_div}>
             <button className={style.next_question}>
               <Link to={"/admin-tools/listTeams"}>Админ панель</Link>

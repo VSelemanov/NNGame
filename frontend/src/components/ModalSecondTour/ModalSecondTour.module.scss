@@ -23,6 +23,7 @@
     .question_text {
       width: 80%;
       height: 150px;
+      overflow-y: scroll;
       margin-top: 3%;
       & p {
         font-size: 28px;
