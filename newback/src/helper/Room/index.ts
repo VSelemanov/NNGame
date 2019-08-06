@@ -312,40 +312,33 @@ const methods = {
             step.defenderNumericResponse &&
             step.numericQuestion
           ) {
-            const numericAnswer = step.numericQuestion.numericAnswer || 0;
-            const dif = {
-              attacking: Math.abs(
-                step.attackingNumericResponse.response - numericAnswer
-              ),
-              defender: Math.abs(
-                step.defenderNumericResponse.response - numericAnswer
-              )
+            const teamsResponses = {
+              [teams.team1]: null,
+              [teams.team2]: null,
+              [teams.team3]: null
             };
+
+            teamsResponses[step.attacking] = step.attackingNumericResponse;
+            teamsResponses[step.defender] = step.defenderNumericResponse;
+
+            const questionResults = methods.calcNumericQuestionWinner(
+              [step.attacking, step.defender],
+              step.numericQuestion,
+              teamsResponses
+            );
+
             let zone = "";
-            if (dif.attacking < dif.defender) {
-              step.winner = step.attacking;
+
+            if (questionResults[0].teamKey === step.attacking) {
               zone = step.defenderZone;
-            } else if (dif.attacking > dif.defender) {
-              step.winner = step.defender;
-              zone = step.attackingZone;
-            } else if (
-              step.attackingNumericResponse.timer <
-              step.defenderNumericResponse.timer
-            ) {
-              step.winner = step.attacking;
-              zone = step.defenderZone;
-            } else if (
-              step.attackingNumericResponse.timer >
-              step.defenderNumericResponse.timer
-            ) {
-              step.winner = step.defender;
-              zone = step.attackingZone;
-            } else {
-              const r = [step.attacking, step.defender];
-              const randomIndex = utils.getRandomInt(0, 1);
-              step.winner = r[randomIndex];
-              zone = randomIndex === 0 ? step.attackingZone : step.defenderZone;
             }
+
+            if (questionResults[0].teamKey === step.defender) {
+              zone = step.attackingZone;
+            }
+
+            step.winner = questionResults[0].teamKey;
+
             await methods.colorZone(zone, step.winner, Room);
           }
         }

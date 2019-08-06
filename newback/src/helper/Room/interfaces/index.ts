@@ -65,14 +65,8 @@ export interface IGamePart2Step {
   numericIsStarted?: boolean;
   attackingResponse?: number;
   defenderResponse?: number;
-  attackingNumericResponse?: {
-    response: number;
-    timer: number;
-  };
-  defenderNumericResponse?: {
-    response: number;
-    timer: number;
-  };
+  attackingNumericResponse?: ITeamResponsePart3;
+  defenderNumericResponse?: ITeamResponsePart3;
   winner?: string;
 }
 
