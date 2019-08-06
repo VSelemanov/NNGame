@@ -233,8 +233,23 @@ const methods = {
         teamResponse.response = response;
         teamResponse.timer = timer;
 
+        const teamsInPart = Object.keys(teams).map(key => teams[key]);
+
         if (methods.checkTeamResponses(step)) {
-          methods.calcQuestionWinner(step);
+          const teamResults = methods.calcNumericQuestionWinner(
+            teamsInPart,
+            step.question,
+            step.responses
+          );
+
+          for (let i = 0; i < teamResults.length; i++) {
+            const zones = 2 - i;
+            step.allowZones[teamResults[i].teamKey] = zones;
+            step.responses[teamResults[i].teamKey].result = zones;
+            if (zones !== 0) {
+              step.teamQueue.push(teamResults[i].teamKey);
+            }
+          }
         }
       }
 
@@ -421,51 +436,6 @@ const methods = {
       }
     }
     return true;
-  },
-  calcQuestionWinner: (stepElement: IGamePart1Step) => {
-    interface IResultDifTimer {
-      dif: number;
-      timer: number;
-      teamKey: string;
-    }
-
-    const semiRes: IResultDifTimer[] = Object.keys(teams).map(
-      (teamKey): IResultDifTimer => {
-        return {
-          timer: stepElement.responses[teamKey].timer || 100,
-          dif: Math.abs(
-            (stepElement.question.numericAnswer || 0) -
-              stepElement.responses[teamKey].response
-          ),
-          teamKey
-        };
-      }
-    );
-
-    semiRes.sort((a, b) => {
-      if (a.dif < b.dif) {
-        return -1;
-      } else if (a.dif > b.dif) {
-        return 1;
-      } else {
-        if (a.timer < b.timer) {
-          return -1;
-        } else if (a.timer > b.timer) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }
-    });
-
-    for (let i = 0; i < semiRes.length; i++) {
-      const zones = 2 - i;
-      stepElement.allowZones[semiRes[i].teamKey] = zones;
-      stepElement.responses[semiRes[i].teamKey].result = zones;
-      if (zones !== 0) {
-        stepElement.teamQueue.push(semiRes[i].teamKey);
-      }
-    }
   },
   prepareTeamQueue: async (gameStatus: IGameStatus) => {
     const res: ITeamInRoom[] = [];
