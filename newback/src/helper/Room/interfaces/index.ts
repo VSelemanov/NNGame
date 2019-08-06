@@ -1,6 +1,10 @@
 import { IBaseFlds, IMapZone } from "../../../interfaces";
 import { Document } from "mongoose";
-import { ITeamsInRoom, ITeamResponsePart1 } from "../../Team/interfaces";
+import {
+  ITeamsInRoom,
+  ITeamResponsePart1,
+  ITeamResponsePart3
+} from "../../Team/interfaces";
 import { mapZones, teams } from "../../../constants";
 import { IQuestion } from "../../Question/interfaces";
 
@@ -79,10 +83,11 @@ export interface IGamePart2 {
 
 export interface IGamePart3 {
   question: IQuestion | null;
+  teams: string[];
   responses: {
-    [teams.team1]: ITeamResponsePart1 | null;
-    [teams.team2]: ITeamResponsePart1 | null;
-    [teams.team3]: ITeamResponsePart1 | null;
+    [teams.team1]: ITeamResponsePart3 | null;
+    [teams.team2]: ITeamResponsePart3 | null;
+    [teams.team3]: ITeamResponsePart3 | null;
   };
   isStarted: boolean;
 }

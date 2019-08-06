@@ -7,7 +7,8 @@ import {
   IGamePart1Step,
   IGameStatus,
   IGamePart2,
-  IGamePart2Step
+  IGamePart2Step,
+  IGamePart3
 } from "./interfaces";
 import { server } from "../../server";
 import {
@@ -17,15 +18,22 @@ import {
   responsesDefault,
   winnerCheckResults
 } from "./constants";
+import { ErrorMessages as QuestionErrorMessages } from "../Question/constants";
 import { roomDefault } from "./constants";
 import { teams, mapZones } from "../../constants";
-import { ITeam, ITeamInRoom, ITeamResponsePart1 } from "../Team/interfaces";
+import {
+  ITeam,
+  ITeamInRoom,
+  ITeamResponsePart1,
+  ITeamResponsePart3
+} from "../Team/interfaces";
 import QuestionMethods from "../Question";
 
 import TeamMethods from "../Team";
 import { IQuestion } from "../Question/interfaces";
 import utils from "../../utils";
 import { isFunction } from "util";
+import { IResultDifTimer } from "../../interfaces";
 
 const methods = {
   create: trycatcher(
@@ -329,7 +337,7 @@ const methods = {
         if (step.winner && step.winner !== winnerCheckResults.draw) {
           part.teamQueue.shift();
           if (part.steps.length === 3 && part.teamQueue.length === 0) {
-            methods.checkGameWinner(Room.gameStatus);
+            await methods.checkGameWinner(Room.gameStatus);
             if (Room.gameStatus.gameWinner) {
               Room.isActive = false;
             }
@@ -337,6 +345,36 @@ const methods = {
         }
         Room.markModified("gameStatus.part2.teamQueue");
         Room.markModified("gameStatus.part2.steps");
+      }
+
+      if (currentPart === 3) {
+        let isAllTeamsAnswered = true;
+        const part: IGamePart3 = Room.gameStatus[`part${currentPart}`];
+        if (!timer) {
+          throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+        }
+        if (!part.question) {
+          throw new Error(QuestionErrorMessages.NOT_FOUND);
+        }
+
+        part.responses[teamKey] = { timer, response } as ITeamResponsePart3;
+
+        for (const teamKey of part.teams) {
+          if (!part.responses[teamKey]) {
+            isAllTeamsAnswered = false;
+          }
+        }
+
+        if (isAllTeamsAnswered) {
+          // check winner of game
+          const resultOfQuestion = methods.calcNumericQuestionWinner(
+            part.teams,
+            part.question,
+            part.responses || {}
+          );
+          Room.gameStatus.gameWinner = resultOfQuestion[0].teamKey;
+          Room.isActive = false;
+        }
       }
 
       await Room.save();
@@ -448,6 +486,56 @@ const methods = {
       res.map(async r => await TeamMethods.getTeamLinkInGame(r._id))
     );
   },
+  calcNumericQuestionWinner: (
+    teamsInPart: string[],
+    question: IQuestion,
+    responses: {
+      [teams.team1]: ITeamResponsePart3 | null;
+      [teams.team2]: ITeamResponsePart3 | null;
+      [teams.team3]: ITeamResponsePart3 | null;
+    }
+  ): IResultDifTimer[] => {
+    // Функция возвращает отсортированный массив с участинками числового вопроса
+    // Массив отсортирован в порядке победы в вопросе: 0 элемент - победитель вопроса
+
+    if (
+      question.numericAnswer === undefined ||
+      question.numericAnswer === null
+    ) {
+      throw new Error(QuestionErrorMessages.QUESTION_SHOULD_BE_NUMERIC);
+    }
+    const calculatedDif: IResultDifTimer[] = [];
+
+    for (const teamKey of teamsInPart) {
+      if (responses[teamKey]) {
+        calculatedDif.push({
+          dif: Math.abs(
+            question.numericAnswer - (responses[teamKey].response || 0)
+          ),
+          teamKey,
+          timer: responses[teamKey].timer || 100
+        });
+      }
+    }
+
+    calculatedDif.sort((a, b) => {
+      if (a.dif < b.dif) {
+        return -1;
+      } else if (a.dif > b.dif) {
+        return 1;
+      } else {
+        if (a.timer < b.timer) {
+          return -1;
+        } else if (a.timer > b.timer) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+
+    return calculatedDif;
+  },
   checkFillMap: (gameMap): boolean => {
     for (const key of Object.keys(mapZones)) {
       if (
@@ -491,15 +579,33 @@ const methods = {
       logMessage: `${EntityName} team attack method`
     }
   ),
-  checkGameWinner: (gameStatus: IGameStatus) => {
+  checkGameWinner: async (gameStatus: IGameStatus): Promise<void> => {
     let firstPlace = Object.keys(teams)[0];
     for (const key of Object.keys(teams)) {
       if (gameStatus.teams[firstPlace].zones < gameStatus.teams[key].zones) {
         firstPlace = key;
       }
     }
-    console.log({ firstPlace });
-    gameStatus.gameWinner = firstPlace;
+    let teamsPart3 = [firstPlace];
+    for (const key of Object.keys(teams)) {
+      if (
+        gameStatus.teams[firstPlace].zones === gameStatus.teams[key].zones &&
+        key !== firstPlace
+      ) {
+        teamsPart3.push(key);
+      }
+    }
+
+    if (teamsPart3.length < 2) {
+      gameStatus.gameWinner = firstPlace;
+      return;
+    }
+
+    gameStatus.currentPart = 3;
+    gameStatus.part3.question = await QuestionMethods.random({
+      isNumeric: true
+    });
+    gameStatus.part3.teams = teamsPart3;
   }
 };
 

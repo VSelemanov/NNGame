@@ -228,6 +228,12 @@ Then("запускается тур номер {int} с командами {stri
   teamsString: string
 ) {
   const res: IGameStatus = getSocketResponse();
+  const Team1 = await getTeam(teamsString.split(",")[0]);
+  const Team1Key = await TeamMethods.getTeamLinkInGame(Team1._id);
+  const Team2 = await getTeam(teamsString.split(",")[1]);
+  const Team2Key = await TeamMethods.getTeamLinkInGame(Team2._id);
 
   expect(res.currentPart).to.eql(partNumber);
+  expect(res.part3.teams[0]).to.eql(Team1Key);
+  expect(res.part3.teams[1]).to.eql(Team2Key);
 });

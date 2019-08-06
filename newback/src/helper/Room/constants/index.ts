@@ -48,6 +48,7 @@ export const roomDefault: IRoomBase = {
     isStarted: false,
     currentPart: 0,
     part3: {
+      teams: [],
       isStarted: false,
       question: null,
       responses: {
