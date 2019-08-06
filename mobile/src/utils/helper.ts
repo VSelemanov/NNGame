@@ -4,14 +4,14 @@ import {
 	NavigationComponent
 } from "react-navigation";
 import { SCREENS, TEAM } from "../constants/enum";
-import { isDev } from "../constants/constants";
+import { isDev, strings } from "../constants/constants";
 import {
 	IGamePart1Step,
 	IGameMap
 } from "../../../newback/src/helper/Room/interfaces";
 import { ITeamsInRoom } from "../../../newback/src/helper/Team/interfaces";
 import { IMapZone } from "../../../newback/src/interfaces";
-import { mapZones } from "../../../newback/src/constants";
+import { mapZones, teams } from "../../../newback/src/constants";
 export class Helper {
 	private navigator: NavigationComponent;
 	constructor() {
@@ -137,11 +137,12 @@ export class Helper {
 			allowZones.team2 !== null &&
 			allowZones.team3 !== null
 		) {
+			const allow = allowZones[teamKey] || 0;
+			const tQ = teamQueue[0] || "";
+			const allowQueue = allowZones[tQ] || 0;
 			if (
-				(step.teamQueue[0] === teamKey && allowZones[teamKey] > 0) ||
-				(teamQueue[1] === teamKey &&
-					allowZones[teamQueue[0]] === 0 &&
-					allowZones[teamKey] > 0)
+				(step.teamQueue[0] === teamKey && allow > 0) ||
+				(teamQueue[1] === teamKey && allowQueue === 0 && allow > 0)
 			) {
 				return true;
 			}
@@ -192,6 +193,19 @@ export class Helper {
 		});
 
 		return Object.keys(obj);
+	}
+
+	public getTeamString(team: string): string {
+		switch (team) {
+			case TEAM.RED:
+				return strings.redTeam;
+			case TEAM.BLUE:
+				return strings.blueTeam;
+			case TEAM.WHITE:
+				return strings.whiteTeam;
+			default:
+				return "";
+		}
 	}
 }
 

@@ -3,6 +3,7 @@ import { ISessionStore, ISessionActionsProps } from "../interfaces/session";
 import helper, { lg } from "../utils/helper";
 import jwt_decode from "jwt-decode";
 import { strings } from "../constants/constants";
+import { Alert } from "react-native";
 export const defaultState: ISessionStore = {
 	screen: SCREENS.ENTRANCE,
 	currentTeam: TEAM.RED,
@@ -204,11 +205,11 @@ export default (
 				const { steps, teamQueue } = action.status.part2;
 
 				if (steps.length === 0 && teamQueue) {
-					newState.enabledZonesForAttack = helper.getEnabledZonesForAttack(
-						newState.status.gameMap,
-						teamQueue[0]
-					);
 					if (`${teamQueue[0]}` === teamKey) {
+						newState.enabledZonesForAttack = helper.getEnabledZonesForAttack(
+							newState.status.gameMap,
+							teamQueue[0]
+						);
 						newState.gameStep = GAME_STEP.CHOOSE_ATTACKING_ZONE;
 						newState.allowZones = 2;
 						newState.waiting = {
@@ -231,28 +232,126 @@ export default (
 						}
 						newState.waiting = {
 							title: team,
-							msg: strings.waitingForOthers
+							msg: strings.teamGoingToAttack
 						};
 					}
 				}
-				if (steps.length > 0) {
+				if (steps.length > 0 && teamQueue.length !== 0) {
 					const currentStep = steps[steps.length - 1];
-					if (
-						currentStep.attacking !== teamKey &&
-						currentStep.defender !== teamKey
-					) {
-						newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
-						newState.waiting = {
-							title: "",
-							msg: strings.waitingForOthers
-						};
+					if (!currentStep.winner) {
+						switch (teamKey) {
+							case currentStep.attacking:
+								if (
+									currentStep.attackingResponse &&
+									!currentStep.defenderResponse
+								) {
+									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									newState.waiting = {
+										title: helper.getTeamString(currentStep.defender),
+										msg: strings.isAnswering
+									};
+								} else if (!currentStep.isStarted) {
+									newState.gameStep = GAME_STEP.QUESTION_DESC;
+								} else if (!currentStep.attackingResponse) {
+									newState.gameStep = GAME_STEP.QUESTION;
+								}
+								break;
+							case currentStep.defender:
+								if (
+									!currentStep.attackingResponse &&
+									currentStep.defenderResponse
+								) {
+									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									newState.waiting = {
+										title: helper.getTeamString(currentStep.attacking),
+										msg: strings.isAnswering
+									};
+								} else if (!currentStep.isStarted) {
+									newState.gameStep = GAME_STEP.QUESTION_DESC;
+								} else if (!currentStep.defenderResponse) {
+									newState.gameStep = GAME_STEP.QUESTION;
+								}
+								break;
+							default:
+								newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+								newState.waiting = {
+									title: "",
+									msg: strings.waitingForOthers
+								};
+						}
+					} else if (currentStep.winner === "draw") {
+						switch (teamKey) {
+							case currentStep.attacking:
+								if (
+									currentStep.attackingNumericResponse &&
+									!currentStep.defenderNumericResponse
+								) {
+									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									newState.waiting = {
+										title: helper.getTeamString(currentStep.defender),
+										msg: strings.isAnswering
+									};
+								} else if (!currentStep.attackingNumericResponse) {
+									newState.gameStep = GAME_STEP.QUESTION;
+								}
+								break;
+							case currentStep.defender:
+								if (
+									!currentStep.attackingNumericResponse &&
+									currentStep.defenderNumericResponse
+								) {
+									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									newState.waiting = {
+										title: helper.getTeamString(currentStep.attacking),
+										msg: strings.isAnswering
+									};
+								} else if (!currentStep.defenderNumericResponse) {
+									newState.gameStep = GAME_STEP.QUESTION;
+								}
+								break;
+							default:
+								newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+								newState.waiting = {
+									title: "",
+									msg: strings.waitingForOthers
+								};
+						}
 					} else {
-						if (!currentStep.isStarted) {
-							newState.gameStep = GAME_STEP.QUESTION_DESC;
+						if (`${teamQueue[0]}` === teamKey) {
+							newState.enabledZonesForAttack = helper.getEnabledZonesForAttack(
+								newState.status.gameMap,
+								teamQueue[0]
+							);
+							newState.gameStep = GAME_STEP.CHOOSE_ATTACKING_ZONE;
+							newState.allowZones = 2;
+							newState.waiting = {
+								title: "",
+								msg: strings.chooseZoneFromAttack
+							};
 						} else {
-							newState.gameStep = GAME_STEP.QUESTION;
+							newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+							let team = "";
+							switch (`${teamQueue[0]}`) {
+								case TEAM.BLUE:
+									team = strings.blueTeam;
+									break;
+								case TEAM.RED:
+									team = strings.redTeam;
+									break;
+								case TEAM.WHITE:
+									team = strings.whiteTeam;
+									break;
+							}
+							newState.waiting = {
+								title: team,
+								msg: strings.teamGoingToAttack
+							};
 						}
 					}
+				} else if (teamQueue.length === 0) {
+					newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
+					Alert.alert("Все");
+				} else {
 				}
 			}
 

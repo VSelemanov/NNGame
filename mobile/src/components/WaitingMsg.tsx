@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 		marginBottom: 2
 	},
 	msg: {
-		maxWidth: rem * 6,
+		maxWidth: rem * 7,
 		textAlign: "center",
 		fontSize: rem * 0.55,
 		color: COLORS.N_BLACK,

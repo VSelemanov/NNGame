@@ -18,10 +18,13 @@ import {
 	IGamePart1Step
 } from "../../../newback/src/helper/Room/interfaces";
 import { IAnswer } from "../../../newback/src/helper/Question/interfaces";
+import { teams } from "../../../newback/src/constants";
+import { ITeamsInRoom } from "../../../newback/src/helper/Team/interfaces";
 
 interface IP {
 	onSubmit(n: number): void;
 	lastStep: IGamePart2Step;
+	teams: ITeamsInRoom;
 }
 
 interface IS {
@@ -70,6 +73,7 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 				<Image source={iconImgs.shutter} style={styles.shutter} />
 				<Image source={iconImgs.teams[team].union} style={styles.unionBack} />
 				<Image source={unionType} style={styles.unionType} />
+				<Text style={styles.teamName}>{this.props.teams[team].name}</Text>
 			</View>
 		);
 	}
@@ -106,14 +110,16 @@ const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
 		flexDirection: "row",
-		justifyContent: "space-between"
+		justifyContent: "space-between",
+		alignItems: "center"
 	},
 	union: {
 		width: rem * 6 * lambda,
 		height: rem * 9.5 * lambda,
 		marginHorizontal: rem,
 		justifyContent: "center",
-		alignItems: "center"
+		alignItems: "center",
+		marginBottom: rem * 2
 	},
 	shutter: {
 		width: rem * 6 * lambda,
@@ -131,10 +137,20 @@ const styles = StyleSheet.create({
 		width: rem * 1.7 * lambda,
 		height: rem * 1.7 * lambda
 	},
+	teamName: {
+		position: "absolute",
+		bottom: -rem * 1.5,
+		fontFamily: FONTS.preslav,
+		color: COLORS.N_WHITE,
+		fontSize: rem * 0.7,
+		textAlign: "center",
+		maxWidth: rem * 6
+	},
 	variantWrapper: {},
 	variant: {
 		width: rem * 13,
-		height: rem * 1.9,
+		minHeight: rem * 1.9,
+		padding: rem * 0.5,
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: COLORS.LL_BROWN,
@@ -143,7 +159,8 @@ const styles = StyleSheet.create({
 	variantText: {
 		fontFamily: FONTS.preslav,
 		color: COLORS.DDD_BROWN,
-		fontSize: rem * 0.7
+		fontSize: rem * 0.7,
+		textAlign: "center"
 	},
 	timer: {
 		color: COLORS.DDDDD_BROWN,

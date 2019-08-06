@@ -42,7 +42,8 @@ export const strings = {
 	chooseZone: "Выберите территорию",
 	waitNewQuestion: "Ожидайте новый вопрос",
 	chooseZoneFromAttack: "Выберите зону из которой вы нападаете",
-	teamGoingToAttack: "Команда выбирает зону для атаки"
+	teamGoingToAttack: "выбирает зону для атаки",
+	isAnswering: "отвечает на вопрос"
 };
 
 export const iconImgs: IIconImgs = {

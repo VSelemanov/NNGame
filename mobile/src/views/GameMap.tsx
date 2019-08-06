@@ -91,90 +91,128 @@ class GameMap extends React.Component<Store, IS> {
 		return true;
 	}
 	private renderTeamInfo() {
-		return Object.keys(this.props.session.status.teams).map((team, i) => {
-			const thisTeam: ITeamInRoom = this.props.session.status.teams[team];
-			const { name, zones } = thisTeam;
-			const { currentStep, steps } = this.props.session.status.part1;
+		return Object.keys(this.props.session.status.teams).map(
+			(team: string, i) => {
+				const thisTeam: ITeamInRoom = this.props.session.status.teams[team];
+				const { name, zones } = thisTeam;
+				const { currentStep, steps } = this.props.session.status.part1;
+				const { teamQueue } = this.props.session.status.part2;
+				const stepsPart2: IGamePart2Step[] = this.props.session.status.part2
+					.steps;
+				const { gameStep } = this.props.session;
+				let actionState: TEAM_ACTION_STATE_PART_2 =
+					TEAM_ACTION_STATE_PART_2.NULL;
+				let gradientColors = [];
+				let borderColors = {
+					light: "",
+					dark: ""
+				};
+				lg(stepsPart2);
 
-			let actionState: TEAM_ACTION_STATE_PART_2 =
-				TEAM_ACTION_STATE_PART_2.DEFENCE;
-			let gradientColors = [];
-			let borderColors = {
-				light: "",
-				dark: ""
-			};
-			// lg(thisTeam);
+				if (team === teamQueue[0]) {
+					actionState = TEAM_ACTION_STATE_PART_2.CHOOSE;
+				}
+				if (stepsPart2.length > 0) {
+					const lastStep = stepsPart2[stepsPart2.length - 1];
+					if (
+						(team === lastStep.attacking && !lastStep.winner) ||
+						(team === lastStep.attacking && lastStep.winner === "draw")
+					) {
+						lg(team);
+						switch (gameStep) {
+							case GAME_STEP.QUESTION:
+							case GAME_STEP.QUESTION_DESC:
+							case GAME_STEP.WAITING_FOR_TEAM:
+							case GAME_STEP.WAITING_FOR_OTHERS:
+								actionState = TEAM_ACTION_STATE_PART_2.ATTACK;
+								break;
+						}
+					} else if (
+						(team === lastStep.defender && !lastStep.winner) ||
+						(team === lastStep.defender && lastStep.winner === "draw")
+					) {
+						lg(team);
+						switch (gameStep) {
+							case GAME_STEP.QUESTION:
+							case GAME_STEP.QUESTION_DESC:
+							case GAME_STEP.WAITING_FOR_TEAM:
+							case GAME_STEP.WAITING_FOR_OTHERS:
+								actionState = TEAM_ACTION_STATE_PART_2.DEFENCE;
+								break;
+						}
+					}
+				}
 
-			switch (team) {
-				case TEAM.RED:
-					gradientColors = [COLORS.D_RED, COLORS.DD_RED];
-					borderColors.light = COLORS.L_RED;
-					borderColors.dark = COLORS.DD_RED;
+				// if (
+				// 	(teamQueue.length > 0 &&
+				// 		team === teamQueue[0] &&
+				// 		stepsPart2.length < 2) ||
+				// 	(teamQueue.length > 0 &&
+				// 		team === teamQueue[0] &&
+				// 		stepsPart2[stepsPart2.length - 2].winner) ||
+				// 	stepsPart2[stepsPart2.length - 2].winner !== "draw"
+				// ) {
+				// 	actionState = TEAM_ACTION_STATE_PART_2.CHOOSE;
+				// }
 
-					break;
-				case TEAM.BLUE:
-					gradientColors = [COLORS.N_BLUE, COLORS.D_BLUE];
-					borderColors.light = COLORS.L_BLUE;
-					borderColors.dark = COLORS.DD_BLUE;
-					break;
-				case TEAM.WHITE:
-					gradientColors = [COLORS.N_WHITE, COLORS.D_WHITE];
-					borderColors.light = COLORS.N_WHITE;
-					borderColors.dark = COLORS.D_BROWN;
-					break;
-				default:
-					return;
-			}
+				switch (team) {
+					case TEAM.RED:
+						gradientColors = [COLORS.D_RED, COLORS.DD_RED];
+						borderColors.light = COLORS.L_RED;
+						borderColors.dark = COLORS.DD_RED;
+						break;
+					case TEAM.BLUE:
+						gradientColors = [COLORS.N_BLUE, COLORS.D_BLUE];
+						borderColors.light = COLORS.L_BLUE;
+						borderColors.dark = COLORS.DD_BLUE;
+						break;
+					case TEAM.WHITE:
+						gradientColors = [COLORS.N_WHITE, COLORS.D_WHITE];
+						borderColors.light = COLORS.N_WHITE;
+						borderColors.dark = COLORS.D_BROWN;
+						break;
+					default:
+						return;
+				}
 
-			// switch (actionState) {
-			// 	case TEAM_ACTION_STATE_PART_2.CHOOSE:
-			// 		actionStateImg = require("./../assets/icons/flag_white.png");
-			// 		break;
-			// 	case TEAM_ACTION_STATE_PART_2.ATTACK:
-			// 		actionStateImg = require("./../assets/icons/flag_white.png");
-			// 		break;
-			// 	case TEAM_ACTION_STATE_PART_2.DEFENCE:
-			// 		actionStateImg = require("./../assets/icons/flag_white.png");
-			// 		break;
-			// }
+				lg(actionState);
 
-			// lg(team);
-
-			return (
-				<View key={team} style={styles.teamArea}>
-					<View style={styles.teamInfo}>
-						<Text style={styles.teamTitle}>{name}</Text>
-						<Text style={styles.teamHaveAllowZones}>
-							{this.props.session.status.currentPart === 1 &&
-							steps &&
-							currentStep !== null &&
-							steps[currentStep] &&
-							steps[currentStep].allowZones[team]
-								? `Доступно: ${steps[currentStep].allowZones[team]}`
-								: ""}
-						</Text>
-						<View style={styles.teamHaveArea}>
-							<Text style={styles.teamHaveTitle}>Областей:</Text>
-							<Text style={styles.teamHaveNumber}>{zones}</Text>
-							<Image
-								source={iconImgs.teams[team][actionState]}
-								style={styles.teamHaveImg}
-							/>
+				return (
+					<View key={team} style={styles.teamArea}>
+						<View style={styles.teamInfo}>
+							<Text style={styles.teamTitle}>{name}</Text>
+							<Text style={styles.teamHaveAllowZones}>
+								{this.props.session.status.currentPart === 1 &&
+								steps &&
+								currentStep !== null &&
+								steps[currentStep] &&
+								steps[currentStep].allowZones[team]
+									? `Доступно: ${steps[currentStep].allowZones[team]}`
+									: ""}
+							</Text>
+							<View style={styles.teamHaveArea}>
+								<Text style={styles.teamHaveTitle}>Областей:</Text>
+								<Text style={styles.teamHaveNumber}>{zones}</Text>
+								<Image
+									source={iconImgs.teams[team][actionState]}
+									style={styles.teamHaveImg}
+								/>
+							</View>
 						</View>
+						<LinearGradient
+							colors={gradientColors}
+							style={[
+								styles.teamGradient,
+								{
+									borderBottomColor: borderColors.dark,
+									borderColor: borderColors.light
+								}
+							]}
+						/>
 					</View>
-					<LinearGradient
-						colors={gradientColors}
-						style={[
-							styles.teamGradient,
-							{
-								borderBottomColor: borderColors.dark,
-								borderColor: borderColors.light
-							}
-						]}
-					/>
-				</View>
-			);
-		});
+				);
+			}
+		);
 	}
 
 	private submitNumericQuestion(num: number, timer: number) {
@@ -182,10 +220,7 @@ class GameMap extends React.Component<Store, IS> {
 	}
 
 	private submitBattleQuestion(num: number) {
-		this.props.sendAnswer(
-			{ response: num, timer: 0 },
-			this.props.session.token
-		);
+		this.props.sendAnswer({ response: num }, this.props.session.token);
 	}
 
 	public renderQuestion() {
@@ -199,21 +234,28 @@ class GameMap extends React.Component<Store, IS> {
 			} else if (status.currentPart === 2 && status.part2.steps.length > 0) {
 				lastStep = status.part2.steps[status.part2.steps.length - 1];
 			} else {
-				throw "Wrong lastStep";
+				return (
+					<QuestionWindow question={"Null"}>
+						<Text>Null</Text>
+					</QuestionWindow>
+				);
 			}
 
 			const { isNumeric, title } = lastStep.question;
-
+			const { winner, numericQuestion } = lastStep;
 			return (
-				<QuestionWindow question={title}>
+				<QuestionWindow
+					question={winner && winner === "draw" ? numericQuestion.title : title}
+				>
 					<View style={{ flex: 1 }}>
 						{gameStep === GAME_STEP.QUESTION ? (
-							isNumeric ? (
+							status.currentPart === 1 || (winner && winner === "draw") ? (
 								<QuestionNumInput onSubmit={this.submitNumericQuestion} />
 							) : (
 								<QuestionVariantsInput
 									lastStep={lastStep}
 									onSubmit={this.submitBattleQuestion}
+									teams={status.teams}
 								/>
 							)
 						) : null}
@@ -225,10 +267,6 @@ class GameMap extends React.Component<Store, IS> {
 			return (
 				<QuestionWindow question={"Null"}>
 					<Text>Null</Text>
-					{/* <Text>
-						{moment().diff(this.state.startTime.subtract(60, "seconds"))}
-					</Text>
-					<Pad onSubmit={this.submitNumericQuestion} /> */}
 				</QuestionWindow>
 			);
 		}

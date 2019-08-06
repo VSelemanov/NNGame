@@ -27,8 +27,8 @@ export default class QuestionWindow extends React.Component<IP> {
 				<Svg
 					// width={`${(2301 / WIDTH) * 100}`}
 					// height={`${(1534 / WIDTH) * 100}`}
-					width={`${(2301 * rem) / 72}`}
-					height={`${(1534 * rem) / 80}`}
+					width={`${(2301 * rem) / 72 / 5}`}
+					height={`${(1534 * rem) / 80 / 5}`}
 					viewBox={`0 0 ${(2301 * rem) / 37} ${(1534 * rem) / 38}`}
 					// viewBox={`0 0 ${(2301 / WIDTH) * 100} ${(1534 / WIDTH) * 100}`}
 					fill="none"
@@ -64,7 +64,7 @@ export default class QuestionWindow extends React.Component<IP> {
 					<Text
 						style={{
 							marginTop: rem * 0.5,
-							fontSize: rem * 0.8,
+							fontSize: rem * 0.7,
 							color: COLORS.N_BLACK,
 							fontFamily: FONTS.preslav,
 							marginBottom: rem * 0.9,

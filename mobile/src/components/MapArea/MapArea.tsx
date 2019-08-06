@@ -1,7 +1,6 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
 import { lg } from "../../utils/helper";
-import { Alert } from "react-native";
 import { IMapZone } from "../../../../newback/src/interfaces";
 import { TEAM, COLORS } from "../../constants/enum";
 
