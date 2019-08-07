@@ -1,27 +1,43 @@
 import * as React from "react";
 import style from "./Map.module.scss";
 import MapVector from "./MapVector";
-import { createRoom, startGame, getQuestion, createTeam } from "../../toServer/requests";
+import { startGame, getQuestion } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
-import KeyboardWindowAdmin from "../NumQuestionWindowAdmin/NumQuestionWindowAdmin";
+import NumQuestionPart1 from "../NumQuestionPart1/NumQuestionPart1";
 import store from "../../store";
 import { Link } from "react-router-dom";
+import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
+import NumQuestionPart2 from "../NumQuestionPart2/NumQuestionPart2";
 
 class Map extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       teams: {},
-      isModalTeam: false,
-      isModalRoom: false,
+      gameMap: {},
+      isGameStarted: false,
+      gameStatus: 0,
+      // первый тур
       isNumQuestionModal: false,
+      isNumStarted: false,
       numQuestion: [],
       numResponses: [],
       numAllowZones: {},
-      isNumStarted: false,
-      gameMap: {},
-      isGameStarted: false
+      // второй тур не цифровой вопрос
+      isPart2QuestionModal: false,
+      isPart2Started: false,
+      attackingResponse: null,
+      defenderResponse: null,
+      attack: null,
+      defend: null,
+      // второй тур цифровой вопрос
+      numQuestionPart2: {},
+      isNumPart2QuestionModal: false,
+      isNumPart2Started: false,
+      attackingNumericResponse: null,
+      defenderNumericResponse: null,
+      winner: null
     };
   }
 
@@ -30,24 +46,31 @@ class Map extends React.Component<any, any> {
       [param]: false
     });
   };
-
+  public closeFuncNumPart2 = () => {
+    this.setState({
+      numQuestionPart2: {},
+      isNumPart2QuestionModal: false,
+      isNumPart2Started: false,
+      attackingNumericResponse: null,
+      defenderNumericResponse: null,
+      winner: null
+    });
+  };
+  public closeFuncSecondTourModal = () => {
+    this.setState({
+      isPart2QuestionModal: false,
+      isPart2Started: false,
+      attackingResponse: null,
+      defenderResponse: null,
+      attack: null,
+      defend: null
+    });
+  };
   public closeFuncNumModal = () => {
     this.setState({
       isNumQuestionModal: false,
       numAllowZones: {}
     });
-  };
-
-  public createRoom = (theme: string, team1: string, team2: string, team3: string) => {
-    createRoom(theme, team1, team2, team3).then(() =>
-      this.setState({
-        isModalRoom: false
-      })
-    );
-  };
-
-  public createTeam = (name: string) => {
-    createTeam(name).then(() => this.setState({ isModalTeam: false }));
   };
 
   public parseJwt = (token: string) => {
@@ -58,17 +81,22 @@ class Map extends React.Component<any, any> {
     }
   };
 
-  public getTeamData = () => {
-    const teams = this.state.teams;
-    const result: any = [];
-    Object.keys(teams).map(
-      (key: string) =>
-        teams[key].name && result.push({ value: teams[key]._id, label: teams[key].name })
-    );
-    result.unshift({ value: null, label: "Выберите команду" });
-    return result;
+  public getTeamStatus = (team: string) => {
+    return <div className={style[team]} />;
   };
 
+  public getGameStatus = () => {
+    switch (this.state.gameStatus) {
+      case 0:
+        return <p>Выбор стартовых зон</p>;
+      case 1:
+        return <p>Первый тур</p>;
+      case 2:
+        return <p>Второй тур</p>;
+      default:
+        return <p>{""}</p>;
+    }
+  };
   public componentDidMount() {
     const Nes = require("nes");
     const client = new Nes.Client("ws://188.68.210.120:3000");
@@ -85,7 +113,8 @@ class Map extends React.Component<any, any> {
           Object.keys(teams).includes("_id") && delete teams["_id"];
           this.setState({
             teams,
-            isGameStarted: message.isStarted
+            isGameStarted: message.isStarted,
+            gameStatus: message.currentPart ? message.currentPart : 0
           });
         }
 
@@ -98,10 +127,15 @@ class Map extends React.Component<any, any> {
           });
         }
 
-        
         // ПЕРВЫЙ ТУР
-        if (message.currentPart && message.currentPart === 1 && message.part1 && message.part1.currentStep !== null) {
-          const step = message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
+        if (
+          message.currentPart &&
+          message.currentPart === 1 &&
+          message.part1 &&
+          message.part1.currentStep !== null
+        ) {
+          const step =
+            message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
           // запись данных о вопросе первого тура
           if (step.question) {
             const question = step.question;
@@ -119,7 +153,9 @@ class Map extends React.Component<any, any> {
               isNumStarted: step.isStarted
             });
           }
-          const answers = Object.keys(step.responses).filter(key => step.responses[key].response !== null).length;
+          const answers = Object.keys(step.responses).filter(
+            key => step.responses[key].response !== null
+          ).length;
           // проверяем, если ответов не 3 в текущем вопросе то открываем модалку админа
           if (answers !== 3) {
             this.setState({
@@ -129,8 +165,69 @@ class Map extends React.Component<any, any> {
         }
 
         // ВТОРОЙ ТУР
-        if (message.currentPart && message.currentPart === 2 && message.part2 && message.part2.currentStep !== null) {
-          
+        if (message.currentPart && message.currentPart === 2 && message.part2) {
+          console.log("Начинаем второй тур");
+          const length = message.part2.steps ? message.part2.steps.length : 0;
+          // const step = length !== 0 ? message.part2.steps[length - 1] : [];
+          const step = length !== 0 ? message.part2.steps[length - 1] : [];
+          // запись данных о вопросе второго тура
+          if (
+            step.question &&
+            step.attacking &&
+            step.defender &&
+            !step.attackingResponse &&
+            !step.defenderResponse
+          ) {
+            console.log(step);
+            const question = step.question;
+            Object.keys(question).includes("_id") && delete question["_id"];
+            this.setState({
+              part2Question: question,
+              attack: step.attacking,
+              defend: step.defender,
+              isPart2QuestionModal: true
+            });
+          }
+          // ищем активный вопрос
+          if (length !== 0 && !step.winner && step.attackingResponse && step.defenderResponse) {
+            this.setState({
+              isPart2QuestionModal: true,
+              attackingResponse: "",
+              defenderResponse: ""
+            });
+          }
+          if (step.attackingResponse !== undefined) {
+            this.setState({
+              attackingResponse: step.attackingResponse
+            });
+          }
+          if (step.defenderResponse !== undefined) {
+            this.setState({
+              defenderResponse: step.defenderResponse
+            });
+          }
+          if (step.isStarted) {
+            this.setState({
+              isPart2Started: true
+            });
+          }
+          if (step.numericQuestion) {
+            console.log("второй тур - цифровой вопрос");
+            this.setState({
+              numQuestionPart2: step.numericQuestion,
+              isNumPart2QuestionModal: step.winner === "draw" && true,
+              isNumPart2Started: step.numericIsStarted,
+              attackingNumericResponse: step.attackingNumericResponse
+                ? step.attackingNumericResponse
+                : null,
+              defenderNumericResponse: step.defenderNumericResponse
+                ? step.defenderNumericResponse
+                : null,
+              winner: step.winner ? step.winner : null,
+              attack: step.attacking,
+              defend: step.defender
+            });
+          }
         }
       };
       client.subscribe("/api/room/gamestatus", handler);
@@ -144,6 +241,7 @@ class Map extends React.Component<any, any> {
       <div className={style.main}>
         <div className={style.left_panel}>
           <div className={style.command_info}>
+            {this.getTeamStatus("team1")}
             <span>
               {teams.team1 && teams.team1.isLoggedIn ? teams.team1.name : "Ожидание команды"}
             </span>
@@ -151,6 +249,8 @@ class Map extends React.Component<any, any> {
             <span>{teams.team1 ? teams.team1.inviteCode : "-"}</span>
           </div>
           <div className={style.command_info}>
+            {this.getTeamStatus("team2")}
+
             <span>
               {teams.team2 && teams.team2.isLoggedIn ? teams.team2.name : "Ожидание команды"}
             </span>
@@ -158,6 +258,7 @@ class Map extends React.Component<any, any> {
             <span>{teams.team2 ? teams.team2.inviteCode : "-"}</span>
           </div>
           <div className={style.command_info}>
+            {this.getTeamStatus("team3")}
             <span>
               {teams.team3 && teams.team3.isLoggedIn ? teams.team3.name : "Ожидание команды"}
             </span>
@@ -171,12 +272,10 @@ class Map extends React.Component<any, any> {
           <div className={style.color3} />
         </div>
         <div className={style.right_panel}>
-          <div className={style.game_status} />
+          <div className={style.game_status}>{this.getGameStatus()}</div>
           <div className={style.button_div}>
             <button className={style.next_question}>
-              <Link to={"/admin-tools/listTeams"}>
-                Админ панель
-              </Link>
+              <Link to={"/admin-tools/listTeams"}>Админ панель</Link>
             </button>
             {!this.state.isGameStarted && (
               <button className={style.next_question} onClick={() => startGame()}>
@@ -187,9 +286,10 @@ class Map extends React.Component<any, any> {
               Следующий вопрос
             </button>
           </div>
+
           {/* нужно без воскл знака! убери не забудь */}
           {this.state.isNumQuestionModal && (
-            <KeyboardWindowAdmin
+            <NumQuestionPart1
               closeFunc={this.closeFuncNumModal}
               teams={this.state.teams}
               question={this.state.numQuestion}
@@ -197,8 +297,39 @@ class Map extends React.Component<any, any> {
               isStarted={this.state.isNumStarted}
             />
           )}
+
+          {/* нужно без воскл знака! убери не забудь */}
+          {this.state.isPart2QuestionModal && (
+            <ModalSecondTour
+              teams={this.state.teams}
+              question={this.state.part2Question}
+              isStarted={this.state.isPart2Started}
+              attack={this.state.attack}
+              defend={this.state.defend}
+              attackingResponse={this.state.attackingResponse}
+              defenderResponse={this.state.defenderResponse}
+              closeFunc={this.closeFuncSecondTourModal}
+            />
+          )}
+
+          {this.state.isNumPart2QuestionModal && (
+            <NumQuestionPart2
+              question={this.state.numQuestionPart2}
+              attack={this.state.attack}
+              defend={this.state.defend}
+              isStarted={this.state.isNumPart2Started}
+              attackResponse={this.state.attackingNumericResponse}
+              defendResponse={this.state.defenderNumericResponse}
+              winner={this.state.winner}
+              closeFunc={this.closeFuncNumPart2}
+            />
+          )}
           <div className={style.map_wrapper}>
-            <MapVector teams={this.state.teams} gameMap={this.state.gameMap} />
+            <MapVector
+              teams={this.state.teams}
+              gameMap={this.state.gameMap}
+              isStarted={this.state.isNumStarted}
+            />
           </div>
         </div>
       </div>

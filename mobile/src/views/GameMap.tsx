@@ -233,6 +233,8 @@ class GameMap extends React.Component<Store, IS> {
 				lastStep = status.part1.steps[status.part1.steps.length - 1];
 			} else if (status.currentPart === 2 && status.part2.steps.length > 0) {
 				lastStep = status.part2.steps[status.part2.steps.length - 1];
+			} else if (status.currentPart === 3 && status.part3) {
+				lastStep = status.part3;
 			} else {
 				return (
 					<QuestionWindow question={"Null"}>

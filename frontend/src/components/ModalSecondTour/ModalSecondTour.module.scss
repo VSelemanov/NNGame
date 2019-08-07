@@ -1,76 +1,252 @@
 .modal_back {
-  z-index: 2;
-	width: 100vw;
-	height: 100vh;
-	top: 0;
-	left: 0;
+  z-index: 5;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
   background: rgba(41, 31, 16, 0.5);
   backdrop-filter: blur(40px);
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.main{
-  height: 100%;
-  width: 80%;
-  background: url('../../img/keboard_bg.svg') no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  height: 60%;
-  width: 80%;
-}
-.keyboard {
-  height: auto;
-  width: 80%;
-  max-width: 500px;
-  margin: 10px;
-}
-.left_part {
-  // display: flex;
-  // justify-content: flex-start;
-  // align-items: center;
-  width: auto;
-  & p {
-    color:  #7B6442;
-    text-align: center;
-    font-size: 24px;
-  }
-}
-.rigth_part{
-  display: flex;
-  flex-direction: column;
-  // align-items: center;
-  & p {
-    color:  #7B6442;
-    text-align: center;
-    font-size: 24px;
-  }
-}
-
-//1280*680
-
-@media (max-height: 680px), (max-width: 1280px) {
-  .question_text{
-    max-width: 600px;
-    height: 100px;
-    font-size: 32px;
-    & p{
-      margin: 5px;
-      text-align: center;
+  .main {
+    height: 80%;
+    width: 80%;
+    max-width: 1000px;
+    background: url("../../img/keboard_bg.svg") no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 5%;
+    .question_text {
+      width: 80%;
+      height: 150px;
+      overflow-y: scroll;
+      margin-top: 3%;
+      & p {
+        font-size: 28px;
+        margin: 5px;
+        text-align: center;
+        font-family: "PT-Serif", sans-serif;
+      }
+    }
+    .content {
+      width: 90%;
+      max-width: 900px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      .left_part {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        .flag {
+          background: url("../../img/white_flag.svg") no-repeat;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          img {
+            height: 6vw;
+            max-height: 76px;
+            max-width: 76px;
+          }
+          span {
+            color: black;
+          }
+        }
+        .red {
+          background: url("../../img/red_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
+        }
+        .blue {
+          background: url("../../img/blue_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
+        }
+        p {
+          font-family: "Preslav", sans-serif;
+          color: #7b6442;
+          text-align: center;
+          width: 80%;
+          margin: 0;
+        }
+      }
+      .center_part {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .one_answer {
+          font-family: "PT-sans", sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: #ffe4b5;
+          border-radius: 1px;
+          height: 6.5vw;
+          max-height: 77px;
+          width: 38vw;
+          max-width: 471px;
+          margin: 3px 0;
+          font-size: 32px;
+          line-height: 130%px;
+          color: #7b6442;
+          padding: 4px;
+        }
+        .team1 {
+          background: #efeae1;
+        }
+        .team2 {
+          background: #31427c;
+          color: #fff;
+        }
+        .team3 {
+          background: #b01d1d;
+          color: #fff;
+        }
+        .team1_team2, .team2_team1 {
+          background: url("../../img/white-blue_flag.svg") no-repeat top;
+          background-size: cover;
+          color: #fff;
+        }
+        .team1_team3, .team3_team1 {
+          background: url("../../img/white-red_flag.svg") no-repeat top;
+          background-size: cover;
+          color: #fff;
+        }
+        .team2_team3, .team3_team2 {
+          background: url("../../img/red-blue_flag.svg") no-repeat top;
+          background-size: cover;
+          color: #fff;
+        }
+        .isRight{
+          border: 4px solid #63a647;
+          padding: 0;
+        }
+      }
+      .rigth_part {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        .flag {
+          background: url("../../img/white_flag.svg") no-repeat;
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          span {
+            color: black;
+          }
+          img {
+            height: 6vw;
+            max-height: 76px;
+            max-width: 76px;
+          }
+        }
+        .blue {
+          background: url("../../img/blue_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
+        }
+        .red {
+          background: url("../../img/red_flag.svg") no-repeat;
+          span {
+            color: #fff;
+          }
+        }
+        p {
+          font-family: "Preslav", sans-serif;
+          color: #7b6442;
+          text-align: center;
+          width: 80%;
+          margin: 0;
+        }
+      }
+    }
+    .button_wrapper {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      .button {
+        height: 50px;
+        width: 250px;
+        border-radius: 4px;
+        background: #e7b777;
+        border: 2px solid #3f3f3f;
+        font-family: "Preslav", sans-serif;
+        font-size: 30px;
+        cursor: pointer;
+      }
+      .clock {
+        position: relative;
+        bottom: 0%;
+        width: 60px;
+        animation: rotate 3s infinite linear;
+      }
     }
   }
-  .keyboard {
-    height: auto;
-    width: 90%;
-    max-width: 620px;
+}
+
+@media screen and (max-width: 1280px) {
+  .modal_back{
+    .main {
+      .question_text {
+        width: 80%;
+        height: 10vw;
+        & p {
+          font-size: 2.5vw;
+          margin: 5px;
+          text-align: center;
+        }
+      }
+      .content{
+        .center_part{
+          .one_answer{
+            font-size: 2.5vw;
+          }
+        }
+      }
+      .button_wrapper{
+        .button{
+          height: 3.5vw;
+          width: 20vw;
+          font-size: 2vw;
+        }
+        .clock {
+          height: 5vw;
+          bottom: 1vw;
+        }
+      }
+    }
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(180deg);
+  }
+  70% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

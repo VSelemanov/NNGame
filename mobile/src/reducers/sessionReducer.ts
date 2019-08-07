@@ -351,7 +351,17 @@ export default (
 				} else if (teamQueue.length === 0) {
 					newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
 					Alert.alert("Все");
+				}
+			}
+
+			if (currentPart === 3) {
+				const { part3 } = action.status;
+				if (part3.isStarted) {
+					newState.gameStep = GAME_STEP.QUESTION;
+				} else if (part3.teams.indexOf(teamKey) !== -1) {
+					newState.gameStep = GAME_STEP.QUESTION_DESC;
 				} else {
+					newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
 				}
 			}
 
