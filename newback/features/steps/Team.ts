@@ -376,8 +376,8 @@ Then(
         Authorization: token
       },
       payload: {
-        timer,
-        response
+        timer: response !== 111 ? timer : 60,
+        response: response !== 111 ? response : null
       }
     });
 

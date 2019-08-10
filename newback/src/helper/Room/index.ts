@@ -205,6 +205,11 @@ const methods = {
         Room.markModified("gameStatus.part2.steps");
       }
 
+      if (currentPart === 3) {
+        const part: IGamePart3 = Room.gameStatus[`part${currentPart}`];
+        part.isStarted = true;
+      }
+
       await Room.save();
 
       return Room;
@@ -341,17 +346,23 @@ const methods = {
 
             let zone = "";
 
-            if (questionResults[0].teamKey === step.attacking) {
-              zone = step.defenderZone;
+            if (
+              questionResults[0].dif !== null ||
+              questionResults[1].dif !== null
+            ) {
+              if (questionResults[0].teamKey === step.attacking) {
+                zone = step.defenderZone;
+              }
+
+              if (questionResults[0].teamKey === step.defender) {
+                zone = step.attackingZone;
+              }
+              step.winner = questionResults[0].teamKey;
+
+              await methods.colorZone(zone, step.winner, Room);
+            } else {
+              step.winner = "none";
             }
-
-            if (questionResults[0].teamKey === step.defender) {
-              zone = step.attackingZone;
-            }
-
-            step.winner = questionResults[0].teamKey;
-
-            await methods.colorZone(zone, step.winner, Room);
           }
         }
         if (step.winner && step.winner !== winnerCheckResults.draw) {
@@ -548,8 +559,9 @@ const methods = {
         defenderZone,
         defender: Room.gameStatus.gameMap[defenderZone].team,
         question,
-        isStarted: false
-      });
+        isStarted: false,
+        numericIsStarted: false
+      } as IGamePart2Step);
 
       await Room.save();
 
