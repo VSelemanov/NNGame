@@ -119,7 +119,11 @@ const methods = {
     { logMessage: `${EntityName} colorZone method error` }
   ),
   response: trycatcher(
-    async (response: number, timer: number | undefined, teamKey: string) => {
+    async (
+      response: number | null,
+      timer: number | undefined,
+      teamKey: string
+    ) => {
       const Room: IRoom = await RoomMethods.teamResponse(
         response,
         timer,

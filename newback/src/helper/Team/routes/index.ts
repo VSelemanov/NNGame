@@ -61,7 +61,9 @@ const routes: ServerRoute[] = [
       auth: "team-auth",
       validate: {
         payload: Joi.object({
-          response: Joi.number().required(),
+          response: Joi.number()
+            .required()
+            .allow(null),
           timer: Joi.number()
         })
       }

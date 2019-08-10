@@ -180,8 +180,8 @@ When(
         Authorization: token
       },
       payload: {
-        timer,
-        response
+        timer: response !== 111 ? timer : 60,
+        response: response !== 111 ? response : null
       }
     });
 
@@ -207,7 +207,6 @@ Then(
   "в сокете состояние игры со следующими результатами по выбору доступных зон:",
   async function(dataTable) {
     const res: IGameStatus = getSocketResponse();
-    // await client.disconnect();
 
     const allowZones = res.part1.steps[res.part1.currentStep || 0].allowZones;
 
@@ -215,12 +214,21 @@ Then(
       expect(allowZones[row.teamKey]).to.eql(+row.allowZones);
     }
 
-    expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[0]).to.eql(
-      "team2"
-    );
-    expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[1]).to.eql(
-      "team1"
-    );
+    const queueLength =
+      res.part1.steps[res.part1.currentStep || 0].teamQueue.length;
+
+    if (queueLength === 2) {
+      expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[0]).to.eql(
+        "team2"
+      );
+      expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[1]).to.eql(
+        "team1"
+      );
+    } else if (queueLength === 1) {
+      expect(res.part1.steps[res.part1.currentStep || 0].teamQueue[0]).to.eql(
+        "team2"
+      );
+    }
   }
 );
 
