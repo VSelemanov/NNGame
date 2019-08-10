@@ -36,9 +36,9 @@ class MapVector extends React.Component <any, any> {
   public calcColor =(team: string) => {
     switch(team){
      case 'team1': return '#F8F3EB';
-     case 'team2': return '#BFC4D4';
-     case 'team3': return '#F4CEC1';
-     default: return "#F1E0C3"
+     case 'team2': return '#8296D9';
+     case 'team3': return '#E08383';
+     default: return "#F8D59B"
     }
   }
 

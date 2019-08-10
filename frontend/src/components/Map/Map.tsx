@@ -53,7 +53,9 @@ class Map extends React.Component<any, any> {
       isNumPart2Started: false,
       attackingNumericResponse: null,
       defenderNumericResponse: null,
-      winner: null
+      winner: null,
+      attackingResponse: null,
+      defenderResponse: null,
     });
   };
   public closeFuncSecondTourModal = () => {
@@ -86,15 +88,21 @@ class Map extends React.Component<any, any> {
   };
 
   public getGameStatus = () => {
+    let zones = 0;
+    Object.keys(this.state.teams).forEach(
+      team => (zones += this.state.teams[team].zones)
+    );
     switch (this.state.gameStatus) {
       case 0:
-        return <p>Ожидание старта игры</p>;
+        return "Ожидание старта игры";
       case 1:
-        return <p>Первый тур</p>;
+        return zones >= 3 ? "Первый тур" : "Выбор стартовых зон";
       case 2:
-        return <p>Второй тур</p>;
+        return "Второй тур";
+      case 3:
+        return "Третий тур";
       default:
-        return <p>{""}</p>;
+        return "";
     }
   };
   public componentDidMount() {
@@ -102,7 +110,11 @@ class Map extends React.Component<any, any> {
     const client = new Nes.Client("ws://188.68.210.120:3000");
     const start = async () => {
       await client.connect({
-        auth: { headers: { authorization: `Bearer ${store.getState().global.appToken}` } }
+        auth: {
+          headers: {
+            authorization: `Bearer ${store.getState().global.appToken}`
+          }
+        }
       });
       const handler = (message: any, flags: any) => {
         console.log("message", message);
@@ -135,7 +147,9 @@ class Map extends React.Component<any, any> {
           message.part1.currentStep !== null
         ) {
           const step =
-            message.part1.steps.length !== 0 ? message.part1.steps[message.part1.currentStep] : [];
+            message.part1.steps.length !== 0
+              ? message.part1.steps[message.part1.currentStep]
+              : [];
           // запись данных о вопросе первого тура
           if (step.question) {
             const question = step.question;
@@ -154,7 +168,8 @@ class Map extends React.Component<any, any> {
             });
           }
           const answers = Object.keys(step.responses).filter(
-            key => step.responses[key].response !== null
+            key =>
+              step.responses[key].response !== null || step.responses[key].timer
           ).length;
           // проверяем, если ответов не 3 в текущем вопросе то открываем модалку админа
           if (answers !== 3) {
@@ -178,24 +193,32 @@ class Map extends React.Component<any, any> {
             !step.attackingResponse &&
             !step.defenderResponse
           ) {
-            console.log(step);
+            console.log('записываем инфу о втором вопросе')
+            console.log(step)
             const question = step.question;
             Object.keys(question).includes("_id") && delete question["_id"];
             this.setState({
               part2Question: question,
               attack: step.attacking,
               defend: step.defender,
-              isPart2QuestionModal: true
+              isPart2QuestionModal: true,
+              attackingResponse: null,
+              defenderResponse: null
             });
           }
           // ищем активный вопрос
-          if (length !== 0 && !step.winner && step.attackingResponse && step.defenderResponse) {
-            this.setState({
-              isPart2QuestionModal: true,
-              attackingResponse: "",
-              defenderResponse: ""
-            });
-          }
+          // if (
+          //   length !== 0 &&
+          //   !step.winner &&
+          //   step.attackingResponse &&
+          //   step.defenderResponse
+          // ) {
+          //   this.setState({
+          //     isPart2QuestionModal: true,
+          //     attackingResponse: null,
+          //     defenderResponse: null
+          //   });
+          // }
           if (step.attackingResponse !== undefined) {
             this.setState({
               attackingResponse: step.attackingResponse
@@ -213,6 +236,7 @@ class Map extends React.Component<any, any> {
           }
           if (step.numericQuestion) {
             console.log("второй тур - цифровой вопрос");
+            console.log(step)
             this.setState({
               numQuestionPart2: step.numericQuestion,
               isNumPart2QuestionModal: step.winner === "draw" && true,
@@ -229,6 +253,20 @@ class Map extends React.Component<any, any> {
             });
           }
         }
+        if (message.currentPart && message.currentPart === 3 && message.part2) {
+          const length = message.part2.steps ? message.part2.steps.length : 0;
+          const step = length !== 0 ? message.part2.steps[length - 1] : [];
+          if( this.state.attackingResponse === null || this.state.defenderResponse){
+            this.setState({
+              attackingResponse: step.attackingResponse,
+              defenderResponse: step.defenderResponse
+            })
+          }
+        }
+        // ТРЕТИЙ ТУР
+        if (message.currentPart && message.currentPart === 3){
+          console.log('Третий тур')
+        }
       };
       client.subscribe("/api/room/gamestatus", handler);
     };
@@ -243,7 +281,9 @@ class Map extends React.Component<any, any> {
           <div className={style.command_info}>
             {this.getTeamStatus("team1")}
             <span>
-              {teams.team1 && teams.team1.isLoggedIn ? teams.team1.name : "Ожидание команды"}
+              {teams.team1 && teams.team1.isLoggedIn
+                ? teams.team1.name
+                : "Ожидание команды"}
             </span>
             <p>Областей: {teams.team1 ? teams.team1.zones : "-"}</p>
             <span>{teams.team1 ? teams.team1.inviteCode : "-"}</span>
@@ -252,7 +292,9 @@ class Map extends React.Component<any, any> {
             {this.getTeamStatus("team2")}
 
             <span>
-              {teams.team2 && teams.team2.isLoggedIn ? teams.team2.name : "Ожидание команды"}
+              {teams.team2 && teams.team2.isLoggedIn
+                ? teams.team2.name
+                : "Ожидание команды"}
             </span>
             <p>Областей: {teams.team2 ? teams.team2.zones : "-"}</p>
             <span>{teams.team2 ? teams.team2.inviteCode : "-"}</span>
@@ -260,7 +302,9 @@ class Map extends React.Component<any, any> {
           <div className={style.command_info}>
             {this.getTeamStatus("team3")}
             <span>
-              {teams.team3 && teams.team3.isLoggedIn ? teams.team3.name : "Ожидание команды"}
+              {teams.team3 && teams.team3.isLoggedIn
+                ? teams.team3.name
+                : "Ожидание команды"}
             </span>
             <p>Областей: {teams.team3 ? teams.team3.zones : "-"}</p>
             <span>{teams.team3 ? teams.team3.inviteCode : "-"}</span>
@@ -272,21 +316,34 @@ class Map extends React.Component<any, any> {
           <div className={style.color3} />
         </div>
         <div className={style.right_panel}>
-          <div className={style.game_status}>{this.getGameStatus()}</div>
-          <div className={style.button_div}>
-            <button className={style.next_question}>
-              <Link to={"/admin-tools/listTeams"}>Админ панель</Link>
-            </button>
-            {!this.state.isGameStarted && (
-              <button className={style.next_question} onClick={() => startGame()}>
-                Старт Игры
+          <div className={style.header}>
+            <div className={style.button_div}>
+              {!this.state.isGameStarted && (
+                <button
+                  className={style.next_question}
+                  onClick={() => startGame()}
+                >
+                  Старт Игры
+                </button>
+              )}
+              {this.state.isGameStarted && (
+                <button
+                  className={style.next_question}
+                  onClick={() => getQuestion("numeric")}
+                >
+                  Следующий вопрос
+                </button>
+              )}
+            </div>
+            <div className={style.game_status}>
+              <p>{this.getGameStatus()}</p>
+            </div>
+            <div className={style.admin_panel}>
+              <button className={style.button}>
+                <Link to={"/admin-tools/listTeams"}>Админ панель</Link>
               </button>
-            )}
-            <button className={style.next_question} onClick={() => getQuestion("numeric")}>
-              Следующий вопрос
-            </button>
+            </div>
           </div>
-
           {/* нужно без воскл знака! убери не забудь */}
           {this.state.isNumQuestionModal && (
             <NumQuestionPart1
@@ -310,7 +367,7 @@ class Map extends React.Component<any, any> {
               defenderResponse={this.state.defenderResponse}
               closeFunc={this.closeFuncSecondTourModal}
             />
-          )}
+          )} 
 
           {this.state.isNumPart2QuestionModal && (
             <NumQuestionPart2
@@ -323,7 +380,7 @@ class Map extends React.Component<any, any> {
               winner={this.state.winner}
               closeFunc={this.closeFuncNumPart2}
             />
-          )}
+           )} 
           <div className={style.map_wrapper}>
             <MapVector
               teams={this.state.teams}
