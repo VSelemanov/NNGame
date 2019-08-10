@@ -88,7 +88,7 @@ class Map extends React.Component<any, any> {
   public getGameStatus = () => {
     switch (this.state.gameStatus) {
       case 0:
-        return <p>Выбор стартовых зон</p>;
+        return <p>Ожидание старта игры</p>;
       case 1:
         return <p>Первый тур</p>;
       case 2:
