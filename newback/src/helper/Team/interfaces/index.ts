@@ -36,3 +36,8 @@ export interface ITeamCredentials {
   isAdmin: false;
   iat: number;
 }
+
+export interface ITeamResponse {
+  response: number | null;
+  timer?: number;
+}

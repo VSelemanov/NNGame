@@ -1,6 +1,11 @@
 import trycatcher from "../../../utils/trycatcher";
 import { IDecoratedRequest } from "../../../interfaces";
-import { ITeamBase, ITeam, ITeamCredentials } from "../interfaces";
+import {
+  ITeamBase,
+  ITeam,
+  ITeamCredentials,
+  ITeamResponse
+} from "../interfaces";
 import methods from "../";
 import { EntityName } from "../constants";
 
@@ -50,12 +55,7 @@ const ctrl = {
   ),
   response: trycatcher(
     async (
-      req: IDecoratedRequest<
-        { response: number; timer?: number },
-        {},
-        {},
-        ITeamCredentials
-      >,
+      req: IDecoratedRequest<ITeamResponse, {}, {}, ITeamCredentials>,
       h
     ) => {
       const { response, timer } = req.payload;
@@ -63,7 +63,7 @@ const ctrl = {
       return await methods.response(response, timer, teamKey);
     },
     {
-      logMessage: `${EntityName} create request`,
+      logMessage: `${EntityName} response request`,
       isRequest: true
     }
   ),
@@ -82,7 +82,7 @@ const ctrl = {
       return await methods.attack(attackingZone, defenderZone, teamKey);
     },
     {
-      logMessage: `${EntityName} create request`,
+      logMessage: `${EntityName} attack request`,
       isRequest: true
     }
   )

@@ -21,7 +21,7 @@ export interface IMapZone {
 }
 
 export interface IResultDifTimer {
-  dif: number;
+  dif: number | null;
   timer: number;
   teamKey: string;
 }

@@ -205,6 +205,11 @@ const methods = {
         Room.markModified("gameStatus.part2.steps");
       }
 
+      if (currentPart === 3) {
+        const part: IGamePart3 = Room.gameStatus[`part${currentPart}`];
+        part.isStarted = true;
+      }
+
       await Room.save();
 
       return Room;
@@ -215,7 +220,7 @@ const methods = {
   ),
   teamResponse: trycatcher(
     async (
-      response: number,
+      response: number | null,
       timer: number | undefined,
       teamKey: string
     ): Promise<IRoom> => {
@@ -242,13 +247,25 @@ const methods = {
             step.responses
           );
 
+          let nullResponseCount = 0;
+
           for (let i = 0; i < teamResults.length; i++) {
-            const zones = 2 - i;
+            let zones = 2 - i;
+            if (teamResults[i].dif === null) {
+              nullResponseCount++;
+              zones = 0;
+            }
             step.allowZones[teamResults[i].teamKey] = zones;
             step.responses[teamResults[i].teamKey].result = zones;
             if (zones !== 0) {
               step.teamQueue.push(teamResults[i].teamKey);
             }
+          }
+
+          if (nullResponseCount === 2) {
+            const teamKeyWinner = teamResults[0].teamKey;
+            step.allowZones[teamKeyWinner] = 3;
+            step.responses[teamKeyWinner].result = 3;
           }
         }
       }
@@ -329,17 +346,23 @@ const methods = {
 
             let zone = "";
 
-            if (questionResults[0].teamKey === step.attacking) {
-              zone = step.defenderZone;
+            if (
+              questionResults[0].dif !== null ||
+              questionResults[1].dif !== null
+            ) {
+              if (questionResults[0].teamKey === step.attacking) {
+                zone = step.defenderZone;
+              }
+
+              if (questionResults[0].teamKey === step.defender) {
+                zone = step.attackingZone;
+              }
+              step.winner = questionResults[0].teamKey;
+
+              await methods.colorZone(zone, step.winner, Room);
+            } else {
+              step.winner = "none";
             }
-
-            if (questionResults[0].teamKey === step.defender) {
-              zone = step.attackingZone;
-            }
-
-            step.winner = questionResults[0].teamKey;
-
-            await methods.colorZone(zone, step.winner, Room);
           }
         }
         if (step.winner && step.winner !== winnerCheckResults.draw) {
@@ -424,7 +447,10 @@ const methods = {
   },
   checkTeamResponses: (step: IGamePart1Step): boolean => {
     for (const teamKey of Object.keys(teams)) {
-      if (step.responses[teamKey].response === null) {
+      if (
+        step.responses[teamKey].response === null &&
+        step.responses[teamKey].timer === null
+      ) {
         return false;
       }
     }
@@ -472,19 +498,21 @@ const methods = {
     for (const teamKey of teamsInPart) {
       if (responses[teamKey]) {
         calculatedDif.push({
-          dif: Math.abs(
-            question.numericAnswer - (responses[teamKey].response || 0)
-          ),
+          dif:
+            responses[teamKey].response !== null &&
+            responses[teamKey].response !== undefined
+              ? Math.abs(question.numericAnswer - responses[teamKey].response)
+              : null,
           teamKey,
-          timer: responses[teamKey].timer || 100
+          timer: responses[teamKey].timer || 60000
         });
       }
     }
 
     calculatedDif.sort((a, b) => {
-      if (a.dif < b.dif) {
+      if (a.dif !== null && b.dif !== null && a.dif < b.dif) {
         return -1;
-      } else if (a.dif > b.dif) {
+      } else if (a.dif !== null && b.dif !== null && a.dif > b.dif) {
         return 1;
       } else {
         if (a.timer < b.timer) {
@@ -531,8 +559,9 @@ const methods = {
         defenderZone,
         defender: Room.gameStatus.gameMap[defenderZone].team,
         question,
-        isStarted: false
-      });
+        isStarted: false,
+        numericIsStarted: false
+      } as IGamePart2Step);
 
       await Room.save();
 
