@@ -7,7 +7,8 @@ import {
   IGamePart1Step,
   IGameStatus,
   IGamePart2,
-  IGamePart2Step
+  IGamePart2Step,
+  IGamePart3
 } from "./interfaces";
 import { server } from "../../server";
 import {
@@ -15,17 +16,24 @@ import {
   ErrorMessages,
   allowZonesDefault,
   responsesDefault,
-  winnerCheckResults,
-  subscriptionGameStatuspath
+  winnerCheckResults
 } from "./constants";
+import { ErrorMessages as QuestionErrorMessages } from "../Question/constants";
 import { roomDefault } from "./constants";
 import { teams, mapZones } from "../../constants";
-import { ITeam, ITeamInRoom, ITeamResponsePart1 } from "../Team/interfaces";
+import {
+  ITeam,
+  ITeamInRoom,
+  ITeamResponsePart1,
+  ITeamResponsePart3
+} from "../Team/interfaces";
 import QuestionMethods from "../Question";
 
 import TeamMethods from "../Team";
 import { IQuestion } from "../Question/interfaces";
 import utils from "../../utils";
+import { isFunction } from "util";
+import { IResultDifTimer } from "../../interfaces";
 
 const methods = {
   create: trycatcher(
@@ -225,8 +233,23 @@ const methods = {
         teamResponse.response = response;
         teamResponse.timer = timer;
 
+        const teamsInPart = Object.keys(teams).map(key => teams[key]);
+
         if (methods.checkTeamResponses(step)) {
-          methods.calcQuestionWinner(step);
+          const teamResults = methods.calcNumericQuestionWinner(
+            teamsInPart,
+            step.question,
+            step.responses
+          );
+
+          for (let i = 0; i < teamResults.length; i++) {
+            const zones = 2 - i;
+            step.allowZones[teamResults[i].teamKey] = zones;
+            step.responses[teamResults[i].teamKey].result = zones;
+            if (zones !== 0) {
+              step.teamQueue.push(teamResults[i].teamKey);
+            }
+          }
         }
       }
 
@@ -289,48 +312,77 @@ const methods = {
             step.defenderNumericResponse &&
             step.numericQuestion
           ) {
-            const numericAnswer = step.numericQuestion.numericAnswer || 0;
-            const dif = {
-              attacking: Math.abs(
-                step.attackingNumericResponse.response - numericAnswer
-              ),
-              defender: Math.abs(
-                step.defenderNumericResponse.response - numericAnswer
-              )
+            const teamsResponses = {
+              [teams.team1]: null,
+              [teams.team2]: null,
+              [teams.team3]: null
             };
+
+            teamsResponses[step.attacking] = step.attackingNumericResponse;
+            teamsResponses[step.defender] = step.defenderNumericResponse;
+
+            const questionResults = methods.calcNumericQuestionWinner(
+              [step.attacking, step.defender],
+              step.numericQuestion,
+              teamsResponses
+            );
+
             let zone = "";
-            if (dif.attacking < dif.defender) {
-              step.winner = step.attacking;
+
+            if (questionResults[0].teamKey === step.attacking) {
               zone = step.defenderZone;
-            } else if (dif.attacking > dif.defender) {
-              step.winner = step.defender;
-              zone = step.attackingZone;
-            } else if (
-              step.attackingNumericResponse.timer <
-              step.defenderNumericResponse.timer
-            ) {
-              step.winner = step.attacking;
-              zone = step.defenderZone;
-            } else if (
-              step.attackingNumericResponse.timer >
-              step.defenderNumericResponse.timer
-            ) {
-              step.winner = step.defender;
-              zone = step.attackingZone;
-            } else {
-              const r = [step.attacking, step.defender];
-              const randomIndex = utils.getRandomInt(0, 1);
-              step.winner = r[randomIndex];
-              zone = randomIndex === 0 ? step.attackingZone : step.defenderZone;
             }
+
+            if (questionResults[0].teamKey === step.defender) {
+              zone = step.attackingZone;
+            }
+
+            step.winner = questionResults[0].teamKey;
+
             await methods.colorZone(zone, step.winner, Room);
           }
         }
         if (step.winner && step.winner !== winnerCheckResults.draw) {
           part.teamQueue.shift();
+          if (part.steps.length === 3 && part.teamQueue.length === 0) {
+            await methods.checkGameWinner(Room.gameStatus);
+            if (Room.gameStatus.gameWinner) {
+              Room.isActive = false;
+            }
+          }
         }
         Room.markModified("gameStatus.part2.teamQueue");
         Room.markModified("gameStatus.part2.steps");
+      }
+
+      if (currentPart === 3) {
+        let isAllTeamsAnswered = true;
+        const part: IGamePart3 = Room.gameStatus[`part${currentPart}`];
+        if (!timer) {
+          throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+        }
+        if (!part.question) {
+          throw new Error(QuestionErrorMessages.NOT_FOUND);
+        }
+
+        part.responses[teamKey] = { timer, response } as ITeamResponsePart3;
+
+        for (const teamKey of part.teams) {
+          if (!part.responses[teamKey]) {
+            isAllTeamsAnswered = false;
+          }
+        }
+
+        if (isAllTeamsAnswered) {
+          // check winner of game
+          const resultOfQuestion = methods.calcNumericQuestionWinner(
+            part.teams,
+            part.question,
+            part.responses || {}
+          );
+          Room.gameStatus.gameWinner = resultOfQuestion[0].teamKey;
+          Room.isActive = false;
+        }
       }
 
       await Room.save();
@@ -378,51 +430,6 @@ const methods = {
     }
     return true;
   },
-  calcQuestionWinner: (stepElement: IGamePart1Step) => {
-    interface IResultDifTimer {
-      dif: number;
-      timer: number;
-      teamKey: string;
-    }
-
-    const semiRes: IResultDifTimer[] = Object.keys(teams).map(
-      (teamKey): IResultDifTimer => {
-        return {
-          timer: stepElement.responses[teamKey].timer || 100,
-          dif: Math.abs(
-            (stepElement.question.numericAnswer || 0) -
-              stepElement.responses[teamKey].response
-          ),
-          teamKey
-        };
-      }
-    );
-
-    semiRes.sort((a, b) => {
-      if (a.dif < b.dif) {
-        return -1;
-      } else if (a.dif > b.dif) {
-        return 1;
-      } else {
-        if (a.timer < b.timer) {
-          return -1;
-        } else if (a.timer > b.timer) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }
-    });
-
-    for (let i = 0; i < semiRes.length; i++) {
-      const zones = 2 - i;
-      stepElement.allowZones[semiRes[i].teamKey] = zones;
-      stepElement.responses[semiRes[i].teamKey].result = zones;
-      if (zones !== 0) {
-        stepElement.teamQueue.push(semiRes[i].teamKey);
-      }
-    }
-  },
   prepareTeamQueue: async (gameStatus: IGameStatus) => {
     const res: ITeamInRoom[] = [];
     for (const key of Object.keys(teams)) {
@@ -441,6 +448,56 @@ const methods = {
     return await Promise.all(
       res.map(async r => await TeamMethods.getTeamLinkInGame(r._id))
     );
+  },
+  calcNumericQuestionWinner: (
+    teamsInPart: string[],
+    question: IQuestion,
+    responses: {
+      [teams.team1]: ITeamResponsePart3 | null;
+      [teams.team2]: ITeamResponsePart3 | null;
+      [teams.team3]: ITeamResponsePart3 | null;
+    }
+  ): IResultDifTimer[] => {
+    // Функция возвращает отсортированный массив с участинками числового вопроса
+    // Массив отсортирован в порядке победы в вопросе: 0 элемент - победитель вопроса
+
+    if (
+      question.numericAnswer === undefined ||
+      question.numericAnswer === null
+    ) {
+      throw new Error(QuestionErrorMessages.QUESTION_SHOULD_BE_NUMERIC);
+    }
+    const calculatedDif: IResultDifTimer[] = [];
+
+    for (const teamKey of teamsInPart) {
+      if (responses[teamKey]) {
+        calculatedDif.push({
+          dif: Math.abs(
+            question.numericAnswer - (responses[teamKey].response || 0)
+          ),
+          teamKey,
+          timer: responses[teamKey].timer || 100
+        });
+      }
+    }
+
+    calculatedDif.sort((a, b) => {
+      if (a.dif < b.dif) {
+        return -1;
+      } else if (a.dif > b.dif) {
+        return 1;
+      } else {
+        if (a.timer < b.timer) {
+          return -1;
+        } else if (a.timer > b.timer) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+
+    return calculatedDif;
   },
   checkFillMap: (gameMap): boolean => {
     for (const key of Object.keys(mapZones)) {
@@ -484,7 +541,35 @@ const methods = {
     {
       logMessage: `${EntityName} team attack method`
     }
-  )
+  ),
+  checkGameWinner: async (gameStatus: IGameStatus): Promise<void> => {
+    let firstPlace = Object.keys(teams)[0];
+    for (const key of Object.keys(teams)) {
+      if (gameStatus.teams[firstPlace].zones < gameStatus.teams[key].zones) {
+        firstPlace = key;
+      }
+    }
+    let teamsPart3 = [firstPlace];
+    for (const key of Object.keys(teams)) {
+      if (
+        gameStatus.teams[firstPlace].zones === gameStatus.teams[key].zones &&
+        key !== firstPlace
+      ) {
+        teamsPart3.push(key);
+      }
+    }
+
+    if (teamsPart3.length < 2) {
+      gameStatus.gameWinner = firstPlace;
+      return;
+    }
+
+    gameStatus.currentPart = 3;
+    gameStatus.part3.question = await QuestionMethods.random({
+      isNumeric: true
+    });
+    gameStatus.part3.teams = teamsPart3;
+  }
 };
 
 export default methods;

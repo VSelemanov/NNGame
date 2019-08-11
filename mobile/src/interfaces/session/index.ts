@@ -15,6 +15,7 @@ export interface ISessionStore {
 	gameStep: GAME_STEP;
 	allowZones: number;
 	enabledZonesForAttack: string[];
+	teamZonesPart2: string[];
 	attack: {
 		attackingZone: string;
 		defenderZone: string;
@@ -46,11 +47,12 @@ export interface ISessionActions {
 		allowZones: number,
 		part: number,
 		attackingZone?: string,
-		defenderZone?: string
+		defenderZone?: string,
+		teamKey?: TEAM
 	): void;
 }
 
 export interface IAnswerQuestion {
-	response: number;
+	response: number | null;
 	timer: number;
 }

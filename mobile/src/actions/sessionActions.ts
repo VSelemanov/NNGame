@@ -108,6 +108,7 @@ const actions: ISessionActions = {
 				type: ActionTypes.SEND_ANSWER_REQUEST
 			});
 			try {
+				lg(props);
 				let response = await net.sendAnswer(props, token);
 				if (response.status !== 200) {
 					throw "Ошибка";
@@ -131,7 +132,8 @@ const actions: ISessionActions = {
 		allowZones: number,
 		part: number,
 		attackingZone?: string,
-		defenderZone?: string
+		defenderZone?: string,
+		teamKey?: TEAM
 	) {
 		lg(zone);
 

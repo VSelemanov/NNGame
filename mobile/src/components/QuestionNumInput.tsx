@@ -14,7 +14,7 @@ import { lg } from "../utils/helper";
 import moment from "moment";
 
 interface IP {
-	onSubmit(n: number, t: number): void;
+	onSubmit(n: number | null, t: number): void;
 }
 
 interface IS {
@@ -24,12 +24,13 @@ interface IS {
 }
 
 export default class QuestionNumInput extends React.Component<IP, IS> {
-	private interval: number;
+	private interval: any;
 	constructor(props: any) {
 		super(props);
+		this.interval = 0;
 		this.state = {
 			startTime: moment(),
-			number: null,
+			number: "0",
 			diff: 0
 		};
 		this.addSymbol = this.addSymbol.bind(this);
@@ -48,6 +49,9 @@ export default class QuestionNumInput extends React.Component<IP, IS> {
 				diff: moment().diff(startTime, "seconds")
 			});
 			// this.forceUpdate();
+			if (moment().diff(startTime, "seconds") > 59) {
+				this.submit(true);
+			}
 		}, 1000);
 	}
 
@@ -66,17 +70,22 @@ export default class QuestionNumInput extends React.Component<IP, IS> {
 	private deleteSymbol() {
 		this.setState({
 			number:
-				!this.state || this.state.number.length <= 1
+				!this.state || this.state.number.length <= 1 || !this.state.number
 					? "0"
 					: this.state.number.substr(0, this.state.number.length - 1)
 		});
 	}
-	private submit() {
-		clearInterval(this.interval);
-		const timer =
-			parseInt(moment().format("x")) -
-			parseInt(this.state.startTime.format("x"));
-		this.props.onSubmit(parseFloat(this.state.number), timer);
+	private submit(timeout: boolean = false) {
+		if (timeout && timeout === true) {
+			clearInterval(this.interval);
+			this.props.onSubmit(null, 60000);
+		} else {
+			clearInterval(this.interval);
+			const timer =
+				parseInt(moment().format("x"), 10) -
+				parseInt(this.state.startTime.format("x"), 10);
+			this.props.onSubmit(parseFloat(this.state.number), timer);
+		}
 	}
 	private renderNumPad() {
 		const mat = [[1, 2, 3, -1], [4, 5, 6, 0], [7, 8, 9, -2]];
@@ -85,7 +94,6 @@ export default class QuestionNumInput extends React.Component<IP, IS> {
 			return (
 				<View key={`pad_line-${i}`} style={{ flexDirection: "row" }}>
 					{line.map((el: number) => {
-						let img: ImageRequireSource = null;
 						let color: COLORS = COLORS.LL_BROWN;
 						let func: (n: number) => void = this.addSymbol;
 						switch (el) {
@@ -160,7 +168,9 @@ export default class QuestionNumInput extends React.Component<IP, IS> {
 				</View>
 				<View style={styles.inputNumArea}>
 					<Text style={styles.timer}>
-						{60 - this.state.diff >= 0 ? `0:${60 - this.state.diff}` : "0:00"}
+						{60 - this.state.diff >= 0
+							? `0:${`${60 - this.state.diff}`.padStart(2, "0")}`
+							: "0:00"}
 					</Text>
 					<View style={{}}>{this.renderNumPad()}</View>
 					<TouchableOpacity
@@ -197,7 +207,7 @@ const styles = StyleSheet.create({
 	outputText: {
 		color: COLORS.N_BLACK,
 		fontSize: rem * 1.3,
-		fontFamily: FONTS.preslav,
+		fontFamily: FONTS.preslav
 	},
 	inputNumField: {
 		width: rem * 3,

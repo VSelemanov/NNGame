@@ -25,6 +25,7 @@ interface IP {
 	smallDim: boolean;
 	attackingZone?: string;
 	defenderZone?: string;
+	teamKey: TEAM;
 }
 
 export default class MapArea extends React.Component<IP> {
@@ -42,8 +43,8 @@ export default class MapArea extends React.Component<IP> {
 			allowZones,
 			dim,
 			smallDim,
-			attackingZone,
-			defenderZone
+			defenderZone,
+			teamKey
 		} = this.props;
 		// lg("----------------");
 		// lg(mapZone.team);
@@ -62,11 +63,18 @@ export default class MapArea extends React.Component<IP> {
 				break;
 		}
 
+		const attackingZone =
+			mapZone.team === teamKey ? "" : this.props.attackingZone;
+
+		// const smallDim =
+		// 	mapZone.team === teamKey && attackingZone === ""
+		// 		? false
+		// 		: this.props.smallDim;
 		return (
 			<Svg key={name} fill="none">
 				<Path
 					d={areaD}
-					fill={`${dim ? "#AAAAAA33" : smallDim ? "#CCCCCCAA" : color}`}
+					fill={`${dim ? `${color}22` : smallDim ? `${color}66` : color}`}
 					stroke={`${dim ? "#9F835A55" : "#9F835A"}`}
 					strokeWidth="3"
 					strokeLinejoin="round"

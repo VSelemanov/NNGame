@@ -49,7 +49,8 @@ import Spinner from "../components/Spinner";
 import WaitingMsg from "../components/WaitingMsg";
 import {
 	IGamePart1Step,
-	IGamePart2Step
+	IGamePart2Step,
+	IGamePart3
 } from "../../../newback/src/helper/Room/interfaces";
 interface IS {
 	startTime: moment.Moment;
@@ -215,7 +216,7 @@ class GameMap extends React.Component<Store, IS> {
 		);
 	}
 
-	private submitNumericQuestion(num: number, timer: number) {
+	private submitNumericQuestion(num: number | null, timer: number) {
 		this.props.sendAnswer({ response: num, timer }, this.props.session.token);
 	}
 
@@ -227,7 +228,7 @@ class GameMap extends React.Component<Store, IS> {
 		try {
 			const { gameStep, status } = this.props.session;
 
-			let lastStep: IGamePart1Step | IGamePart2Step;
+			let lastStep: IGamePart1Step | IGamePart2Step | IGamePart3;
 
 			if (status.currentPart === 1 && status.part1.steps.length > 0) {
 				lastStep = status.part1.steps[status.part1.steps.length - 1];
@@ -251,15 +252,27 @@ class GameMap extends React.Component<Store, IS> {
 				>
 					<View style={{ flex: 1 }}>
 						{gameStep === GAME_STEP.QUESTION ? (
-							status.currentPart === 1 || (winner && winner === "draw") ? (
+							status.currentPart === 1 ||
+							status.currentPart === 3 ||
+							(winner && winner === "draw") ? (
 								<QuestionNumInput onSubmit={this.submitNumericQuestion} />
 							) : (
 								<QuestionVariantsInput
 									lastStep={lastStep}
 									onSubmit={this.submitBattleQuestion}
 									teams={status.teams}
+									isActive={lastStep.isStarted}
 								/>
 							)
+						) : gameStep === GAME_STEP.QUESTION_DESC ? (
+							status.currentPart === 2 ? (
+								<QuestionVariantsInput
+									lastStep={lastStep}
+									onSubmit={this.submitBattleQuestion}
+									teams={status.teams}
+									isActive={lastStep.isStarted}
+								/>
+							) : null
 						) : null}
 					</View>
 				</QuestionWindow>
@@ -283,6 +296,7 @@ class GameMap extends React.Component<Store, IS> {
 			allowZones,
 			teamKey,
 			enabledZonesForAttack,
+			teamZonesPart2,
 			attack
 		} = this.props.session;
 
@@ -308,6 +322,7 @@ class GameMap extends React.Component<Store, IS> {
 						allowZones={allowZones}
 						teamKey={teamKey}
 						enabledZonesForAttack={enabledZonesForAttack}
+						teamZonesPart2={teamZonesPart2}
 						attackingZone={attack.attackingZone}
 						defenderZone={attack.defenderZone}
 					/>
@@ -322,7 +337,7 @@ class GameMap extends React.Component<Store, IS> {
 								{
 									width:
 										gameStep === GAME_STEP.CHOOSE_ZONE ||
-										GAME_STEP.CHOOSE_ATTACKING_ZONE
+										gameStep === GAME_STEP.CHOOSE_ATTACKING_ZONE
 											? 0
 											: WIDTH
 								}
@@ -454,7 +469,7 @@ const styles = StyleSheet.create({
 		left: 0,
 		width: WIDTH,
 		height: HEIGHT,
-		backgroundColor: `${COLORS.N_BLACK}AA`
+		backgroundColor: `${COLORS.N_BLACK}77`
 	},
 	loadingText: {
 		padding: rem,

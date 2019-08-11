@@ -34,6 +34,36 @@ export class Helper {
 		return roundFunc(num);
 	}
 
+	public getRandomInt(min: number, max: number) {
+		const arr: number[] = [];
+		const res: number[] = [];
+		for (let i = min; i <= max; i++) {
+			arr.push(i);
+		}
+		for (let i = 0; i < 1; i++) {
+			res.push(arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
+		}
+
+		return res[0];
+	}
+
+	public shuffle(array: any[]) {
+		let currentIndex = array.length;
+		let temporaryValue;
+		let randomIndex;
+
+		while (0 !== currentIndex) {
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+
+		return array;
+	}
+
 	// привязка обьекта навигации к компоненту
 	public setTopLevelNavigator(navigatorRef: NavigationContainerComponent) {
 		this.navigator = navigatorRef;
@@ -118,14 +148,17 @@ export class Helper {
 		);
 	}
 	public isQuestionStartedForTeam(step: IGamePart1Step, teamKey: TEAM) {
-		return step.responses[teamKey].response === null;
+		return (
+			step.responses[teamKey].response === null &&
+			step.responses[teamKey].timer === null
+		);
 	}
 	public isQuestionDoneByAll(step: IGamePart1Step) {
 		const { team1, team2, team3 } = step.responses;
 		return (
-			team1.response !== null &&
-			team2.response !== null &&
-			team3.response !== null
+			(team1.response !== null || (team1.timer && team1.timer > 59500)) &&
+			(team2.response !== null || (team2.timer && team2.timer > 59500)) &&
+			(team3.response !== null || (team3.timer && team3.timer > 59500))
 		);
 	}
 	public allowChooseZonePart1(step: IGamePart1Step, teamKey: TEAM): boolean {
@@ -184,6 +217,24 @@ export class Helper {
 		arr1.forEach((val: string, i: number) => {
 			if (gameMap[val].team === teamKey) {
 				arr = arr.concat(gameMap[val].nearby);
+			}
+		});
+		arr.forEach((val: string) => {
+			if (val) {
+				obj[val] = true;
+			}
+		});
+
+		return Object.keys(obj);
+	}
+
+	public getTeamZones(gameMap: any, teamKey: TEAM): string[] {
+		const obj: { [key: string]: boolean } = {};
+		let arr: string[] = [];
+		const arr1 = Object.keys(gameMap);
+		arr1.forEach((val: string, i: number) => {
+			if (gameMap[val].team === teamKey) {
+				arr = arr.concat(val);
 			}
 		});
 		arr.forEach((val: string) => {

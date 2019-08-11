@@ -47,6 +47,16 @@ export const roomDefault: IRoomBase = {
   gameStatus: {
     isStarted: false,
     currentPart: 0,
+    part3: {
+      teams: [],
+      isStarted: false,
+      question: null,
+      responses: {
+        [teams.team1]: null,
+        [teams.team2]: null,
+        [teams.team3]: null
+      }
+    },
     teams: {
       [teams.team1]: null,
       [teams.team2]: null,
@@ -60,7 +70,8 @@ export const roomDefault: IRoomBase = {
     part2: {
       steps: [],
       teamQueue: []
-    }
+    },
+    gameWinner: null
   },
   isActive: true,
   theme: null

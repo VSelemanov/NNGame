@@ -4,7 +4,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "build:android": "expo build:android --release-channel prod"
+    "build:android": "expo build:android --release-channel prod",
+    "update": "expo publish --release-channel prod"
   },
   "dependencies": {
     "@types/superagent": "^4.1.3",

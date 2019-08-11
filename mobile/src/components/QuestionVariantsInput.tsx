@@ -11,7 +11,7 @@ import Svg, { Path } from "react-native-svg";
 
 import { rem, iconImgs } from "../constants/constants";
 import { COLORS, FONTS, TEAM_ACTION_STATE_PART_2 } from "../constants/enum";
-import { lg } from "../utils/helper";
+import helper, { lg } from "../utils/helper";
 import moment from "moment";
 import {
 	IGamePart2Step,
@@ -25,6 +25,7 @@ interface IP {
 	onSubmit(n: number): void;
 	lastStep: IGamePart2Step;
 	teams: ITeamsInRoom;
+	isActive: boolean;
 }
 
 interface IS {
@@ -35,8 +36,10 @@ interface IS {
 
 export default class QuestionVariantsInput extends React.Component<IP, IS> {
 	private interval: number;
+	private answers;
 	constructor(props: any) {
 		super(props);
+		this.answers = null;
 		this.state = {
 			startTime: moment(),
 			number: "",
@@ -57,6 +60,25 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 		// 	});
 		// 	// this.forceUpdate();
 		// }, 1000);
+		// this.answers = this.props.lastStep.question.answers
+		// 	? this.props.lastStep.question.answers.map((el: IAnswer, i: number) => {
+		// 			return (
+		// 				<TouchableOpacity
+		// 					onPress={() =>
+		// 						this.props.isActive ? this.props.onSubmit(i) : lg("isNotActive")
+		// 					}
+		// 					key={i}
+		// 					style={[
+		// 						styles.variant,
+		// 						{ opacity: this.props.isActive ? 1 : 0.5 }
+		// 					]}
+		// 				>
+		// 					<Text style={styles.variantText}>{el.title}</Text>
+		// 				</TouchableOpacity>
+		// 			);
+		// 	  })
+		// 	: null;
+		// this.answers = this.answers ? helper.shuffle(this.answers) : null;
 	}
 
 	public componentWillUnmount() {
@@ -66,14 +88,14 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 	private renderUnion(team: string, type: TEAM_ACTION_STATE_PART_2) {
 		const unionType =
 			type === TEAM_ACTION_STATE_PART_2.ATTACK
-				? iconImgs.teams[team].attack
+				? iconImgs.teams.team1.attack
 				: iconImgs.teams[team].defence;
 		return (
 			<View style={styles.union}>
 				<Image source={iconImgs.shutter} style={styles.shutter} />
 				<Image source={iconImgs.teams[team].union} style={styles.unionBack} />
 				<Image source={unionType} style={styles.unionType} />
-				<Text style={styles.teamName}>{this.props.teams[team].name}</Text>
+				{/* <Text style={styles.teamName}>{this.props.teams[team].name}</Text> */}
 			</View>
 		);
 	}
@@ -82,9 +104,14 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 			? this.props.lastStep.question.answers.map((el: IAnswer, i: number) => {
 					return (
 						<TouchableOpacity
-							onPress={() => this.props.onSubmit(i)}
+							onPress={() =>
+								this.props.isActive ? this.props.onSubmit(i) : lg("isNotActive")
+							}
 							key={i}
-							style={styles.variant}
+							style={[
+								styles.variant,
+								{ opacity: this.props.isActive ? 1 : 0.5 }
+							]}
 						>
 							<Text style={styles.variantText}>{el.title}</Text>
 						</TouchableOpacity>
@@ -134,8 +161,8 @@ const styles = StyleSheet.create({
 		height: rem * 9.5 * lambda
 	},
 	unionType: {
-		width: rem * 1.7 * lambda,
-		height: rem * 1.7 * lambda
+		width: rem * 1.79 * lambda,
+		height: rem * 1.8 * lambda
 	},
 	teamName: {
 		position: "absolute",

@@ -91,7 +91,11 @@ export default class App extends React.Component<{}, { isReady: boolean }> {
 			require("../assets/icons/trumpet_red.png"),
 			require("../assets/banners/white.png"),
 			require("../assets/banners/blue.png"),
-			require("../assets/banners/red.png")
+			require("../assets/banners/red.png"),
+			require("../assets/unions/white.png"),
+			require("../assets/unions/blue.png"),
+			require("../assets/unions/red.png"),
+			require("../assets/unions/shutter.png")
 		];
 
 		return new Promise(async (resolve, reject) => {

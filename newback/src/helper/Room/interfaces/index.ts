@@ -1,6 +1,10 @@
 import { IBaseFlds, IMapZone } from "../../../interfaces";
 import { Document } from "mongoose";
-import { ITeamsInRoom, ITeamResponsePart1 } from "../../Team/interfaces";
+import {
+  ITeamsInRoom,
+  ITeamResponsePart1,
+  ITeamResponsePart3
+} from "../../Team/interfaces";
 import { mapZones, teams } from "../../../constants";
 import { IQuestion } from "../../Question/interfaces";
 
@@ -61,14 +65,8 @@ export interface IGamePart2Step {
   numericIsStarted?: boolean;
   attackingResponse?: number;
   defenderResponse?: number;
-  attackingNumericResponse?: {
-    response: number;
-    timer: number;
-  };
-  defenderNumericResponse?: {
-    response: number;
-    timer: number;
-  };
+  attackingNumericResponse?: ITeamResponsePart3;
+  defenderNumericResponse?: ITeamResponsePart3;
   winner?: string;
 }
 
@@ -77,13 +75,26 @@ export interface IGamePart2 {
   steps: IGamePart2Step[];
 }
 
+export interface IGamePart3 {
+  question: IQuestion | null;
+  teams: string[];
+  responses: {
+    [teams.team1]: ITeamResponsePart3 | null;
+    [teams.team2]: ITeamResponsePart3 | null;
+    [teams.team3]: ITeamResponsePart3 | null;
+  };
+  isStarted: boolean;
+}
+
 export interface IGameStatus {
   teams: ITeamsInRoom;
   gameMap: IGameMap;
   currentPart: number;
   part1: IGamePart1;
   part2: IGamePart2;
+  part3: IGamePart3;
   isStarted: boolean;
+  gameWinner: string | null;
 }
 
 export interface IRoomCreateRequest {

@@ -48,6 +48,8 @@ export default class InputText extends React.Component<IP, IS> {
 					<Path
 						d="M2128.35 250.923C1666.22 246.604 584.102 246.604 121.981 250.925C69.9117 251.524 9.24629 186.222 2.00036 133.5C-5.06029 80.7745 13.4724 0.150378 67.5005 0.999822C544.583 7.59014 1673.7 7.6056 2150.78 1.01529C2204.81 0.168693 2225.56 65.7775 2218.5 118.5C2211.26 171.22 2180.42 251.521 2128.35 250.923Z"
 						fill="white"
+						strokeWidth={3}
+						stroke={COLORS.DDDDD_BROWN}
 					/>
 				</Svg>
 
@@ -62,7 +64,7 @@ export default class InputText extends React.Component<IP, IS> {
 						fontFamily: FONTS.preslav
 					}}
 					multiline={false}
-					maxLength={20}
+					maxLength={13}
 					keyboardType={type}
 					onChangeText={(text: string) =>
 						this.setState({

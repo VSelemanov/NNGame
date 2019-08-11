@@ -26,6 +26,10 @@ export interface ITeamResponsePart1 {
   result: number | null;
 }
 
+export interface ITeamResponsePart3 {
+  timer: number | null;
+  response: number | null;
+}
 export interface ITeamCredentials {
   _id: string;
   teamKey: string;

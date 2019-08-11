@@ -19,3 +19,9 @@ export interface IMapZone {
   isStartBase: boolean;
   team: string | null;
 }
+
+export interface IResultDifTimer {
+  dif: number;
+  timer: number;
+  teamKey: string;
+}

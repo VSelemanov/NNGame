@@ -17,6 +17,7 @@ interface IP {
 	chooseZone(z: string, token: string, allowZones: number, part: number): void;
 	allowZones: number;
 	enabledZonesForAttack: string[];
+	teamZonesPart2: string[];
 	teamKey: TEAM;
 	attackingZone?: string;
 	defenderZone?: string;
@@ -29,11 +30,13 @@ export default class Map extends React.Component<IP> {
 			chooseDisabled,
 			currentPart,
 			enabledZonesForAttack,
+
 			gameMap,
 			token,
 			teamKey,
 			attackingZone,
-			defenderZone
+			defenderZone,
+			teamZonesPart2
 		} = this.props;
 		return (
 			<Svg height="100%" width="100%" viewBox="0 0 1854 1393" fill="none">
@@ -65,6 +68,7 @@ export default class Map extends React.Component<IP> {
 								currentPart !== 1
 							}
 							smallDim={smallDim}
+							teamKey={teamKey}
 							attackingZone={attackingZone}
 							defenderZone={defenderZone}
 						/>

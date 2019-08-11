@@ -7,7 +7,9 @@ import {
 	TextInput,
 	Image,
 	Platform,
-	BackHandler
+	BackHandler,
+	TouchableOpacity,
+	Alert
 } from "react-native";
 import { connect } from "react-redux";
 import { actions } from "../actions";
@@ -26,7 +28,8 @@ class Entrance extends React.Component<Store> {
 		this.onBackButton = this.onBackButton.bind(this);
 		this.onSubmitInput = this.onSubmitInput.bind(this);
 	}
-	componentDidMount() {
+
+	public componentDidMount() {
 		this.props.resetSessionStore();
 		this.props.getTeamInfo("");
 		this.props.connectToSocket();
@@ -78,6 +81,17 @@ class Entrance extends React.Component<Store> {
 						<Text style={styles.loadingText}>Ожидание других игроков...</Text>
 					</View>
 				) : null}
+				<TouchableOpacity
+					style={{
+						width: 30,
+						height: 30,
+						top: 50,
+						left: 50,
+						backgroundColor: COLORS.DDDD_BROWN,
+						position: "absolute"
+					}}
+					onPress={() => Alert.alert("1")}
+				/>
 			</View>
 		);
 	}
