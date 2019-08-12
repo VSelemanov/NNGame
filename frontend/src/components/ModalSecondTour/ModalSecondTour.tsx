@@ -3,7 +3,10 @@ import style from "./ModalSecondTour.module.scss";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
 import swords from "../../img/swords.png";
-import shield from "../../img/shield.png";
+import shield_team1 from "../../img/shield_team1.png";
+import shield_team2 from "../../img/shield_team2.png";
+import shield_team3 from "../../img/shield_team3.png";
+
 import { startTimer } from "../../toServer/requests";
 import img from "../../img/awaiting_clock.svg";
 
@@ -20,6 +23,7 @@ class ModalSecondTour extends React.Component<any, any> {
         return `${style.flag}`;
     }
   }
+  
   getTeamName(team: string) {
     switch (team) {
       case "team1":
@@ -54,12 +58,12 @@ class ModalSecondTour extends React.Component<any, any> {
   calcDmg(team: string) {
     const resp1 = this.props.attackingResponse;
     const resp2 = this.props.defenderResponse;
-    const answer =
-      this.props.question && this.props.question.answers
-        ? Object.keys(this.props.question.answers).filter(
-            (item: any) => this.props.question.answers[item].isRight
-          )[0]
-        : null;
+    // const answer =
+    //   this.props.question && this.props.question.answers
+    //     ? Object.keys(this.props.question.answers).filter(
+    //         (item: any) => this.props.question.answers[item].isRight
+    //       )[0]
+    //     : null;
     if (resp1 === resp2) {
       return "";
     }
@@ -76,6 +80,15 @@ class ModalSecondTour extends React.Component<any, any> {
     this.props.closeFunc()
   }
   
+  getShield(){
+    switch(this.props.defend){
+      case 'team1': return shield_team1;
+      case 'team2': return shield_team2;
+      case 'team3': return shield_team3;
+      default: return ''
+    }
+  }
+
   checkWinner(index: number) {
     const answer =
       this.props.question && this.props.question.answers
@@ -129,7 +142,7 @@ class ModalSecondTour extends React.Component<any, any> {
             </div>
             <div className={style.rigth_part}>
               <div className={this.getFlagColor(defend)}>
-                <img src={shield} alt="" />
+                <img src={this.getShield()} alt="" />
                 {/* <span>{this.calcDmg("defend")}</span> */}
               </div>
               {/* <p>{this.getTeamName(defend)}</p> */}
