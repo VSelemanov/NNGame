@@ -1,6 +1,6 @@
-import { When, Then } from "cucumber";
+import { When, Then, Given } from "cucumber";
 import { server } from "../../src/server";
-import { HTTPMethods, APIRoute } from "../../src/constants";
+import { HTTPMethods, APIRoute, adminPath } from "../../src/constants";
 import { Authorization } from "./constants";
 import { IAdminBase } from "../../src/helper/Admin/interfaces";
 import { setResponse, getResponse, getSocketResponse } from "./lib/response";
@@ -174,3 +174,24 @@ Then("в сокете шага дуэли флаг старта true", async fun
 
   expect(res.part2.steps[res.part2.steps.length - 1].isStarted).to.eql(true);
 });
+
+Given("админ закрывает окно с вопросом", async function() {
+  const res = await server.server.inject({
+    url: `${APIRoute}/${routePath}/${paths.stopstep}`,
+    method: HTTPMethods.post,
+    headers: {
+      Authorization
+    }
+  });
+
+  setResponse(res);
+});
+
+Then(
+  "в сокете должен быть завершен текущий шаг второго тура",
+  async function() {
+    const res: IGameStatus = getSocketResponse();
+
+    expect(res.part2.steps[res.part2.steps.length - 1].isFinished).to.eql(true);
+  }
+);

@@ -173,7 +173,8 @@ Given("во втором туре уже есть шаг", async function() {
     defenderZone: "yarmarka",
     isStarted: true,
     question: Question,
-    winner: "team1"
+    winner: "team1",
+    isFinished: false
   });
 
   Room.save();

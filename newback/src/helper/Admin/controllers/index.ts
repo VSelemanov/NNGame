@@ -55,6 +55,14 @@ const ctrl = {
     {
       logMessage: `${EntityName} start question request`
     }
+  ),
+  stopstep: trycatcher(
+    async (req: IDecoratedRequest<IAdminBase>, h) => {
+      return await methods.stopstep();
+    },
+    {
+      logMessage: `${EntityName} stop step request`
+    }
   )
 };
 

@@ -21,6 +21,16 @@ export const login = {
   }
 };
 
+export const stopstep = {
+  description: "Завершить шаг второго тура",
+  tags: ["api", routePath],
+  plugins: {
+    "hapi-swagger": {
+      validate: {}
+    }
+  }
+};
+
 export const colorZone = {
   description: "Покрасить зону в цвет команды",
   tags: ["api", routePath],
