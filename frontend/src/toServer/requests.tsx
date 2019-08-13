@@ -14,6 +14,7 @@ export const GAME_START_URL = `${API_URL}${PREFIX}/admin/startgame`;//
 export const QUESTION_GET_URL = `${API_URL}${PREFIX}/admin/nextquestion`; // 
 export const TIMER_START_URL = `${API_URL}${PREFIX}/admin/startquestion`; //
 export const ZONE_TAKE_URL = `${API_URL}${PREFIX}/admin/zone`; //
+export const STOP_STOP_URL = `${API_URL}${PREFIX}/admin/stopstep`; //
 
 
 const configBase = {
@@ -31,6 +32,14 @@ const config = {
 export const getAllTeams = async () => {
   try {
     return axios.get(TEAMS_GET_URL, config);
+  } catch (e) {
+    return e;
+  }
+};
+//
+export const stopStep = async () => {
+  try {
+    return axios.post(STOP_STOP_URL, config);
   } catch (e) {
     return e;
   }

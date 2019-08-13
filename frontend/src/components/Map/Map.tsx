@@ -17,7 +17,8 @@ class Map extends React.Component<any, any> {
       teams: {},
       gameMap: {},
       isGameStarted: false,
-      gameStatus: 0,
+      currentPart: 0,
+      teamQueue: [],
       // первый тур
       isNumQuestionModal: false,
       isNumStarted: false,
@@ -31,7 +32,6 @@ class Map extends React.Component<any, any> {
       defenderResponse: null,
       attack: null,
       defend: null,
-      teamQueue: [],
       // второй тур цифровой вопрос
       numQuestionPart2: {},
       isNumPart2QuestionModal: false,
@@ -47,6 +47,7 @@ class Map extends React.Component<any, any> {
       [param]: false
     });
   };
+
   public closeFuncNumPart2 = () => {
     this.setState({
       numQuestionPart2: {},
@@ -59,6 +60,7 @@ class Map extends React.Component<any, any> {
       defenderResponse: null
     });
   };
+
   public closeFuncSecondTourModal = () => {
     this.setState({
       isPart2QuestionModal: false,
@@ -69,6 +71,7 @@ class Map extends React.Component<any, any> {
       defend: null
     });
   };
+
   public closeFuncNumModal = () => {
     this.setState({
       isNumQuestionModal: false,
@@ -85,14 +88,15 @@ class Map extends React.Component<any, any> {
   };
 
   public getTeamStatus = (team: string) => {
+    const {currentPart} = this.state;
     const curTeam = this.state.teamQueue.length > 0 ? this.state.teamQueue[0] : null;
-    return (curTeam && curTeam === team) ? <div className={style[curTeam]} /> : <div />;
+    return (curTeam && curTeam === team) ? <div className={style[`${curTeam}_${currentPart}`]} /> : <div />;
   };
 
   public getGameStatus = () => {
     let zones = 0;
     Object.keys(this.state.teams).forEach(team => (zones += this.state.teams[team].zones));
-    switch (this.state.gameStatus) {
+    switch (this.state.currentPart) {
       case 0:
         return "Ожидание старта игры";
       case 1:
@@ -126,7 +130,7 @@ class Map extends React.Component<any, any> {
           this.setState({
             teams,
             isGameStarted: message.isStarted,
-            gameStatus: message.currentPart ? message.currentPart : 0
+            currentPart: message.currentPart ? message.currentPart : 0
           });
         }
 
@@ -173,6 +177,11 @@ class Map extends React.Component<any, any> {
             this.setState({
               isNumQuestionModal: true
             });
+          }
+          if(step.teamQueue !== undefined){
+            this.setState({
+              teamQueue: step.teamQueue
+            })
           }
         }
 
@@ -266,8 +275,11 @@ class Map extends React.Component<any, any> {
           }
         }
         // ТРЕТИЙ ТУР
-        if (message.currentPart && message.currentPart === 3) {
-          console.log("Третий тур");
+        if (message.currentPart && message.currentPart === 3 ) {
+          const length = message.part2.steps ? message.part2.steps.length : 0;
+          if(length && message.part2.steps[length - 1].isFinished){
+            alert("Третий тур начался");
+          }
         }
       };
       client.subscribe("/api/room/gamestatus", handler);
@@ -389,6 +401,10 @@ class Map extends React.Component<any, any> {
               closeFunc={this.closeFuncNumPart2}
             />
           )}
+
+          {this.state.currentPart === 3 && !this.state.isPart2QuestionModal && !this.state.isNumPart2QuestionModal && 
+            <NumQuestionPart1 />
+          }
           <div className={style.map_wrapper}>
             <MapVector
               teams={this.state.teams}
