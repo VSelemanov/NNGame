@@ -68,6 +68,7 @@ export interface IGamePart2Step {
   attackingNumericResponse?: ITeamResponsePart3;
   defenderNumericResponse?: ITeamResponsePart3;
   winner?: string;
+  isFinished: boolean;
 }
 
 export interface IGamePart2 {

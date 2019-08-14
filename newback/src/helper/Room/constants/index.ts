@@ -9,7 +9,8 @@ export const routePath = "room";
 export enum ErrorMessages {
   NOT_FOUND = "Team(s) not found",
   TIMER_IS_REQUIRED = "Timer is required for numeric responses",
-  TEAM_NOT_IN_DUEL = "Team not in duel"
+  TEAM_NOT_IN_DUEL = "Team not in duel",
+  PART_IS_NOT_SECOND = "Current part should be equal 2"
 }
 
 export enum paths {

@@ -77,6 +77,16 @@ const methods = {
     {
       logMessage: `${EntityName} start question method`
     }
+  ),
+  stopstep: trycatcher(
+    async (): Promise<string> => {
+      const Room: IRoom = await RoomMethods.stopstep();
+      await server.server.publish(subscriptionGameStatuspath, Room.gameStatus);
+      return "ok";
+    },
+    {
+      logMessage: `${EntityName} stop step method`
+    }
   )
 };
 

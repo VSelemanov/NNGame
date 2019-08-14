@@ -8,7 +8,8 @@ import {
   colorZone,
   startGame,
   nextQuestion,
-  startQuestion
+  startQuestion,
+  stopstep
 } from "../docs";
 import Joi from "@hapi/joi";
 
@@ -83,6 +84,14 @@ const routes: ServerRoute[] = [
     options: {
       ...startQuestion,
       auth: "admin-auth"
+    }
+  },
+  {
+    path: `${APIRoute}/${routePath}/${paths.stopstep}`,
+    method: HTTPMethods.post,
+    handler: AdminCtrl.stopstep,
+    options: {
+      ...stopstep
     }
   }
 ];

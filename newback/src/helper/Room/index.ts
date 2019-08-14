@@ -218,6 +218,26 @@ const methods = {
       logMessage: `${EntityName} start question method`
     }
   ),
+  stopstep: trycatcher(
+    async (): Promise<IRoom> => {
+      const Room: IRoom = await methods.getActiveRoom();
+
+      if (Room.gameStatus.currentPart !== 2) {
+        throw new Error(ErrorMessages.PART_IS_NOT_SECOND);
+      }
+
+      const part = Room.gameStatus.part2;
+      const step = part.steps[part.steps.length - 1];
+      step.isFinished = true;
+
+      await Room.save();
+
+      return Room;
+    },
+    {
+      logMessage: `${EntityName} start question method`
+    }
+  ),
   teamResponse: trycatcher(
     async (
       response: number | null,
@@ -560,7 +580,8 @@ const methods = {
         defender: Room.gameStatus.gameMap[defenderZone].team,
         question,
         isStarted: false,
-        numericIsStarted: false
+        numericIsStarted: false,
+        isFinished: false
       } as IGamePart2Step);
 
       await Room.save();
@@ -578,7 +599,7 @@ const methods = {
         firstPlace = key;
       }
     }
-    let teamsPart3 = [firstPlace];
+    const teamsPart3 = [firstPlace];
     for (const key of Object.keys(teams)) {
       if (
         gameStatus.teams[firstPlace].zones === gameStatus.teams[key].zones &&
