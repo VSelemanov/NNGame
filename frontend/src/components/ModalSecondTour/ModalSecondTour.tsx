@@ -38,50 +38,23 @@ class ModalSecondTour extends React.Component<any, any> {
   }
 
   getCellColor(index: number) {
-    const resp1 = this.props.attackingResponse;
-    const resp2 = this.props.defenderResponse;
-    const { attack, defend } = this.props;
+    const { attacking, defender, attackingResponse, defenderResponse } = this.props.part2;
     // если ответы одинаковые
-    if (resp1 === resp2) {
-      if (resp1 === index) {
-        return style[`${attack}_${defend}`];
+    if (attackingResponse === defenderResponse) {
+      if (attackingResponse === index) {
+        return style[`${attacking}_${defender}`];
       }
     }
     // если ответы не одинаковые
-    if (resp1 === index || resp2 === index) {
-      return resp1 === index ? style[attack] : style[defend];
+    if (attackingResponse === index || defenderResponse === index) {
+      return attackingResponse === index ? style[attacking] : style[defender];
     } else {
       return "";
     }
   }
-
-  calcDmg(team: string) {
-    const resp1 = this.props.attackingResponse;
-    const resp2 = this.props.defenderResponse;
-    // const answer =
-    //   this.props.question && this.props.question.answers
-    //     ? Object.keys(this.props.question.answers).filter(
-    //         (item: any) => this.props.question.answers[item].isRight
-    //       )[0]
-    //     : null;
-    if (resp1 === resp2) {
-      return "";
-    }
-    // if (resp1 === Number(answer)) {
-    //   return team === "attack" ? "+1" : "-1";
-    // }
-    // if (resp2 === Number(answer)) {
-    //   return team === "defend" ? "+1" : "-1";
-    // }
-    return "";
-  }
-
-  public componentWillUnmount(){
-    this.props.closeFunc()
-  }
   
   getShield(){
-    switch(this.props.defend){
+    switch(this.props.part2.defender){
       case 'team1': return shield_team1;
       case 'team2': return shield_team2;
       case 'team3': return shield_team3;
@@ -106,12 +79,12 @@ class ModalSecondTour extends React.Component<any, any> {
 
   render() {
     const answers =
-      this.props.question && this.props.question.answers
-        ? this.props.question.answers.map((item: any) => item.title)
+      this.props.part2.question && this.props.part2.question.answers
+        ? this.props.part2.question.answers.map((item: any) => item.title)
         : ["", "", "", ""];
-    const { attack, defend, question } = this.props;
-    const resp1 = this.props.attackingResponse;
-    const resp2 = this.props.defenderResponse;
+    const { attacking, defender, question, isStarted } = this.props.part2;
+    const resp1 = this.props.part2.attackingResponse;
+    const resp2 = this.props.part2.defenderResponse;
     return (
       <div className={style.modal_back}>
         <div className={style.main}>
@@ -120,11 +93,9 @@ class ModalSecondTour extends React.Component<any, any> {
           </div>
           <div className={style.content}>
             <div className={style.left_part}>
-              <div className={this.getFlagColor(attack)}>
+              <div className={this.getFlagColor(attacking)}>
                 <img src={swords} alt="" />
-                {/* <span>{this.calcDmg("attack")}</span> */}
               </div>
-              {/* <p>{this.getTeamName(attack)}</p> */}
             </div>
             <div className={style.center_part}>
               <div className={`${style.one_answer} ${this.getCellColor(0)} ${this.checkWinner(0)}`}>
@@ -141,23 +112,21 @@ class ModalSecondTour extends React.Component<any, any> {
               </div>
             </div>
             <div className={style.rigth_part}>
-              <div className={this.getFlagColor(defend)}>
+              <div className={this.getFlagColor(defender)}>
                 <img src={this.getShield()} alt="" />
-                {/* <span>{this.calcDmg("defend")}</span> */}
               </div>
-              {/* <p>{this.getTeamName(defend)}</p> */}
             </div>
           </div>
           <div className={style.button_wrapper}>
-            {!this.props.isStarted && (
+            {!isStarted && (
               <button className={style.button} onClick={() => startTimer()}>
                 Начало опроса
               </button>
             )}
-            {this.props.isStarted && (resp1 === null || resp2 === null) && (
+            {isStarted && (resp1 === null || resp2 === null) && (
               <img className={style.clock} src={img} alt="clock" />
             )}
-            {this.props.isStarted && resp1 !== null && resp2 !== null && (
+            {isStarted && resp1 !== null && resp2 !== null && (
               <button className={style.button} onClick={() => this.props.closeFunc()}>
                 Закрыть
               </button>

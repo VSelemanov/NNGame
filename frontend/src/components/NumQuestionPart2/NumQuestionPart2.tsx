@@ -17,61 +17,55 @@ class NumQuestionPart2 extends React.Component<any, any> {
     }
   }
 
-  public getStyle(winner: string, team: string) {
-    return team === winner && winner !== null ? style.first : "";
-  }
+  public getStyle = (winner: string, team: string) => winner && team === winner ? style.first : "";
 
   public getResult(team: string) {
-    const { attackResponse, defendResponse } = this.props;
-    console.log(attackResponse, defendResponse);
-    if (attackResponse || defendResponse) {
+    const { attackingNumericResponse, defenderNumericResponse } = this.props.part2;
+    if (attackingNumericResponse || defenderNumericResponse) {
       return team === "attack" ? (
         <Fragment>
-          <span>{attackResponse ? attackResponse.response : "-"}</span>
-          <p className={style.timer}>{attackResponse ? attackResponse.timer / 1000 : "-"}</p>
+          <span>{attackingNumericResponse ? attackingNumericResponse.response : "-"}</span>
+          <p className={style.timer}>{attackingNumericResponse ? attackingNumericResponse.timer / 1000 : "-"}</p>
         </Fragment>
       ) : (
         <Fragment>
-          <span>{defendResponse ? defendResponse.response : "-"}</span>
-          <p className={style.timer}>{defendResponse ? defendResponse.timer / 1000 : "-"}</p>
+          <span>{defenderNumericResponse ? defenderNumericResponse.response : "-"}</span>
+          <p className={style.timer}>{defenderNumericResponse  ? defenderNumericResponse.timer / 1000 : "-"}</p>
         </Fragment>
       );
     }
     return "-";
   }
-  public componentWillUnmount() {
-    this.props.closeFunc();
-  }
+
   render() {
-    const { question, attack, defend, winner } = this.props;
-    console.log(question, attack, defend, winner);
+    const { numericQuestion, attacking, defender, winner, numericIsStarted } = this.props.part2;
     return (
       <div className={style.modal_back}>
         <div className={style.main}>
           <div className={style.question_text}>
-            <p>{question ? question.title : ""}</p>
+            <p>{numericQuestion ? numericQuestion.title : ""}</p>
           </div>
           <div className={style.answer}>
-            <p>{winner && question ? question.numericAnswer : "Ожидание ответов команд"}</p>
+            <p>{winner && winner !== 'draw' && numericQuestion ? numericQuestion.numericAnswer : "Ожидание ответов команд"}</p>
           </div>
           <div className={style.footer}>
-            <div className={`${this.getColor(attack)} ${this.getStyle(winner, attack)}`}>
-              {winner ? this.getResult("attack") : <span />}
+            <div className={`${this.getColor(attacking)} ${this.getStyle(winner, attacking)}`}>
+              {winner && winner !== 'draw' ? this.getResult("attack") : <span />}
             </div>
-            <div className={`${this.getColor(defend)} ${this.getStyle(winner, defend)}`}>
-              {winner ? this.getResult("defend") : <span />}
+            <div className={`${this.getColor(defender)} ${this.getStyle(winner, defender)}`}>
+              {winner && winner !== 'draw' ? this.getResult("defend") : <span />}
             </div>
           </div>
           <div className={style.button_wrapper}>
-            {!this.props.isStarted && (
+            {!numericIsStarted && (
               <button className={style.button} onClick={() => startTimer()}>
                 Начало опроса
               </button>
             )}
-            {this.props.isStarted && !winner && (
+            {numericIsStarted && !winner && (
               <img className={style.clock} src={img} alt="clock" />
             )}
-            {this.props.isStarted && winner && (
+            {numericIsStarted && winner && (
               <button className={style.button} onClick={() => this.props.closeFunc()}>
                 Закрыть
               </button>
