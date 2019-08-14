@@ -63,14 +63,13 @@ class ModalSecondTour extends React.Component<any, any> {
   }
 
   checkWinner(index: number) {
-    const answer =
-      this.props.question && this.props.question.answers
-        ? Object.keys(this.props.question.answers).filter(
-            (item: any) => this.props.question.answers[item].isRight
+    const answer = this.props.part2.question && this.props.part2.question.answers
+        ? Object.keys(this.props.part2.question.answers).filter(
+            (item: any) => this.props.part2.question.answers[item].isRight
           )[0]
         : null;
-    const resp1 = this.props.attackingResponse;
-    const resp2 = this.props.defenderResponse;
+    const resp1 = this.props.part2.attackingResponse;
+    const resp2 = this.props.part2.defenderResponse;
     if (answer && resp1 !== undefined && resp1 !== null && resp2 !== undefined && resp2 !== null ) {
       return Number(answer) === index ? style.isRight : "";
     }

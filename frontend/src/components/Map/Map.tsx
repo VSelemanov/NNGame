@@ -61,7 +61,7 @@ class Map extends React.Component<any, any> {
           isPart2QuestionModal: false,
           part2: null
         });
-    !this.state.isNumPart2QuestionModal && stopStep();
+    stopStep();
   };
 
   public closeFuncNumModal = () => {
@@ -188,7 +188,7 @@ class Map extends React.Component<any, any> {
             });
           }
 
-          if (step.question && !step.isFinished && !step.numericQuestion) {
+          if (step.question && !step.isFinished && !step.variableIsFinished) {
             console.log("Стартуем модалку второго тура");
             this.setState({
               isPart2QuestionModal: true
