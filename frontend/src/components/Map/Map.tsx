@@ -1,7 +1,7 @@
 import * as React from "react";
 import style from "./Map.module.scss";
 import MapVector from "./MapVector";
-import { startGame, getQuestion } from "../../toServer/requests";
+import { startGame, getQuestion, stopStep } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
 import NumQuestionPart1 from "../NumQuestionPart1/NumQuestionPart1";
@@ -31,7 +31,7 @@ class Map extends React.Component<any, any> {
       attackingResponse: null,
       defenderResponse: null,
       attack: null,
-      
+      attackingZone: null,
       defend: null,
       defenderZone: null,
       // второй тур цифровой вопрос
@@ -61,6 +61,7 @@ class Map extends React.Component<any, any> {
       attackingResponse: null,
       defenderResponse: null
     });
+    stopStep()
   };
 
   public closeFuncSecondTourModal = () => {
@@ -72,6 +73,7 @@ class Map extends React.Component<any, any> {
       attack: null,
       defend: null
     });
+    !this.state.isNumPart2QuestionModal && stopStep()
   };
 
   public closeFuncNumModal = () => {
@@ -198,8 +200,8 @@ class Map extends React.Component<any, any> {
             step.question &&
             step.attacking &&
             step.defender &&
-            !step.attackingResponse &&
-            !step.defenderResponse
+            (!step.attackingResponse ||
+            !step.defenderResponse)
           ) {
             console.log("записываем инфу о втором вопросе");
             console.log(step);

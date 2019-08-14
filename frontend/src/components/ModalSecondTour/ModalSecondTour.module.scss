@@ -22,13 +22,16 @@
     .question_text {
       width: 90%;
       height: 190px;
+      max-height: 190px;
       margin-top: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow-y: auto;
+      padding-bottom: 10px;
       & p {
+        max-height: 190px;
         font-size: 28px;
-        margin: 5px;
         text-align: center;
         font-family: "Preslav", sans-serif;
       }
@@ -193,7 +196,7 @@
       }
       .clock {
         position: relative;
-        bottom: 15%;
+        bottom: 25%;
         width: 60px;
         animation: rotate 3s infinite linear;
       }
