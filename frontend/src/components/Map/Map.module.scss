@@ -3,6 +3,8 @@
   width: 100%;
   display: flex;
   align-items: center;
+  background: url("../../img/cells.svg");
+  background-size: cover;
   .left_panel {
     display: flex;
     flex-direction: column;
@@ -19,7 +21,16 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      .team_wrapper{
+        margin-left: 40px;
+        margin-right: 20px;
+      }
+      .team_status{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
       span {
         text-align: center;
         font-family: "Preslav", sans-serif;
@@ -31,20 +42,47 @@
         color: #654f2f;
         font-size: 20px;
       }
-      .team1 {
+      .team1_1 {
+        margin-left: 30px;
         height: 50px;
         width: 50px;
-        background: url("../../img/team_status_team1.svg") no-repeat;
+        background: url("../../img/flag_team1.png") no-repeat;
+        background-size: cover;
       }
-      .team2 {
+      .team2_1 {
+        margin-left: 30px;
         height: 50px;
         width: 50px;
-        background: url("../../img/team_status_team2.svg") no-repeat;
+        background: url("../../img/flag_team2.png") no-repeat;
+        background-size: cover;
       }
-      .team3 {
+      .team3_1 {
+        margin-left: 30px;
         height: 50px;
         width: 50px;
-        background: url("../../img/team_status_team3.svg") no-repeat;
+        background: url("../../img/flag_team3.png") no-repeat;
+        background-size: cover;
+      }
+      .team1_2 {
+        margin-left: 30px;
+        height: 50px;
+        width: 50px;
+        background: url("../../img/trumbed_team1.png") no-repeat;
+        background-size: cover;
+      }
+      .team2_2 {
+        margin-left: 30px;
+        height: 50px;
+        width: 50px;
+        background: url("../../img/trumbed_team2.png") no-repeat;
+        background-size: cover;
+      }
+      .team3_2 {
+        margin-left: 30px;
+        height: 50px;
+        width: 50px;
+        background: url("../../img/trumbed_team3.png") no-repeat;
+        background-size: cover;
       }
     }
   }
@@ -55,40 +93,24 @@
     height: 100%;
     width: 20px;
     .color1 {
-      width: 100%;
+      width: 20px;
       height: 33%;
       min-height: 225px;
-      background: linear-gradient(
-        180deg,
-        #ffffff 0%,
-        #efeae1 49.48%,
-        #d7ccb9 100%
-      );
+      background: linear-gradient(180deg, #ffffff 0%, #efeae1 49.48%, #d7ccb9 100%);
       border-bottom: 2px solid #bea47e;
     }
     .color2 {
-      width: 100%;
+      width: 20px;
       height: 33%;
       min-height: 225px;
-      background: linear-gradient(
-        180deg,
-        #42569c 0%,
-        #31427c 49.48%,
-        #25295c 100%
-      );
+      background: linear-gradient(180deg, #42569c 0%, #31427c 49.48%, #25295c 100%);
       border-bottom: 2px solid #bea47e;
     }
     .color3 {
-      width: 100%;
+      width: 20px;
       height: 33%;
       min-height: 225px;
-      background: linear-gradient(
-          180deg,
-          #c13030 0%,
-          #b01d1d 49.48%,
-          #8f1919 100%
-        ),
-        #efeae1;
+      background: linear-gradient(180deg, #c13030 0%, #b01d1d 49.48%, #8f1919 100%), #efeae1;
       border-bottom: 2px solid #bea47e;
     }
   }
@@ -98,7 +120,7 @@
     justify-content: flex-start;
     align-items: center;
     background: url("../../img/map_bg.svg") no-repeat;
-    background-position: right;
+    background-position: center;
     background-size: cover;
     height: 100%;
     width: 80%;
@@ -162,14 +184,19 @@
           background-color: #fff;
         }
       }
+      .hide {
+        visibility: hidden;
+      }
     }
     .map_wrapper {
       display: flex;
       justify-content: center;
-      width: 90%;
+      width: 100%;
+      max-height: 715px;
       .map_vector {
-        height: 90%;
-        width: 90%;
+        height: 100%;
+        width: 100%;
+        max-width: 1100px;
       }
     }
   }
