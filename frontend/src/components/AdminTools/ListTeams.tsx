@@ -4,9 +4,8 @@ import 'react-table/react-table.css';
 import style from "./AdminTools.module.scss";
 import { mapStateToProps, mapDispatchToProps } from '../../exports';
 import { connect } from 'react-redux';
-// import store from '../../store';
-// import { push } from 'connected-react-router';
 import { getAllTeams } from '../../toServer/requests';
+import moment from 'moment';
 
 class ListTeams extends React.Component <any, any>{
   constructor(props: any) {
@@ -42,7 +41,8 @@ class ListTeams extends React.Component <any, any>{
       },
       {
         Header: 'Созданa',
-			  accessor: 'cAt',
+        id: 'cAt',
+				accessor: (d: any) => moment(d.cAt).format("DD.MM.YYYY, HH:mm")
       },
       {
         Header: 'Действия',

@@ -24,6 +24,7 @@
       align-items: flex-start;
       .team_wrapper{
         margin-left: 40px;
+        margin-right: 20px;
       }
       .team_status{
         display: flex;
@@ -92,21 +93,21 @@
     height: 100%;
     width: 20px;
     .color1 {
-      width: 100%;
+      width: 20px;
       height: 33%;
       min-height: 225px;
       background: linear-gradient(180deg, #ffffff 0%, #efeae1 49.48%, #d7ccb9 100%);
       border-bottom: 2px solid #bea47e;
     }
     .color2 {
-      width: 100%;
+      width: 20px;
       height: 33%;
       min-height: 225px;
       background: linear-gradient(180deg, #42569c 0%, #31427c 49.48%, #25295c 100%);
       border-bottom: 2px solid #bea47e;
     }
     .color3 {
-      width: 100%;
+      width: 20px;
       height: 33%;
       min-height: 225px;
       background: linear-gradient(180deg, #c13030 0%, #b01d1d 49.48%, #8f1919 100%), #efeae1;
@@ -191,10 +192,11 @@
       display: flex;
       justify-content: center;
       width: 100%;
+      max-height: 715px;
       .map_vector {
-        height: 90%;
-        width: 90%;
-        max-width: 1200px;
+        height: 100%;
+        width: 100%;
+        max-width: 1100px;
       }
     }
   }

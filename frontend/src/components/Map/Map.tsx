@@ -31,7 +31,9 @@ class Map extends React.Component<any, any> {
       attackingResponse: null,
       defenderResponse: null,
       attack: null,
+      
       defend: null,
+      defenderZone: null,
       // второй тур цифровой вопрос
       numQuestionPart2: {},
       isNumPart2QuestionModal: false,
@@ -205,7 +207,9 @@ class Map extends React.Component<any, any> {
             Object.keys(question).includes("_id") && delete question["_id"];
             this.setState({
               part2Question: question,
+              attackingZone: step.attackingZone,
               attack: step.attacking,
+              defenderZone: step.defenderZone,
               defend: step.defender,
               isPart2QuestionModal: true,
               attackingResponse: null,
