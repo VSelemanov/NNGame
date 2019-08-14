@@ -238,3 +238,9 @@ Then("запускается тур номер {int} с командами {stri
   expect(res.part3.teams[0]).to.eql(Team1Key);
   expect(res.part3.teams[1]).to.eql(Team2Key);
 });
+
+Then("победителя игры нет", function() {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.gameWinner).to.eql(null);
+});

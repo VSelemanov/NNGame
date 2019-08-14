@@ -13,10 +13,11 @@ import {
 import { server } from "../../server";
 import {
   EntityName,
-  ErrorMessages,
+  ErrorMessages as RoomErrorMessages,
   allowZonesDefault,
-  responsesDefault,
-  winnerCheckResults
+  winnerCheckResults,
+  responsesDefaultPart1,
+  responsesDefaultPart3
 } from "./constants";
 import { ErrorMessages as QuestionErrorMessages } from "../Question/constants";
 import { roomDefault } from "./constants";
@@ -50,7 +51,7 @@ const methods = {
       });
 
       if (teamsObject.length !== 3) {
-        throw new Error(ErrorMessages.NOT_FOUND);
+        throw new Error(RoomErrorMessages.ROOM_NOT_FULL);
       }
 
       const TeamsInRoom: any = new Map();
@@ -88,7 +89,7 @@ const methods = {
       const Room = await server.Room.findOne({ isActive: true });
 
       if (!Room) {
-        throw new Error(ErrorMessages.NOT_FOUND);
+        throw new Error(RoomErrorMessages.ROOM_NOT_FOUND);
       }
 
       return Room;
@@ -167,7 +168,7 @@ const methods = {
           question: Question,
           allowZones: allowZonesDefault,
           isStarted: false,
-          responses: responsesDefault,
+          responses: responsesDefaultPart1,
           teamQueue: []
         }) - 1;
 
@@ -223,7 +224,7 @@ const methods = {
       const Room: IRoom = await methods.getActiveRoom();
 
       if (Room.gameStatus.currentPart !== 2) {
-        throw new Error(ErrorMessages.PART_IS_NOT_SECOND);
+        throw new Error(RoomErrorMessages.PART_IS_NOT_SECOND);
       }
 
       const part = Room.gameStatus.part2;
@@ -250,7 +251,7 @@ const methods = {
       if (currentPart === 1) {
         const part: IGamePart1 = Room.gameStatus[`part${currentPart}`];
         if (!timer) {
-          throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+          throw new Error(RoomErrorMessages.TIMER_IS_REQUIRED);
         }
         const step = (part as IGamePart1).steps[part.currentStep || 0];
         const teamResponse: ITeamResponsePart1 = step.responses[teamKey];
@@ -301,7 +302,7 @@ const methods = {
           roleInDuel = winnerCheckResults.defender;
         }
         if (!roleInDuel) {
-          throw new Error(ErrorMessages.TEAM_NOT_IN_DUEL);
+          throw new Error(RoomErrorMessages.TEAM_NOT_IN_DUEL);
         }
 
         // Вариативный вопрос второго тура
@@ -329,7 +330,7 @@ const methods = {
         // Числовой вопрос второго тура
         if (step.isStarted && step.numericIsStarted) {
           if (!timer) {
-            throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+            throw new Error(RoomErrorMessages.TIMER_IS_REQUIRED);
           }
           if (roleInDuel === "attacking") {
             step.attackingNumericResponse = {
@@ -402,7 +403,7 @@ const methods = {
         let isAllTeamsAnswered = true;
         const part: IGamePart3 = Room.gameStatus[`part${currentPart}`];
         if (!timer) {
-          throw new Error(ErrorMessages.TIMER_IS_REQUIRED);
+          throw new Error(RoomErrorMessages.TIMER_IS_REQUIRED);
         }
         if (!part.question) {
           throw new Error(QuestionErrorMessages.NOT_FOUND);
@@ -423,8 +424,31 @@ const methods = {
             part.question,
             part.responses || {}
           );
-          Room.gameStatus.gameWinner = resultOfQuestion[0].teamKey;
-          Room.isActive = false;
+
+          const countNullResults = resultOfQuestion.reduce(
+            (acc: number, row: IResultDifTimer) => {
+              return (acc += row.dif === null && row.timer === 60 ? 1 : 0);
+            },
+            0
+          );
+
+          const teamsAnswered = resultOfQuestion.reduce(
+            (acc: number, row: IResultDifTimer) => {
+              return (acc += row.dif !== null || row.timer === 60 ? 1 : 0);
+            },
+            0
+          );
+
+          if (countNullResults === resultOfQuestion.length) {
+            part.isStarted = false;
+            part.question = await QuestionMethods.random({ isNumeric: true });
+            part.responses = responsesDefaultPart3;
+          } else {
+            if (teamsAnswered === part.teams.length) {
+              Room.gameStatus.gameWinner = resultOfQuestion[0].teamKey;
+              Room.isActive = false;
+            }
+          }
         }
       }
 

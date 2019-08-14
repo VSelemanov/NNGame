@@ -80,9 +80,9 @@ export interface IGamePart3 {
   question: IQuestion | null;
   teams: string[];
   responses: {
-    [teams.team1]: ITeamResponsePart3 | null;
-    [teams.team2]: ITeamResponsePart3 | null;
-    [teams.team3]: ITeamResponsePart3 | null;
+    [teams.team1]: ITeamResponsePart3;
+    [teams.team2]: ITeamResponsePart3;
+    [teams.team3]: ITeamResponsePart3;
   };
   isStarted: boolean;
 }
