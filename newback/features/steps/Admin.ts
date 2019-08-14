@@ -175,12 +175,16 @@ Then("в сокете шага дуэли флаг старта true", async fun
   expect(res.part2.steps[res.part2.steps.length - 1].isStarted).to.eql(true);
 });
 
-Given("админ закрывает окно с вопросом", async function() {
+Given("админ l={string} p={string} закрывает окно с вопросом", async function(
+  login: string,
+  password: string
+) {
+  const token = await getAdminLogin(login, password);
   const res = await server.server.inject({
     url: `${APIRoute}/${routePath}/${paths.stopstep}`,
     method: HTTPMethods.post,
     headers: {
-      Authorization
+      Authorization: token
     }
   });
 
@@ -191,6 +195,8 @@ Then(
   "в сокете должен быть завершен текущий шаг второго тура",
   async function() {
     const res: IGameStatus = getSocketResponse();
+
+    // console.log({ t: res.part2.steps[res.part2.steps.length - 1] });
 
     expect(res.part2.steps[res.part2.steps.length - 1].isFinished).to.eql(true);
   }

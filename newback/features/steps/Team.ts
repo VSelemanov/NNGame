@@ -310,7 +310,7 @@ Then("в сокете в ответе победитель будет коман
   teamName: string
 ) {
   const res: IGameStatus = getSocketResponse();
-  await client.disconnect();
+  // await client.disconnect();
 
   const Team = await getTeam(teamName);
   const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
@@ -323,7 +323,7 @@ Then("зона {string} переходит во владения команды 
   teamName: string
 ) {
   const res: IGameStatus = getSocketResponse();
-  await client.disconnect();
+  // await client.disconnect();
 
   const Team = await getTeam(teamName);
   const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);
@@ -335,7 +335,7 @@ Then("команда {string} удалена из очереди команд в
   teamName
 ) {
   const res: IGameStatus = getSocketResponse();
-  await client.disconnect();
+  // await client.disconnect();
 
   const Team = await getTeam(teamName);
   const teamKey = await TeamMethods.getTeamLinkInGame(Team._id);

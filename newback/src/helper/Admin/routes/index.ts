@@ -91,7 +91,8 @@ const routes: ServerRoute[] = [
     method: HTTPMethods.post,
     handler: AdminCtrl.stopstep,
     options: {
-      ...stopstep
+      ...stopstep,
+      auth: "admin-auth"
     }
   }
 ];

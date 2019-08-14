@@ -229,7 +229,14 @@ const methods = {
 
       const part = Room.gameStatus.part2;
       const step = part.steps[part.steps.length - 1];
-      step.isFinished = true;
+      if (!step.variableIsFinished) {
+        step.variableIsFinished = true;
+      }
+
+      if (step.variableIsFinished && step.winner !== "draw") {
+        step.isFinished = true;
+      }
+      Room.markModified(`gameStatus.part2.steps`);
 
       await Room.save();
 
@@ -605,7 +612,8 @@ const methods = {
         question,
         isStarted: false,
         numericIsStarted: false,
-        isFinished: false
+        isFinished: false,
+        variableIsFinished: false
       } as IGamePart2Step);
 
       await Room.save();

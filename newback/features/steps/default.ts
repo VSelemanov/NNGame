@@ -174,7 +174,8 @@ Given("во втором туре уже есть шаг", async function() {
     isStarted: true,
     question: Question,
     winner: "team1",
-    isFinished: false
+    isFinished: false,
+    variableIsFinished: false
   });
 
   Room.save();
@@ -243,4 +244,12 @@ Then("победителя игры нет", function() {
   const res: IGameStatus = getSocketResponse();
 
   expect(res.gameWinner).to.eql(null);
+});
+
+Then("флаг закрытия вариативного вопроса будет true", function() {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.part2.steps[res.part2.steps.length - 1].variableIsFinished).to.eql(
+    true
+  );
 });
