@@ -100,7 +100,7 @@ class GameMap extends React.Component<Store, IS> {
 				const { teamQueue } = this.props.session.status.part2;
 				const stepsPart2: IGamePart2Step[] = this.props.session.status.part2
 					.steps;
-				const { gameStep } = this.props.session;
+				const { gameStep, teamKey } = this.props.session;
 				let actionState: TEAM_ACTION_STATE_PART_2 =
 					TEAM_ACTION_STATE_PART_2.NULL;
 				let gradientColors = [];
@@ -144,18 +144,12 @@ class GameMap extends React.Component<Store, IS> {
 					}
 				}
 
-				// if (
-				// 	(teamQueue.length > 0 &&
-				// 		team === teamQueue[0] &&
-				// 		stepsPart2.length < 2) ||
-				// 	(teamQueue.length > 0 &&
-				// 		team === teamQueue[0] &&
-				// 		stepsPart2[stepsPart2.length - 2].winner) ||
-				// 	stepsPart2[stepsPart2.length - 2].winner !== "draw"
-				// ) {
-				// 	actionState = TEAM_ACTION_STATE_PART_2.CHOOSE;
-				// }
-
+				lg(teamKey);
+				const thisTeamStyle = {
+					elevation: teamKey === team ? 5 : 0,
+					backgroundColor: COLORS.D_BROWN,
+					opacity: teamKey === team ? 1 : 0.9
+				};
 				switch (team) {
 					case TEAM.RED:
 						gradientColors = [COLORS.D_RED, COLORS.DD_RED];
@@ -176,28 +170,28 @@ class GameMap extends React.Component<Store, IS> {
 						return;
 				}
 
-				lg(actionState);
-
 				return (
 					<View key={team} style={styles.teamArea}>
-						<View style={styles.teamInfo}>
-							<Text style={styles.teamTitle}>{name}</Text>
-							<Text style={styles.teamHaveAllowZones}>
-								{this.props.session.status.currentPart === 1 &&
-								steps &&
-								currentStep !== null &&
-								steps[currentStep] &&
-								steps[currentStep].allowZones[team]
-									? `Доступно: ${steps[currentStep].allowZones[team]}`
-									: ""}
-							</Text>
-							<View style={styles.teamHaveArea}>
-								<Text style={styles.teamHaveTitle}>Областей:</Text>
-								<Text style={styles.teamHaveNumber}>{zones}</Text>
-								<Image
-									source={iconImgs.teams[team][actionState]}
-									style={styles.teamHaveImg}
-								/>
+						<View style={styles.teamInfoWrapper}>
+							<View style={[styles.teamInfo, thisTeamStyle]}>
+								<Text style={styles.teamTitle}>{name}</Text>
+								<Text style={styles.teamHaveAllowZones}>
+									{this.props.session.status.currentPart === 1 &&
+									steps &&
+									currentStep !== null &&
+									steps[currentStep] &&
+									steps[currentStep].allowZones[team]
+										? `Доступно: ${steps[currentStep].allowZones[team]}`
+										: ""}
+								</Text>
+								<View style={styles.teamHaveArea}>
+									<Text style={styles.teamHaveTitle}>Областей:</Text>
+									<Text style={styles.teamHaveNumber}>{zones}</Text>
+									<Image
+										source={iconImgs.teams[team][actionState]}
+										style={styles.teamHaveImg}
+									/>
+								</View>
 							</View>
 						</View>
 						<LinearGradient
@@ -226,7 +220,7 @@ class GameMap extends React.Component<Store, IS> {
 
 	public renderQuestion() {
 		try {
-			const { gameStep, status } = this.props.session;
+			const { gameStep, status, teamKey } = this.props.session;
 
 			let lastStep: IGamePart1Step | IGamePart2Step | IGamePart3;
 
@@ -245,7 +239,12 @@ class GameMap extends React.Component<Store, IS> {
 			}
 
 			const { isNumeric, title } = lastStep.question;
-			const { winner, numericQuestion } = lastStep;
+			const {
+				winner,
+				numericQuestion,
+				numericIsStarted,
+				isFinished
+			} = lastStep;
 			return (
 				<QuestionWindow
 					question={winner && winner === "draw" ? numericQuestion.title : title}
@@ -262,17 +261,30 @@ class GameMap extends React.Component<Store, IS> {
 									onSubmit={this.submitBattleQuestion}
 									teams={status.teams}
 									isActive={lastStep.isStarted}
+									teamKey={teamKey}
 								/>
 							)
 						) : gameStep === GAME_STEP.QUESTION_DESC ? (
 							status.currentPart === 2 ? (
-								<QuestionVariantsInput
-									lastStep={lastStep}
-									onSubmit={this.submitBattleQuestion}
-									teams={status.teams}
-									isActive={lastStep.isStarted}
-								/>
+								winner && winner === "draw" && !numericIsStarted ? null : (
+									<QuestionVariantsInput
+										lastStep={lastStep}
+										onSubmit={this.submitBattleQuestion}
+										teams={status.teams}
+										isActive={lastStep.isStarted}
+										teamKey={teamKey}
+									/>
+								)
 							) : null
+						) : gameStep === GAME_STEP.BATTLE_RESULT ? (
+							<QuestionVariantsInput
+								lastStep={lastStep}
+								onSubmit={this.submitBattleQuestion}
+								teams={status.teams}
+								isActive={false}
+								teamKey={teamKey}
+								result={true}
+							/>
 						) : null}
 					</View>
 				</QuestionWindow>
@@ -296,11 +308,27 @@ class GameMap extends React.Component<Store, IS> {
 			allowZones,
 			teamKey,
 			enabledZonesForAttack,
-			teamZonesPart2,
 			attack
 		} = this.props.session;
 
 		const { steps, currentStep } = status.part1;
+		let waitingMsgStyle = {};
+		if (
+			gameStep === GAME_STEP.WAITING_FOR_START_OF_GAME ||
+			gameStep === GAME_STEP.WAITING_FOR_ADMIN ||
+			gameStep === GAME_STEP.WAITING_FOR_OTHERS ||
+			gameStep === GAME_STEP.GAME_OVER
+		) {
+			waitingMsgStyle = {
+				alignItems: "center",
+				justifyContent: "center"
+			};
+		} else {
+			waitingMsgStyle = {
+				// paddingLeft: HEIGHT / 4 - rem * 0.5,
+				paddingTop: WIDTH / 3.3
+			};
+		}
 		return (
 			<View style={styles.container}>
 				<MapGrid height={HEIGHT} width={WIDTH} size={rem} isShadowed={false} />
@@ -322,7 +350,6 @@ class GameMap extends React.Component<Store, IS> {
 						allowZones={allowZones}
 						teamKey={teamKey}
 						enabledZonesForAttack={enabledZonesForAttack}
-						teamZonesPart2={teamZonesPart2}
 						attackingZone={attack.attackingZone}
 						defenderZone={attack.defenderZone}
 					/>
@@ -330,16 +357,21 @@ class GameMap extends React.Component<Store, IS> {
 					gameStep === GAME_STEP.WAITING_FOR_TEAM ||
 					gameStep === GAME_STEP.CHOOSE_ZONE ||
 					gameStep === GAME_STEP.CHOOSE_ATTACKING_ZONE ||
-					gameStep === GAME_STEP.WAITING_FOR_QUESTION ? (
+					gameStep === GAME_STEP.WAITING_FOR_QUESTION ||
+					gameStep === GAME_STEP.WAITING_FOR_ADMIN ||
+					gameStep === GAME_STEP.WAITING_FOR_OTHERS ||
+					gameStep === GAME_STEP.GAME_OVER ? (
 						<View
 							style={[
 								styles.waitingZone,
 								{
+									height: HEIGHT,
 									width:
 										gameStep === GAME_STEP.CHOOSE_ZONE ||
 										gameStep === GAME_STEP.CHOOSE_ATTACKING_ZONE
 											? 0
-											: WIDTH
+											: WIDTH,
+									...waitingMsgStyle
 								}
 							]}
 						>
@@ -362,10 +394,11 @@ class GameMap extends React.Component<Store, IS> {
 				</View>
 
 				{(steps && steps.length > 0 && gameStep === GAME_STEP.QUESTION) ||
-				(steps && steps.length > 0 && gameStep === GAME_STEP.QUESTION_DESC)
+				(steps && steps.length > 0 && gameStep === GAME_STEP.QUESTION_DESC) ||
+				(steps && steps.length > 0 && gameStep === GAME_STEP.BATTLE_RESULT)
 					? this.renderQuestion()
 					: null}
-				{gameStep === GAME_STEP.WAITING_FOR_ADMIN ||
+				{/* {gameStep === GAME_STEP.WAITING_FOR_ADMIN ||
 				gameStep === GAME_STEP.WAITING_FOR_OTHERS ? (
 					<View style={styles.loading}>
 						<View style={styles.loadingBG} />
@@ -376,7 +409,7 @@ class GameMap extends React.Component<Store, IS> {
 								: "других игроков"
 						}...`}</Text>
 					</View>
-				) : null}
+				) : null} */}
 			</View>
 		);
 	}
@@ -407,15 +440,21 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderTopWidth: 1
 	},
-	teamInfo: {
+	teamInfoWrapper: {
 		width: WIDTH / 4 - rem,
-		paddingVertical: rem * 0.6,
-		paddingHorizontal: rem * 0.7,
-		paddingBottom: rem * 1.4,
 		borderBottomColor: COLORS.DD_BROWN,
 		borderBottomWidth: 1,
 		borderColor: COLORS.L_BROWN,
-		borderTopWidth: 1,
+		borderTopWidth: 1
+	},
+	teamInfo: {
+		// width: WIDTH / 4 - rem,
+		flex: 1,
+		margin: 20,
+		paddingVertical: rem * 0.6,
+		paddingHorizontal: rem * 0.6,
+		paddingRight: rem * 0.3,
+		paddingBottom: rem * 1.1,
 		justifyContent: "space-between"
 	},
 	teamTitle: {
@@ -478,13 +517,13 @@ const styles = StyleSheet.create({
 		fontFamily: FONTS.preslav
 	},
 	waitingZone: {
-		width: WIDTH,
+		// width: WIDTH,
 		height: HEIGHT,
 		position: "absolute",
 		top: 0,
 		left: 0,
-		backgroundColor: `${COLORS.N_BLACK}66`,
-		justifyContent: "center",
-		paddingTop: HEIGHT / 5
+		backgroundColor: `${COLORS.N_BLACK}66`
+		// justifyContent: "center",
+		// paddingTop: HEIGHT / 5
 	}
 });

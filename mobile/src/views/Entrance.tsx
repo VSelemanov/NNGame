@@ -83,14 +83,14 @@ class Entrance extends React.Component<Store> {
 				) : null}
 				<TouchableOpacity
 					style={{
-						width: 30,
-						height: 30,
+						width: 50,
+						height: 50,
 						top: 50,
 						left: 50,
-						backgroundColor: COLORS.DDDD_BROWN,
+						// backgroundColor: COLORS.DDDD_BROWN,
 						position: "absolute"
 					}}
-					onPress={() => Alert.alert("1")}
+					onPress={() => Alert.alert("")}
 				/>
 			</View>
 		);

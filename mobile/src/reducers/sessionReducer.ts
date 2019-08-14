@@ -133,6 +133,10 @@ export default (
 						lg(helper.isFirstZoneCompleted(teams));
 						lg("isFirstZoneCompleted");
 						newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
+						newState.waiting = {
+							title: "",
+							msg: strings.waitingForAdmin
+						};
 					} else {
 						lg("step null");
 						newState.gameStep = GAME_STEP.NULL;
@@ -154,6 +158,10 @@ export default (
 						} else if (!helper.isQuestionDoneByAll(steps[currentStep])) {
 							lg("question not done for all");
 							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+							newState.waiting = {
+								title: "",
+								msg: strings.waitingForOthers
+							};
 						} else if (
 							helper.allowChooseZonePart1(steps[currentStep], teamKey) &&
 							steps[currentStep].allowZones[teamKey] !== null
@@ -243,7 +251,7 @@ export default (
 				}
 				if (steps.length > 0 && teamQueue.length !== 0) {
 					const currentStep = steps[steps.length - 1];
-					if (!currentStep.winner) {
+					if (!currentStep.winner || !currentStep.isFinished) {
 						switch (teamKey) {
 							case currentStep.attacking:
 								if (
@@ -259,6 +267,8 @@ export default (
 									newState.gameStep = GAME_STEP.QUESTION_DESC;
 								} else if (!currentStep.attackingResponse) {
 									newState.gameStep = GAME_STEP.QUESTION;
+								} else if (currentStep.attackingResponse) {
+									newState.gameStep = GAME_STEP.BATTLE_RESULT;
 								}
 								break;
 							case currentStep.defender:
@@ -275,6 +285,8 @@ export default (
 									newState.gameStep = GAME_STEP.QUESTION_DESC;
 								} else if (!currentStep.defenderResponse) {
 									newState.gameStep = GAME_STEP.QUESTION;
+								} else if (currentStep.defenderResponse) {
+									newState.gameStep = GAME_STEP.BATTLE_RESULT;
 								}
 								break;
 							default:
@@ -378,7 +390,11 @@ export default (
 					if (newState.status.gameWinner === teamKey) {
 						winner = "Ваша команда";
 					}
-					Alert.alert(`${winner} выйграла!`);
+					newState.waiting = {
+						title: "",
+						msg: `${winner} выйграла!`
+					};
+					newState.gameStep = GAME_STEP.GAME_OVER;
 				}
 			}
 
@@ -406,7 +422,11 @@ export default (
 						if (newState.status.gameWinner === teamKey) {
 							winner = "Ваша команда";
 						}
-						Alert.alert(`${winner} выйграла!`);
+						newState.waiting = {
+							title: "",
+							msg: `${winner} выйграла!`
+						};
+						newState.gameStep = GAME_STEP.GAME_OVER;
 					}
 				} else if (!part3.isStarted && part3.teams.indexOf(teamKey) !== -1) {
 					newState.gameStep = GAME_STEP.QUESTION_DESC;
@@ -436,6 +456,10 @@ export default (
 			newState.attack.attackingZone = action.attackingZone;
 			newState.enabledZonesForAttack =
 				newState.status.gameMap[action.attackingZone].nearby;
+			newState.waiting = {
+				title: "",
+				msg: strings.chooseZoneToAttack
+			};
 			return newState;
 		case ActionTypes.DEFENDER_ZONE_CHOOSE:
 			newState.attack.defenderZone = action.defenderZone;

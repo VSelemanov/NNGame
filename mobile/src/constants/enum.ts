@@ -15,8 +15,9 @@ export enum GAME_STEP {
 	QUESTION = "question",
 	QUESTION_DESC = "question_desc",
 	QUESTION_RESULT = "question_result",
-
-	CHOOSE_ATTACKING_ZONE = "CHOOSE_ATTACKING_ZONE"
+	CHOOSE_ATTACKING_ZONE = "choose_attacking_zone",
+	GAME_OVER = "game_over",
+	BATTLE_RESULT = "battle_result"
 }
 
 export enum TEAM {
@@ -55,7 +56,8 @@ export enum COLORS {
 	DDDDD_BROWN = "#7B6442",
 	N_BROWN = "#DCB680",
 	N_BLACK = "#000000",
-	N_GREEN = "#63A647"
+	N_GREEN = "#63A647",
+	TRANSPARENT = "transparent"
 }
 
 export enum FONTS {

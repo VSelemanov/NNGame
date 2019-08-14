@@ -21,12 +21,13 @@
       justify-content: center;
       align-items: center;
       span {
+        text-align: center;
         font-family: "Preslav", sans-serif;
         color: #fff;
         font-size: 28px;
       }
       p {
-        font-family: "PT-serif", sans-serif;
+        font-family: "Preslav", sans-serif;
         color: #654f2f;
         font-size: 20px;
       }
@@ -57,87 +58,118 @@
       width: 100%;
       height: 33%;
       min-height: 225px;
-      background: linear-gradient(180deg, #ffffff 0%, #efeae1 49.48%, #d7ccb9 100%);
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #efeae1 49.48%,
+        #d7ccb9 100%
+      );
       border-bottom: 2px solid #bea47e;
     }
     .color2 {
       width: 100%;
       height: 33%;
       min-height: 225px;
-      background: linear-gradient(180deg, #42569c 0%, #31427c 49.48%, #25295c 100%);
+      background: linear-gradient(
+        180deg,
+        #42569c 0%,
+        #31427c 49.48%,
+        #25295c 100%
+      );
       border-bottom: 2px solid #bea47e;
     }
     .color3 {
       width: 100%;
       height: 33%;
       min-height: 225px;
-      background: linear-gradient(180deg, #c13030 0%, #b01d1d 49.48%, #8f1919 100%), #efeae1;
+      background: linear-gradient(
+          180deg,
+          #c13030 0%,
+          #b01d1d 49.48%,
+          #8f1919 100%
+        ),
+        #efeae1;
       border-bottom: 2px solid #bea47e;
     }
   }
   .right_panel {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
     background: url("../../img/map_bg.svg") no-repeat;
-    height: 680px;
+    background-position: right;
+    background-size: cover;
+    height: 100%;
     width: 80%;
-    // max-width: 1000px;
     min-height: 420px;
-    .game_status {
-      background: url("../../img/game_status.svg") no-repeat;
-      height: 6.5vw;
-      width: 30vw;
-      position: absolute;
-      top: 0;
-      left: 40%;
+    .header {
       display: flex;
-      justify-content: center;
-      p {
-        font-family: "PT-serif", sans-serif;
-        color: #fff;
-        font-size: 2vw;
-        width: 90%;
-        margin-top: 1vh;
-        text-align: center;
+      justify-content: space-between;
+      width: 100%;
+      .admin_panel {
+        a {
+          text-decoration: none;
+          color: #000;
+        }
+        .button:hover {
+          background-color: #fff;
+        }
+        .button {
+          background-color: #e7c999;
+          border: 2px solid #3f3f3f;
+          width: 150px;
+          height: 30px;
+          margin: 3px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
       }
-    }
-    .button_div {
-      position: relative;
-      z-index: 3;
-      // top: 70%;
-      height: 200px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      a {
-        text-decoration: none;
-        color: #000;
+      .game_status {
+        background: url("../../img/game_status.svg") no-repeat;
+        height: 90px;
+        width: 440px;
+        display: flex;
+        justify-content: center;
+        p {
+          font-family: "Preslav", sans-serif;
+          color: #fff;
+          font-size: 28px;
+          width: 90%;
+          margin-top: 10px;
+          text-align: center;
+        }
       }
-      .next_question {
-        background-color: #e7c999;
-        border: 2px solid #3f3f3f;
-        width: 150px;
-        height: 30px;
-        margin: 3px;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .next_question:hover {
-        background-color: #fff;
+      .button_div {
+        // top: 70%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        a {
+          text-decoration: none;
+          color: #000;
+        }
+        .next_question {
+          background-color: #e7c999;
+          border: 2px solid #3f3f3f;
+          width: 150px;
+          height: 30px;
+          margin: 3px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .next_question:hover {
+          background-color: #fff;
+        }
       }
     }
     .map_wrapper {
       display: flex;
-      // justify-content: center;
-      width: 100%;
-      // max-width: 830px;
+      justify-content: center;
+      width: 90%;
       .map_vector {
-        height: auto;
-        // position: relative;
-        // left: -15%;
-        width: 100%;
-        max-width: 830px;
+        height: 90%;
+        width: 90%;
       }
     }
   }

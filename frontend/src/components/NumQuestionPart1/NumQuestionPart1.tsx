@@ -39,7 +39,7 @@ class NumQuestionPart1 extends React.Component<any, any> {
     const result = data[teamName];
     return result ? (
       <Fragment>
-        <span>{result.response ? result.response : "-"}</span>
+        <span>{result.response !== null && result.response !== undefined ? result.response : "Нет ответа"}</span>
         <p className={style.timer}>{result.timer ? result.timer / 1000 : "-"}</p>
       </Fragment>
     ) : (
@@ -47,10 +47,14 @@ class NumQuestionPart1 extends React.Component<any, any> {
     );
   }
 
+  public componentWillUnmount(){
+    this.props.closeFunc()
+  }
+  
   render() {
     const { responses, question } = this.props;
     const answers = responses
-      ? Object.keys(responses).filter(key => responses[key].response !== null).length
+      ? Object.keys(responses).filter(key => responses[key].response !== null || responses[key].timer).length
       : 0;
     return (
       <div className={style.modal_back}>
@@ -63,13 +67,13 @@ class NumQuestionPart1 extends React.Component<any, any> {
           </div>
           <div className={style.footer}>
             <div className={`${style.button_team1} ${this.getStyle(responses, "team1")}`}>
-              {answers === 3 ? this.getResult(responses, "team1") : <span>-</span>}
+              {answers === 3 ? this.getResult(responses, "team1") : <span></span>}
             </div>
             <div className={`${style.button_team2} ${this.getStyle(responses, "team2")}`}>
-              {answers === 3 ? this.getResult(responses, "team2") : <span>-</span>}
+              {answers === 3 ? this.getResult(responses, "team2") : <span></span>}
             </div>
             <div className={`${style.button_team3} ${this.getStyle(responses, "team3")}`}>
-              {answers === 3 ? this.getResult(responses, "team3") : <span>-</span>}
+              {answers === 3 ? this.getResult(responses, "team3") : <span></span>}
             </div>
           </div>
           <div className={style.button_wrapper}>

@@ -61,17 +61,21 @@ class ModalSecondTour extends React.Component<any, any> {
           )[0]
         : null;
     if (resp1 === resp2) {
-      return "0";
+      return "";
     }
-    if (resp1 === Number(answer)) {
-      return team === "attack" ? "+1" : "-1";
-    }
-    if (resp2 === Number(answer)) {
-      return team === "defend" ? "+1" : "-1";
-    }
+    // if (resp1 === Number(answer)) {
+    //   return team === "attack" ? "+1" : "-1";
+    // }
+    // if (resp2 === Number(answer)) {
+    //   return team === "defend" ? "+1" : "-1";
+    // }
     return "";
   }
 
+  public componentWillUnmount(){
+    this.props.closeFunc()
+  }
+  
   checkWinner(index: number) {
     const answer =
       this.props.question && this.props.question.answers
@@ -81,7 +85,7 @@ class ModalSecondTour extends React.Component<any, any> {
         : null;
     const resp1 = this.props.attackingResponse;
     const resp2 = this.props.defenderResponse;
-    if (answer && resp1 !== undefined && resp1  && resp2 !== undefined && resp2 ) {
+    if (answer && resp1 !== undefined && resp1 !== null && resp2 !== undefined && resp2 !== null ) {
       return Number(answer) === index ? style.isRight : "";
     }
     return "";
@@ -105,9 +109,9 @@ class ModalSecondTour extends React.Component<any, any> {
             <div className={style.left_part}>
               <div className={this.getFlagColor(attack)}>
                 <img src={swords} alt="" />
-                <span>{this.calcDmg("attack")}</span>
+                {/* <span>{this.calcDmg("attack")}</span> */}
               </div>
-              <p>{this.getTeamName(attack)}</p>
+              {/* <p>{this.getTeamName(attack)}</p> */}
             </div>
             <div className={style.center_part}>
               <div className={`${style.one_answer} ${this.getCellColor(0)} ${this.checkWinner(0)}`}>
@@ -126,9 +130,9 @@ class ModalSecondTour extends React.Component<any, any> {
             <div className={style.rigth_part}>
               <div className={this.getFlagColor(defend)}>
                 <img src={shield} alt="" />
-                <span>{this.calcDmg("defend")}</span>
+                {/* <span>{this.calcDmg("defend")}</span> */}
               </div>
-              <p>{this.getTeamName(defend)}</p>
+              {/* <p>{this.getTeamName(defend)}</p> */}
             </div>
           </div>
           <div className={style.button_wrapper}>
@@ -137,10 +141,10 @@ class ModalSecondTour extends React.Component<any, any> {
                 Начало опроса
               </button>
             )}
-            {this.props.isStarted && (!resp1 || !resp2) && (
+            {this.props.isStarted && (resp1 === null || resp2 === null) && (
               <img className={style.clock} src={img} alt="clock" />
             )}
-            {this.props.isStarted && resp1  && resp2 && (
+            {this.props.isStarted && resp1 !== null && resp2 !== null && (
               <button className={style.button} onClick={() => this.props.closeFunc()}>
                 Закрыть
               </button>

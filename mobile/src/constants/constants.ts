@@ -30,10 +30,15 @@ export const isDev =
 		? Constants.manifest.packagerOpts.dev
 		: false;
 
+export const VERSION = Constants.manifest.version
+	? Constants.manifest.version
+	: "0.0.0";
+
 export const strings = {
 	enterInviteCode: "Введите инвайт код",
 	waitingForOthers: "Ожидание других игроков...",
 	waitingForStartOfGame: "Ожидание старта игры",
+	waitingForAdmin: "Ожидание админа...",
 	zones: "Областей",
 	redTeam: "Красная команда",
 	blueTeam: "Синяя команда",
@@ -42,6 +47,7 @@ export const strings = {
 	chooseZone: "Выберите территорию",
 	waitNewQuestion: "Ожидайте новый вопрос",
 	chooseZoneFromAttack: "Выберите зону из которой вы нападаете",
+	chooseZoneToAttack: "Выберите зону на которую вы нападаете",
 	teamGoingToAttack: "выбирает зону для атаки",
 	isAnswering: "отвечает на вопрос"
 };

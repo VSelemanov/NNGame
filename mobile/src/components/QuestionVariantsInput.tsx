@@ -10,7 +10,12 @@ import {
 import Svg, { Path } from "react-native-svg";
 
 import { rem, iconImgs } from "../constants/constants";
-import { COLORS, FONTS, TEAM_ACTION_STATE_PART_2 } from "../constants/enum";
+import {
+	COLORS,
+	FONTS,
+	TEAM_ACTION_STATE_PART_2,
+	TEAM
+} from "../constants/enum";
 import helper, { lg } from "../utils/helper";
 import moment from "moment";
 import {
@@ -26,6 +31,8 @@ interface IP {
 	lastStep: IGamePart2Step;
 	teams: ITeamsInRoom;
 	isActive: boolean;
+	teamKey: TEAM;
+	result?: boolean;
 }
 
 interface IS {
@@ -52,33 +59,6 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 		this.setState({
 			number: "0"
 		});
-		// this.interval = setInterval(() => {
-		// 	const startTime = this.state.startTime;
-
-		// 	this.setState({
-		// 		diff: moment().diff(startTime, "seconds")
-		// 	});
-		// 	// this.forceUpdate();
-		// }, 1000);
-		// this.answers = this.props.lastStep.question.answers
-		// 	? this.props.lastStep.question.answers.map((el: IAnswer, i: number) => {
-		// 			return (
-		// 				<TouchableOpacity
-		// 					onPress={() =>
-		// 						this.props.isActive ? this.props.onSubmit(i) : lg("isNotActive")
-		// 					}
-		// 					key={i}
-		// 					style={[
-		// 						styles.variant,
-		// 						{ opacity: this.props.isActive ? 1 : 0.5 }
-		// 					]}
-		// 				>
-		// 					<Text style={styles.variantText}>{el.title}</Text>
-		// 				</TouchableOpacity>
-		// 			);
-		// 	  })
-		// 	: null;
-		// this.answers = this.answers ? helper.shuffle(this.answers) : null;
 	}
 
 	public componentWillUnmount() {
@@ -100,8 +80,81 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 		);
 	}
 	private renderVariants() {
+		const {
+			attackingResponse = null,
+			defenderResponse = null,
+			defender = TEAM.WHITE,
+			attacking = TEAM.WHITE
+		} = this.props.lastStep;
+
+		let attackingColor: COLORS = COLORS.TRANSPARENT;
+		let defenderColor: COLORS = COLORS.N_WHITE;
+
+		switch (attacking) {
+			case TEAM.WHITE:
+				attackingColor = COLORS.N_WHITE;
+				break;
+			case TEAM.BLUE:
+				attackingColor = COLORS.N_BLUE;
+				break;
+			case TEAM.RED:
+				attackingColor = COLORS.D_RED;
+				break;
+		}
+		switch (defender) {
+			case TEAM.WHITE:
+				defenderColor = COLORS.N_WHITE;
+				break;
+			case TEAM.BLUE:
+				defenderColor = COLORS.N_BLUE;
+				break;
+			case TEAM.RED:
+				defenderColor = COLORS.D_RED;
+				break;
+		}
+
+		lg(defenderColor);
 		return this.props.lastStep.question.answers
 			? this.props.lastStep.question.answers.map((el: IAnswer, i: number) => {
+					let boxColor: COLORS = COLORS.TRANSPARENT;
+					let textColor: COLORS = COLORS.DDDDD_BROWN;
+
+					if (this.props.result) {
+						if (attackingResponse === i) {
+							boxColor = attackingColor;
+							textColor =
+								attackingColor === COLORS.N_WHITE
+									? COLORS.DDDDD_BROWN
+									: COLORS.N_WHITE;
+						} else if (defenderResponse === i) {
+							boxColor = defenderColor;
+							textColor =
+								defenderColor === COLORS.N_WHITE
+									? COLORS.DDDDD_BROWN
+									: COLORS.N_WHITE;
+						}
+					} else if (
+						this.props.teamKey === attacking &&
+						attackingResponse &&
+						attackingResponse === i
+					) {
+						boxColor = attackingColor;
+						textColor =
+							attackingColor === COLORS.N_WHITE
+								? COLORS.DDDDD_BROWN
+								: COLORS.N_WHITE;
+					} else if (
+						this.props.teamKey === defender &&
+						defenderResponse &&
+						defenderResponse === i
+					) {
+						boxColor = defenderColor;
+						textColor =
+							defenderColor === COLORS.N_WHITE
+								? COLORS.DDDDD_BROWN
+								: COLORS.N_WHITE;
+					}
+
 					return (
 						<TouchableOpacity
 							onPress={() =>
@@ -110,10 +163,33 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 							key={i}
 							style={[
 								styles.variant,
-								{ opacity: this.props.isActive ? 1 : 0.5 }
+								{
+									opacity: this.props.isActive || this.props.result ? 1 : 0.5,
+									borderColor:
+										el.isRight && this.props.result ? "green" : "transparent"
+								}
 							]}
+							disabled={!this.props.isActive}
 						>
-							<Text style={styles.variantText}>{el.title}</Text>
+							{attackingResponse !== defenderResponse ? (
+								<View
+									style={[
+										styles.singleAnswerBack,
+										{
+											borderRadius: el.isRight ? 0 : 4,
+											backgroundColor: boxColor
+										}
+									]}
+								/>
+							) : (
+								<View style={styles.triangleWrapper}>
+									<View style={styles.triangleAnswerBackLeft} />
+									<View style={styles.triangleAnswerBackRight} />
+								</View>
+							)}
+							<Text style={[styles.variantText, { color: textColor }]}>
+								{el.title}
+							</Text>
 						</TouchableOpacity>
 					);
 			  })
@@ -176,12 +252,55 @@ const styles = StyleSheet.create({
 	variantWrapper: {},
 	variant: {
 		width: rem * 13,
-		minHeight: rem * 1.9,
-		padding: rem * 0.5,
+		height: rem * 1.9,
+		// padding: rem * 0.5,
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: COLORS.LL_BROWN,
-		marginVertical: rem * 0.2
+		marginVertical: rem * 0.2,
+		borderWidth: 4,
+		borderRadius: 4
+	},
+	singleAnswerBack: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: rem * 13 - 8,
+		height: rem * 1.9 - 8,
+		backgroundColor: "green"
+	},
+	triangleWrapper: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: rem * 13,
+		height: rem * 1.9
+	},
+	triangleAnswerBackLeft: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: 0,
+		height: 0,
+		backgroundColor: "transparent",
+		borderStyle: "solid",
+		borderRightWidth: rem * 13,
+		borderTopWidth: rem * 1.9,
+		borderRightColor: "transparent",
+		borderTopColor: "red"
+	},
+	triangleAnswerBackRight: {
+		position: "absolute",
+		top: 0,
+		right: 0,
+		width: 0,
+		height: 0,
+		backgroundColor: "transparent",
+		borderStyle: "solid",
+		borderLeftWidth: rem * 13,
+		borderBottomWidth: rem * 1.9,
+		borderLeftColor: "transparent",
+		borderBottomColor: "blue"
 	},
 	variantText: {
 		fontFamily: FONTS.preslav,

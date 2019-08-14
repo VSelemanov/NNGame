@@ -4,6 +4,7 @@ import helper, { lg } from "../utils/helper";
 import { Alert } from "react-native";
 import net, { ws } from "../utils/net";
 import { IGameStatus } from "../../../newback/src/helper/Room/interfaces";
+import { mapZones } from "../../../newback/src/constants";
 
 const key = "session";
 const actions: ISessionActions = {
