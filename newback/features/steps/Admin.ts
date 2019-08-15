@@ -196,8 +196,6 @@ Then(
   async function() {
     const res: IGameStatus = getSocketResponse();
 
-    // console.log({ t: res.part2.steps[res.part2.steps.length - 1] });
-
     expect(res.part2.steps[res.part2.steps.length - 1].isFinished).to.eql(true);
   }
 );

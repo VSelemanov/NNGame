@@ -437,8 +437,6 @@ const methods = {
             part.responses || {}
           );
 
-          console.log({ resultOfQuestion });
-
           const countNullResults = resultOfQuestion.reduce(
             (acc: number, row: IResultDifTimer) => {
               return (acc += row.dif === null && row.timer === 60000 ? 1 : 0);
