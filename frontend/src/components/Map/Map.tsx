@@ -10,7 +10,21 @@ import { Link } from "react-router-dom";
 import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
 import NumQuestionPart2 from "../NumQuestionPart2/NumQuestionPart2";
 import Modal3Part from "../Modal3Part/Modal3Part";
-
+// const part3 = {
+//   isStarted: true,
+//   question: {
+//     answers: [],
+//     isNumeric: true,
+//     numericAnswer: 822000,
+//     title: "Сколько жителей Горьковской области сражалось на фронтах Великой Отечественной войны?"
+//   },
+//   responses: {
+//     team1: { response: 2, timer: 8675, _id: "e37fc852-07b2-4c6e-a242-57f9640087ec" },
+//     team2: { response: 3, timer: 18531, _id: "a1b1eb1f-ee32-48b6-9232-9bed9c27e0e7" },
+//     team3: { response: 1, timer: 15698, _id: "88d253a5-3ae4-4cbc-b941-bc3485b1f0d2" }
+//   },
+//   teams: ["team1", "team2", "team3"]
+// };
 class Map extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -97,6 +111,7 @@ class Map extends React.Component<any, any> {
         return "";
     }
   };
+  
   public componentDidMount() {
     const Nes = require("nes");
     const client = new Nes.Client("ws://188.68.210.120:3000");
@@ -232,11 +247,11 @@ class Map extends React.Component<any, any> {
   }
 
   render() {
+    // const { teams} = this.state;
     const { teams, part3 } = this.state;
     return (
       <div className={style.main}>
         <div className={style.left_panel}>
-
           <div className={style.command_info}>
             <div className={style.team_wrapper}>
               <span>
@@ -330,7 +345,7 @@ class Map extends React.Component<any, any> {
 
           {this.state.part3 && this.state.isPart3Modal && (
             <Modal3Part closeFunc={this.closeFuncPart3} part3={part3} />
-          )}
+          )} 
           <div className={style.map_wrapper}>
             <MapVector
               teams={this.state.teams}

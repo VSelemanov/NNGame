@@ -77,8 +77,7 @@ class ModalSecondTour extends React.Component<any, any> {
   }
 
   render() {
-    const answers =
-      this.props.part2.question && this.props.part2.question.answers
+    const answers = this.props.part2 && this.props.part2.question && this.props.part2.question.answers
         ? this.props.part2.question.answers.map((item: any) => item.title)
         : ["", "", "", ""];
     const { attacking, defender, question, isStarted } = this.props.part2;
