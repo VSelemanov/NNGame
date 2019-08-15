@@ -35,7 +35,7 @@ const ctrl = {
       return await methods.login(inviteCode);
     },
     {
-      logMessage: `${EntityName} create request`,
+      logMessage: `${EntityName} login request`,
       isRequest: true
     }
   ),
@@ -49,7 +49,7 @@ const ctrl = {
       return await methods.colorZone(zoneKey, teamKey);
     },
     {
-      logMessage: `${EntityName} create request`,
+      logMessage: `${EntityName} color zone request`,
       isRequest: true
     }
   ),

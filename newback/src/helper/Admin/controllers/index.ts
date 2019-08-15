@@ -11,7 +11,8 @@ const ctrl = {
       return await methods.create(AdminData);
     },
     {
-      logMessage: `${EntityName} create request`
+      logMessage: `${EntityName} create request`,
+      isRequest: true
     }
   ),
   login: trycatcher(
@@ -20,7 +21,8 @@ const ctrl = {
       return await methods.login(AdminData);
     },
     {
-      logMessage: `${EntityName} login request`
+      logMessage: `${EntityName} login request`,
+      isRequest: true
     }
   ),
   colorZone: trycatcher(
@@ -29,7 +31,8 @@ const ctrl = {
       return await methods.colorZone(_id, zone);
     },
     {
-      logMessage: `${EntityName} color zone request`
+      logMessage: `${EntityName} color zone request`,
+      isRequest: true
     }
   ),
   startgame: trycatcher(
@@ -37,7 +40,8 @@ const ctrl = {
       return await methods.startgame();
     },
     {
-      logMessage: `${EntityName} start game request`
+      logMessage: `${EntityName} start game request`,
+      isRequest: true
     }
   ),
   nextquestion: trycatcher(
@@ -45,7 +49,8 @@ const ctrl = {
       return await methods.nextquestion();
     },
     {
-      logMessage: `${EntityName} next question request`
+      logMessage: `${EntityName} next question request`,
+      isRequest: true
     }
   ),
   startquestion: trycatcher(
@@ -53,7 +58,8 @@ const ctrl = {
       return await methods.startquestion();
     },
     {
-      logMessage: `${EntityName} start question request`
+      logMessage: `${EntityName} start question request`,
+      isRequest: true
     }
   ),
   stopstep: trycatcher(
@@ -61,7 +67,8 @@ const ctrl = {
       return await methods.stopstep();
     },
     {
-      logMessage: `${EntityName} stop step request`
+      logMessage: `${EntityName} stop step request`,
+      isRequest: true
     }
   )
 };

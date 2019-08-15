@@ -223,7 +223,10 @@ const methods = {
     async (): Promise<IRoom> => {
       const Room: IRoom = await methods.getActiveRoom();
 
-      if (Room.gameStatus.currentPart !== 2) {
+      if (
+        Room.gameStatus.currentPart !== 2 &&
+        Room.gameStatus.part2.steps.length !== 3
+      ) {
         throw new Error(RoomErrorMessages.PART_IS_NOT_SECOND);
       }
 
