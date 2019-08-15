@@ -1,6 +1,10 @@
 import { IRoomBase } from "../interfaces";
 import { teams, GameMap, APIRoute } from "../../../constants";
-import { ITeamResponsePart1, ITeamResponsePart3 } from "../../Team/interfaces";
+import {
+  ITeamResponsePart1,
+  ITeamResponsePart3,
+  ITeamResponsePart2
+} from "../../Team/interfaces";
 
 export const EntityName = "Room";
 
@@ -34,9 +38,15 @@ export const allowZonesDefault = {
   [teams.team3]: null
 };
 
-export const responseDefaultPart3: ITeamResponsePart3 = {
+export const responseDefaultPart2: ITeamResponsePart2 = {
   timer: null,
   response: null
+};
+
+export const responseDefaultPart3: ITeamResponsePart3 = {
+  timer: null,
+  response: null,
+  result: null
 };
 
 export const responsesDefaultPart3 = {

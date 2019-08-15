@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 import {
   ITeamsInRoom,
   ITeamResponsePart1,
+  ITeamResponsePart2,
   ITeamResponsePart3
 } from "../../Team/interfaces";
 import { mapZones, teams } from "../../../constants";
@@ -65,8 +66,8 @@ export interface IGamePart2Step {
   numericIsStarted?: boolean;
   attackingResponse?: number;
   defenderResponse?: number;
-  attackingNumericResponse?: ITeamResponsePart3;
-  defenderNumericResponse?: ITeamResponsePart3;
+  attackingNumericResponse?: ITeamResponsePart2;
+  defenderNumericResponse?: ITeamResponsePart2;
   winner?: string;
   isFinished: boolean;
   variableIsFinished: boolean;

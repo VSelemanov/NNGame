@@ -11,6 +11,10 @@ const Part3TeamResponse = new Schema({
   timer: {
     type: Number,
     default: null
+  },
+  result: {
+    type: Number,
+    default: null
   }
 });
 

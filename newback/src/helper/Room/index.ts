@@ -17,7 +17,8 @@ import {
   allowZonesDefault,
   winnerCheckResults,
   responsesDefaultPart1,
-  responsesDefaultPart3
+  responsesDefaultPart3,
+  responseDefaultPart2
 } from "./constants";
 import { ErrorMessages as QuestionErrorMessages } from "../Question/constants";
 import { roomDefault } from "./constants";
@@ -26,7 +27,8 @@ import {
   ITeam,
   ITeamInRoom,
   ITeamResponsePart1,
-  ITeamResponsePart3
+  ITeamResponsePart3,
+  ITeamResponsePart2
 } from "../Team/interfaces";
 import QuestionMethods from "../Question";
 
@@ -361,9 +363,9 @@ const methods = {
             step.numericQuestion
           ) {
             const teamsResponses = {
-              [teams.team1]: null,
-              [teams.team2]: null,
-              [teams.team3]: null
+              [teams.team1]: responseDefaultPart2,
+              [teams.team2]: responseDefaultPart2,
+              [teams.team3]: responseDefaultPart2
             };
 
             teamsResponses[step.attacking] = step.attackingNumericResponse;
@@ -435,16 +437,18 @@ const methods = {
             part.responses || {}
           );
 
+          console.log({ resultOfQuestion });
+
           const countNullResults = resultOfQuestion.reduce(
             (acc: number, row: IResultDifTimer) => {
-              return (acc += row.dif === null && row.timer === 60 ? 1 : 0);
+              return (acc += row.dif === null && row.timer === 60000 ? 1 : 0);
             },
             0
           );
 
           const teamsAnswered = resultOfQuestion.reduce(
             (acc: number, row: IResultDifTimer) => {
-              return (acc += row.dif !== null || row.timer === 60 ? 1 : 0);
+              return (acc += row.dif !== null || row.timer === 60000 ? 1 : 0);
             },
             0
           );
@@ -455,6 +459,10 @@ const methods = {
             part.responses = responsesDefaultPart3;
           } else {
             if (teamsAnswered === part.teams.length) {
+              for (let i = 0; i < resultOfQuestion.length; i++) {
+                let zones = 2 - i;
+                part.responses[resultOfQuestion[i].teamKey].result = zones;
+              }
               Room.gameStatus.gameWinner = resultOfQuestion[0].teamKey;
               Room.isActive = false;
             }
@@ -533,9 +541,9 @@ const methods = {
     teamsInPart: string[],
     question: IQuestion,
     responses: {
-      [teams.team1]: ITeamResponsePart3 | null;
-      [teams.team2]: ITeamResponsePart3 | null;
-      [teams.team3]: ITeamResponsePart3 | null;
+      [teams.team1]: ITeamResponsePart2;
+      [teams.team2]: ITeamResponsePart2;
+      [teams.team3]: ITeamResponsePart2;
     }
   ): IResultDifTimer[] => {
     // Функция возвращает отсортированный массив с участинками числового вопроса
@@ -558,7 +566,11 @@ const methods = {
               ? Math.abs(question.numericAnswer - responses[teamKey].response)
               : null,
           teamKey,
-          timer: responses[teamKey].timer || 60000
+          timer: responses[teamKey].timer
+          // responses[teamKey].response === null &&
+          // responses[teamKey].timer !== null
+          //   ? responses[teamKey].timer
+          //   : 60000
         });
       }
     }

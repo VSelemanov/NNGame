@@ -180,7 +180,7 @@ When(
         Authorization: token
       },
       payload: {
-        timer: response !== 111 ? timer : 60,
+        timer: response !== 111 ? timer : 60000,
         response: response !== 111 ? response : null
       }
     });
@@ -376,7 +376,7 @@ Then(
         Authorization: token
       },
       payload: {
-        timer: response !== 111 ? timer : 60,
+        timer: response !== 111 ? timer : 60000,
         response: response !== 111 ? response : null
       }
     });

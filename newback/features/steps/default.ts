@@ -253,3 +253,10 @@ Then("флаг закрытия вариативного вопроса буде
     true
   );
 });
+
+Then("в состоянии игры указаны результаты числового вопроса", function() {
+  const res: IGameStatus = getSocketResponse();
+
+  expect(res.part3.responses[teams.team1].result).to.eql(1);
+  expect(res.part3.responses[teams.team2].result).to.eql(2);
+});
