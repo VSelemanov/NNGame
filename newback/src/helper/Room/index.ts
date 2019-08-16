@@ -584,7 +584,7 @@ const methods = {
         } else if (a.timer > b.timer) {
           return 1;
         } else {
-          return 0;
+          return utils.getRandomInt(-1, 1);
         }
       }
     });
