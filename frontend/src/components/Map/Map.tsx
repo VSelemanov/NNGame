@@ -66,7 +66,7 @@ class Map extends React.Component<any, any> {
       isPart2QuestionModal: false,
       // второй тур цифровой вопрос
       isNumPart2QuestionModal: false,
-      winner: null,
+      gameWinner: null,
       part3: null,
       isPart3Modal: false
     };
@@ -119,20 +119,33 @@ class Map extends React.Component<any, any> {
   public getGameStatus = () => {
     let zones = 0;
     Object.keys(this.state.teams).forEach(team => (zones += this.state.teams[team].zones));
-    switch (this.state.currentPart) {
-      case 0:
-        return "Ожидание старта игры";
-      case 1:
-        return zones >= 3 ? "Первый тур" : "Выбор стартовых зон";
-      case 2:
-        return "Второй тур";
-      case 3:
-        return "Третий тур";
+
+    if (this.state.gameWinner === null) {
+      switch (this.state.currentPart) {
+        case 0:
+          return "Ожидание старта игры";
+        case 1:
+          return zones >= 3 ? "Первый тур" : "Выбор стартовых зон";
+        case 2:
+          return "Второй тур";
+        case 3:
+          return "Третий тур";
+        default:
+          return "";
+      }
+    }
+    switch (this.state.gameWinner) {
+      case 'team1':
+        return "Победа Белых";
+      case 'team2':
+        return 'Победа Синих';
+      case 'team3':
+        return "Победа Красных";
       default:
         return "";
     }
   };
-  
+
   public componentDidMount() {
     const Nes = require("nes");
     const client = new Nes.Client("ws://188.68.210.120:3000");
@@ -164,6 +177,12 @@ class Map extends React.Component<any, any> {
           Object.keys(gameMap).includes("_id") && delete gameMap["_id"];
           this.setState({
             gameMap
+          });
+        }
+
+        if (message.gameWinner !== null && message.gameWinner !== undefined) {
+          this.setState({
+            gameWinner: message.gameWinner
           });
         }
 
