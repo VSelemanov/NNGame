@@ -40,17 +40,21 @@ class ModalSecondTour extends React.Component<any, any> {
   getCellColor(index: number) {
     const { attacking, defender, attackingResponse, defenderResponse } = this.props.part2;
     // если ответы одинаковые
-    if (attackingResponse === defenderResponse) {
-      if (attackingResponse === index) {
-        return style[`${attacking}_${defender}`];
+    const isDisplay = attackingResponse && attackingResponse !== null && defenderResponse && defenderResponse !== null;
+    if(isDisplay){
+      if (attackingResponse === defenderResponse) {
+        if (attackingResponse === index) {
+          return style[`${attacking}_${defender}`];
+        }
+      }
+      // если ответы не одинаковые
+      if (attackingResponse === index || defenderResponse === index) {
+        return attackingResponse === index ? style[attacking] : style[defender];
+      } else {
+        return "";
       }
     }
-    // если ответы не одинаковые
-    if (attackingResponse === index || defenderResponse === index) {
-      return attackingResponse === index ? style[attacking] : style[defender];
-    } else {
-      return "";
-    }
+    return "";
   }
   
   getShield(){
