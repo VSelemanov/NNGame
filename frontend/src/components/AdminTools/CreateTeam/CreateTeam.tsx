@@ -17,9 +17,14 @@ class CreateTeam extends React.Component<any, any> {
 
   public request = () => {
     createTeam(this.state.teamName)
-      .then(() => alert("Команда успешно создана!"))
+      .then(() => {
+        alert("Команда успешно создана!");
+        this.setState({
+          teamName: ""
+        });
+      })
       .catch(() => alert("Что-то пошло не так.."));
-  }
+  };
 
   public render() {
     return (

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
 import NumQuestionPart2 from "../NumQuestionPart2/NumQuestionPart2";
 import Modal3Part from "../Modal3Part/Modal3Part";
-// const part3 = {
+// const fake = {
 //   isStarted: true,
 //   question: {
 //     answers: [],
@@ -19,12 +19,33 @@ import Modal3Part from "../Modal3Part/Modal3Part";
 //     title: "Сколько жителей Горьковской области сражалось на фронтах Великой Отечественной войны?"
 //   },
 //   responses: {
-//     team1: { response: 2, timer: 8675, _id: "e37fc852-07b2-4c6e-a242-57f9640087ec" },
-//     team2: { response: 3, timer: 18531, _id: "a1b1eb1f-ee32-48b6-9232-9bed9c27e0e7" },
-//     team3: { response: 1, timer: 15698, _id: "88d253a5-3ae4-4cbc-b941-bc3485b1f0d2" }
+//     team1: { response: 2, timer: 8675, result: 1, _id: "e37fc852-07b2-4c6e-a242-57f9640087ec" },
+//     team2: { response: 3, timer: 18531, result: 2, _id: "a1b1eb1f-ee32-48b6-9232-9bed9c27e0e7" },
+//     team3: { response: 1, timer: 15698, result: 0, _id: "88d253a5-3ae4-4cbc-b941-bc3485b1f0d2" }
 //   },
 //   teams: ["team1", "team2", "team3"]
 // };
+// const fake = {
+//   isStarted: true,
+//   question:{
+//     answers: [],
+//     cAt: "2019-08-09T14:56:31.749Z",
+//     count: 2,
+//     isNumeric: true,
+//     numericAnswer: 15,
+//     title: "Через сколько субъектов федерации протекает река Волга?",
+//     uAt: "2019-08-15T15:37:11.786Z",
+//     _id: "d73da344-5096-42b7-ad2d-6f4d57a5c167",
+//   },
+// responses: {
+//   team1: {response: 523, timer: 18885, result: 2, _id: "31cda453-299d-4548-8716-14db03c49a50"},
+//   team2: {response: 525, timer: 21512, result: 1},
+//   team3: {response: null, timer: null, result: null, _id: "7b238f2b-24f4-4745-baf3-118e8bdb37a2"},
+//   _id: "a36fa2c2-bd86-429a-b0a8-c637ab95245c"
+// },
+// teams:  ["team1", "team2"],
+// _id: "4ccf5d25-7a81-4248-a3a5-ab727878cfef"
+// }
 class Map extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -211,7 +232,7 @@ class Map extends React.Component<any, any> {
           }
 
           // part2модал кончился и нумерик начался
-          if (step.numericQuestion && !step.isFinished) {
+          if (step.numericQuestion && !step.isFinished && step.variableIsFinished) {
             console.log("Стартуем НУМЕРИК модалку второго тура");
             this.setState({
               isNumPart2QuestionModal: true
@@ -343,9 +364,9 @@ class Map extends React.Component<any, any> {
             <NumQuestionPart2 part2={this.state.part2} closeFunc={this.closeFuncNumPart2} />
           )}
 
-          {this.state.part3 && this.state.isPart3Modal && (
+          {part3 && this.state.isPart3Modal && (
             <Modal3Part closeFunc={this.closeFuncPart3} part3={part3} />
-          )} 
+          )}
           <div className={style.map_wrapper}>
             <MapVector
               teams={this.state.teams}
