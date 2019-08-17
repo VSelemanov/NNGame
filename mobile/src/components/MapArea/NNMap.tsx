@@ -20,10 +20,10 @@ interface IP {
 	teamKey: TEAM;
 	attackingZone?: string;
 	defenderZone?: string;
+	teamQueue: string[];
 }
 export default class Map extends React.Component<IP> {
 	public render() {
-		lg("NNMap rendered");
 		const {
 			allowZones,
 			chooseDisabled,
@@ -34,7 +34,8 @@ export default class Map extends React.Component<IP> {
 			token,
 			teamKey,
 			attackingZone,
-			defenderZone
+			defenderZone,
+			teamQueue
 		} = this.props;
 		return (
 			<Svg height="100%" width="100%" viewBox="0 0 1854 1393" fill="none">
@@ -69,6 +70,7 @@ export default class Map extends React.Component<IP> {
 							teamKey={teamKey}
 							attackingZone={attackingZone}
 							defenderZone={defenderZone}
+							teamQueue={teamQueue || []}
 						/>
 					);
 				})}

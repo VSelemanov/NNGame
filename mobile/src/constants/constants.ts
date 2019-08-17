@@ -54,6 +54,8 @@ export const strings = {
 
 export const iconImgs: IIconImgs = {
 	shutter: require("../../assets/unions/shutter.png"),
+
+	swordsCommon: require("../../assets/icons/swords_common.png"),
 	teams: {
 		[TEAM.WHITE]: {
 			choose: require("../../assets/icons/trumpet_white.png"),

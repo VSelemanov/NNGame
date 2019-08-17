@@ -39,7 +39,6 @@ export default class InputText extends React.Component<IP, IS> {
 		this.setState({ text: "" });
 	}
 	public render() {
-		lg("InputText rendered");
 		const { height, width, type = "default" } = this.props;
 
 		return (

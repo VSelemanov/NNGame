@@ -66,12 +66,27 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 	}
 
 	private renderUnion(team: string, type: TEAM_ACTION_STATE_PART_2) {
+		const { lastStep } = this.props;
+		lg(lastStep);
 		const unionType =
 			type === TEAM_ACTION_STATE_PART_2.ATTACK
-				? iconImgs.teams.team1.attack
+				? iconImgs.swordsCommon
 				: iconImgs.teams[team].defence;
 		return (
 			<View style={styles.union}>
+				<View
+					style={{
+						position: "absolute",
+						top: -rem * 0.5,
+						backgroundColor:
+							lastStep.winner && lastStep.winner === team
+								? COLORS.N_GREEN
+								: COLORS.TRANSPARENT,
+						width: rem * 5 * lambda,
+						height: 10,
+						borderRadius: rem
+					}}
+				/>
 				<Image source={iconImgs.shutter} style={styles.shutter} />
 				<Image source={iconImgs.teams[team].union} style={styles.unionBack} />
 				<Image source={unionType} style={styles.unionType} />
@@ -92,24 +107,24 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 
 		switch (attacking) {
 			case TEAM.WHITE:
-				attackingColor = COLORS.N_WHITE;
+				attackingColor = COLORS.BATTLE_WHITE;
 				break;
 			case TEAM.BLUE:
-				attackingColor = COLORS.N_BLUE;
+				attackingColor = COLORS.BATTLE_BLUE;
 				break;
 			case TEAM.RED:
-				attackingColor = COLORS.D_RED;
+				attackingColor = COLORS.BATTLE_RED;
 				break;
 		}
 		switch (defender) {
 			case TEAM.WHITE:
-				defenderColor = COLORS.N_WHITE;
+				defenderColor = COLORS.BATTLE_WHITE;
 				break;
 			case TEAM.BLUE:
-				defenderColor = COLORS.N_BLUE;
+				defenderColor = COLORS.BATTLE_BLUE;
 				break;
 			case TEAM.RED:
-				defenderColor = COLORS.D_RED;
+				defenderColor = COLORS.BATTLE_RED;
 				break;
 		}
 
@@ -122,39 +137,63 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 					if (this.props.result) {
 						if (attackingResponse === i) {
 							boxColor = attackingColor;
-							textColor =
-								attackingColor === COLORS.N_WHITE
-									? COLORS.DDDDD_BROWN
-									: COLORS.N_WHITE;
+							textColor = COLORS.N_WHITE;
 						} else if (defenderResponse === i) {
 							boxColor = defenderColor;
-							textColor =
-								defenderColor === COLORS.N_WHITE
-									? COLORS.DDDDD_BROWN
-									: COLORS.N_WHITE;
+							textColor = COLORS.N_WHITE;
 						}
 					} else if (
 						this.props.teamKey === attacking &&
-						attackingResponse &&
+						attackingResponse !== undefined &&
+						attackingResponse !== null &&
 						attackingResponse === i
 					) {
 						boxColor = attackingColor;
-						textColor =
-							attackingColor === COLORS.N_WHITE
-								? COLORS.DDDDD_BROWN
-								: COLORS.N_WHITE;
+						textColor = COLORS.N_WHITE;
 					} else if (
 						this.props.teamKey === defender &&
-						defenderResponse &&
+						defenderResponse !== undefined &&
+						defenderResponse !== null &&
 						defenderResponse === i
 					) {
 						boxColor = defenderColor;
-						textColor =
-							defenderColor === COLORS.N_WHITE
-								? COLORS.DDDDD_BROWN
-								: COLORS.N_WHITE;
+						textColor = COLORS.N_WHITE;
 					}
+					// lg(
+					// 	(this.props.teamKey === attacking &&
+					// 		attackingResponse !== null &&
+					// 		attackingResponse === i) ||
+					// 		(this.props.teamKey === defender &&
+					// 			defenderResponse !== null &&
+					// 			defenderResponse === i)
+					// );
+					// lg("-----------");
 
+					let opacity = 1;
+
+					if (this.props.isActive) {
+						if (this.props.result) {
+							if (defenderResponse === i || attackingResponse === i) {
+								opacity = 1;
+							}
+						} else if (
+							(this.props.teamKey === attacking &&
+								attackingResponse !== null &&
+								attackingResponse === i) ||
+							(this.props.teamKey === defender &&
+								defenderResponse !== null &&
+								defenderResponse === i)
+						) {
+							opacity = 1;
+						}
+					} else {
+						if (defenderResponse === i || attackingResponse === i) {
+							opacity = 1;
+						} else {
+							opacity = 0.5;
+						}
+					}
+					lg(boxColor);
 					return (
 						<TouchableOpacity
 							onPress={() =>
@@ -164,14 +203,49 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 							style={[
 								styles.variant,
 								{
-									opacity: this.props.isActive || this.props.result ? 1 : 0.5,
+									opacity,
 									borderColor:
 										el.isRight && this.props.result ? "green" : "transparent"
 								}
 							]}
-							disabled={!this.props.isActive}
+							disabled={
+								!this.props.isActive ||
+								!(
+									(this.props.teamKey === attacking &&
+										attackingResponse === null) ||
+									(this.props.teamKey === defender && defenderResponse === null)
+								)
+							}
 						>
-							{attackingResponse !== defenderResponse ? (
+							{this.props.result ? (
+								attackingResponse !== defenderResponse ? (
+									<View
+										style={[
+											styles.singleAnswerBack,
+											{
+												borderRadius: el.isRight ? 0 : 4,
+												backgroundColor: boxColor
+											}
+										]}
+									/>
+								) : attackingResponse === i ? (
+									<View style={styles.triangleWrapper}>
+										<View
+											style={[
+												styles.triangleAnswerBackLeft,
+												{ borderTopColor: attackingColor }
+											]}
+										/>
+										<View
+											style={[
+												styles.triangleAnswerBackRight,
+												{ borderBottomColor: defenderColor }
+											]}
+										/>
+									</View>
+								) : null
+							) : this.props.teamKey === attacking &&
+							  attackingResponse === i ? (
 								<View
 									style={[
 										styles.singleAnswerBack,
@@ -181,12 +255,17 @@ export default class QuestionVariantsInput extends React.Component<IP, IS> {
 										}
 									]}
 								/>
-							) : (
-								<View style={styles.triangleWrapper}>
-									<View style={styles.triangleAnswerBackLeft} />
-									<View style={styles.triangleAnswerBackRight} />
-								</View>
-							)}
+							) : this.props.teamKey === defender && defenderResponse === i ? (
+								<View
+									style={[
+										styles.singleAnswerBack,
+										{
+											borderRadius: el.isRight ? 0 : 4,
+											backgroundColor: boxColor
+										}
+									]}
+								/>
+							) : null}
 							<Text style={[styles.variantText, { color: textColor }]}>
 								{el.title}
 							</Text>
@@ -222,6 +301,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: rem,
 		justifyContent: "center",
 		alignItems: "center",
+		marginTop: rem,
 		marginBottom: rem * 2
 	},
 	shutter: {
@@ -259,7 +339,7 @@ const styles = StyleSheet.create({
 		backgroundColor: COLORS.LL_BROWN,
 		marginVertical: rem * 0.2,
 		borderWidth: 4,
-		borderRadius: 4
+		borderRadius: 8
 	},
 	singleAnswerBack: {
 		position: "absolute",
@@ -284,21 +364,20 @@ const styles = StyleSheet.create({
 		height: 0,
 		backgroundColor: "transparent",
 		borderStyle: "solid",
-		borderRightWidth: rem * 13,
-		borderTopWidth: rem * 1.9,
-		borderRightColor: "transparent",
-		borderTopColor: "red"
+		borderRightWidth: rem * 13 - 8,
+		borderTopWidth: rem * 1.9 - 8,
+		borderRightColor: "transparent"
 	},
 	triangleAnswerBackRight: {
 		position: "absolute",
 		top: 0,
-		right: 0,
+		right: 8,
 		width: 0,
 		height: 0,
 		backgroundColor: "transparent",
 		borderStyle: "solid",
-		borderLeftWidth: rem * 13,
-		borderBottomWidth: rem * 1.9,
+		borderLeftWidth: rem * 13 - 8,
+		borderBottomWidth: rem * 1.9 - 8,
 		borderLeftColor: "transparent",
 		borderBottomColor: "blue"
 	},

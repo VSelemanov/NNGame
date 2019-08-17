@@ -7,7 +7,6 @@ interface IP {}
 
 export default class Mavericks2 extends React.Component<IP> {
 	public render() {
-		lg("Mavericks2 rendered");
 		return (
 			<Svg
 				// height="100%"

@@ -11,7 +11,6 @@ interface IP {
 
 export default class QuestionWindow extends React.Component<IP> {
 	public render() {
-		lg("QuestionWindow rendered");
 		const { children, question } = this.props;
 		return (
 			<View
@@ -76,14 +75,13 @@ export default class QuestionWindow extends React.Component<IP> {
 					>
 						<Text
 							style={{
-								marginTop: rem * 0.5,
-								fontSize: rem * 0.7,
+								fontSize: rem * 0.6,
 								color: COLORS.N_BLACK,
 								fontFamily: FONTS.preslav,
 								marginBottom: rem * 0.9,
 								textAlign: "center",
 								paddingHorizontal: rem * 1.5,
-								maxHeight: rem * 4
+								minHeight: rem * 4
 							}}
 						>
 							{question}

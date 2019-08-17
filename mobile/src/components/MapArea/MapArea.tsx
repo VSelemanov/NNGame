@@ -27,11 +27,11 @@ interface IP {
 	attackingZone?: string;
 	defenderZone?: string;
 	teamKey: TEAM;
+	teamQueue: string[];
 }
 
 export default class MapArea extends React.Component<IP> {
 	public render() {
-		// lg("MapArea rendered");
 		const {
 			areaD,
 			nameD,
@@ -46,7 +46,8 @@ export default class MapArea extends React.Component<IP> {
 			smallDim,
 			defenderZone,
 			attackingZone,
-			teamKey
+			teamKey,
+			teamQueue
 		} = this.props;
 		// lg("----------------");
 		// lg(mapZone.team);
@@ -76,7 +77,19 @@ export default class MapArea extends React.Component<IP> {
 				<Path
 					d={areaD}
 					fill={`${
-						dim
+						currentPart === 2 || currentPart === 3
+							? teamQueue.length > 0 && teamQueue[0] === teamKey
+								? dim
+									? `${color}22`
+									: smallDim
+									? `${color}66`
+									: name !== attackingZone &&
+									  currentPart === 2 &&
+									  mapZone.team === teamKey
+									? `${color}BB`
+									: color
+								: color
+							: dim
 							? `${color}22`
 							: smallDim
 							? `${color}66`
@@ -86,7 +99,17 @@ export default class MapArea extends React.Component<IP> {
 							? `${color}BB`
 							: color
 					}`}
-					stroke={`${dim ? "#9F835A55" : "#9F835A"}`}
+					stroke={`${
+						currentPart === 2 || currentPart === 3
+							? teamQueue.length > 0 && teamQueue[0] === teamKey
+								? dim
+									? "#9F835A55"
+									: "#9F835A"
+								: "#9F835A"
+							: dim
+							? "#9F835A55"
+							: "#9F835A"
+					}`}
 					strokeWidth="3"
 					strokeLinejoin="round"
 					onPress={() =>

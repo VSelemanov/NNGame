@@ -57,7 +57,11 @@ export enum COLORS {
 	N_BROWN = "#DCB680",
 	N_BLACK = "#000000",
 	N_GREEN = "#63A647",
-	TRANSPARENT = "transparent"
+	TRANSPARENT = "transparent",
+
+	BATTLE_WHITE = "#ACA392",
+	BATTLE_BLUE = "#31427C",
+	BATTLE_RED = "#B01D1D"
 }
 
 export enum FONTS {

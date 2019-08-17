@@ -93,12 +93,9 @@ export default (
 
 			// * PART 1
 			if (currentPart === 1) {
-				lg("part 1");
 				const { part1 } = action.status;
 				if (part1.steps.length === 0) {
-					lg("steps - 0");
 					if (teamKey === helper.teamChoosingFirstZone(teams)) {
-						lg("isFirstZoneChoose");
 						newState.allowZones = 1;
 						newState.gameStep = GAME_STEP.CHOOSE_ZONE;
 						newState.waiting = {
@@ -107,7 +104,6 @@ export default (
 						};
 						return newState;
 					} else if (!helper.isFirstZoneCompleted(teams)) {
-						lg("!isFirstZoneCompleted");
 						switch (helper.teamChoosingFirstZone(teams)) {
 							case TEAM.WHITE:
 								newState.waiting = {
@@ -130,33 +126,26 @@ export default (
 						}
 						newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
 					} else if (helper.isFirstZoneCompleted(teams)) {
-						lg(helper.isFirstZoneCompleted(teams));
-						lg("isFirstZoneCompleted");
 						newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
 						newState.waiting = {
 							title: "",
 							msg: strings.waitingForAdmin
 						};
 					} else {
-						lg("step null");
 						newState.gameStep = GAME_STEP.NULL;
 					}
-					lg("after steps - 0");
 				}
 				// вопросы 1 тура
 				if (part1.steps.length > 0) {
 					const { steps, currentStep } = part1;
-					lg("steps > 0");
 					if (currentStep !== null && steps[currentStep]) {
 						if (!steps[currentStep].isStarted) {
 							newState.gameStep = GAME_STEP.QUESTION_DESC;
 						} else if (
 							helper.isQuestionStartedForTeam(steps[currentStep], teamKey)
 						) {
-							lg("question started for team");
 							newState.gameStep = GAME_STEP.QUESTION;
 						} else if (!helper.isQuestionDoneByAll(steps[currentStep])) {
-							lg("question not done for all");
 							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
 							newState.waiting = {
 								title: "",
@@ -173,7 +162,6 @@ export default (
 							};
 							newState.gameStep = GAME_STEP.CHOOSE_ZONE;
 						} else if (!helper.isAllZonesChoosed(steps[currentStep])) {
-							lg("step null");
 							switch (helper.teamChoosingZonePar1(steps[currentStep])) {
 								case TEAM.WHITE:
 									newState.waiting = {
@@ -251,43 +239,60 @@ export default (
 				}
 				if (steps.length > 0 && teamQueue.length !== 0) {
 					const currentStep = steps[steps.length - 1];
-					if (!currentStep.winner || !currentStep.isFinished) {
+					if (!currentStep.winner || !currentStep.variableIsFinished) {
+						// variableIsFinished
 						switch (teamKey) {
 							case currentStep.attacking:
 								if (
-									currentStep.attackingResponse &&
-									!currentStep.defenderResponse
+									currentStep.attackingResponse !== undefined &&
+									currentStep.attackingResponse !== null &&
+									!currentStep.defenderResponse &&
+									currentStep.defenderResponse !== 0
 								) {
-									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									// newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									newState.gameStep = GAME_STEP.QUESTION;
 									newState.waiting = {
 										title: helper.getTeamString(currentStep.defender),
 										msg: strings.isAnswering
 									};
 								} else if (!currentStep.isStarted) {
 									newState.gameStep = GAME_STEP.QUESTION_DESC;
-								} else if (!currentStep.attackingResponse) {
+								} else if (
+									!currentStep.attackingResponse &&
+									currentStep.attackingResponse !== 0
+								) {
 									newState.gameStep = GAME_STEP.QUESTION;
-								} else if (currentStep.attackingResponse) {
+								} else if (!currentStep.variableIsFinished) {
 									newState.gameStep = GAME_STEP.BATTLE_RESULT;
 								}
 								break;
 							case currentStep.defender:
 								if (
 									!currentStep.attackingResponse &&
-									currentStep.defenderResponse
+									currentStep.attackingResponse !== 0 &&
+									currentStep.defenderResponse !== null &&
+									currentStep.defenderResponse !== undefined
 								) {
-									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									// newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
+									newState.gameStep = GAME_STEP.QUESTION;
 									newState.waiting = {
 										title: helper.getTeamString(currentStep.attacking),
 										msg: strings.isAnswering
 									};
 								} else if (!currentStep.isStarted) {
 									newState.gameStep = GAME_STEP.QUESTION_DESC;
-								} else if (!currentStep.defenderResponse) {
+								} else if (
+									!currentStep.defenderResponse &&
+									currentStep.defenderResponse !== 0
+								) {
 									newState.gameStep = GAME_STEP.QUESTION;
-								} else if (currentStep.defenderResponse) {
+								} else if (!currentStep.variableIsFinished) {
 									newState.gameStep = GAME_STEP.BATTLE_RESULT;
 								}
+
+								// if(currentStep.numericQuestion && currentStep.numericIsStarted) {
+								// 	if()
+								// }
 								break;
 							default:
 								newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
@@ -302,15 +307,20 @@ export default (
 								if (!currentStep.numericIsStarted) {
 									newState.gameStep = GAME_STEP.QUESTION_DESC;
 								} else if (
-									currentStep.attackingNumericResponse &&
-									!currentStep.defenderNumericResponse
+									currentStep.attackingNumericResponse !== null &&
+									currentStep.attackingNumericResponse !== undefined &&
+									!currentStep.defenderNumericResponse &&
+									currentStep.defenderNumericResponse !== 0
 								) {
 									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
 									newState.waiting = {
 										title: helper.getTeamString(currentStep.defender),
 										msg: strings.isAnswering
 									};
-								} else if (!currentStep.attackingNumericResponse) {
+								} else if (
+									!currentStep.attackingNumericResponse &&
+									currentStep.attackingNumericResponse !== 0
+								) {
 									newState.gameStep = GAME_STEP.QUESTION;
 								}
 								break;
@@ -319,14 +329,19 @@ export default (
 									newState.gameStep = GAME_STEP.QUESTION_DESC;
 								} else if (
 									!currentStep.attackingNumericResponse &&
-									currentStep.defenderNumericResponse
+									currentStep.attackingNumericResponse !== 0 &&
+									currentStep.defenderNumericResponse !== null &&
+									currentStep.defenderNumericResponse !== undefined
 								) {
 									newState.gameStep = GAME_STEP.WAITING_FOR_TEAM;
 									newState.waiting = {
 										title: helper.getTeamString(currentStep.attacking),
 										msg: strings.isAnswering
 									};
-								} else if (!currentStep.defenderNumericResponse) {
+								} else if (
+									!currentStep.defenderNumericResponse &&
+									currentStep.defenderNumericResponse !== 0
+								) {
 									newState.gameStep = GAME_STEP.QUESTION;
 								}
 								break;
@@ -336,6 +351,19 @@ export default (
 									title: "",
 									msg: strings.waitingForOthers
 								};
+						}
+					} else if (!currentStep.isFinished) {
+						if (
+							currentStep.attacking !== teamKey &&
+							currentStep.defender !== teamKey
+						) {
+							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+							newState.waiting = {
+								title: "",
+								msg: strings.waitingForOthers
+							};
+						} else {
+							newState.gameStep = GAME_STEP.BATTLE_RESULT;
 						}
 					} else {
 						if (`${teamQueue[0]}` === teamKey) {
@@ -373,38 +401,108 @@ export default (
 							};
 						}
 					}
-				} else if (teamQueue.length === 0 && newState.status.gameWinner) {
-					newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
-					let winner = "";
-					switch (newState.status.gameWinner) {
-						case TEAM.BLUE:
-							winner = strings.blueTeam;
-							break;
-						case TEAM.RED:
-							winner = strings.redTeam;
-							break;
-						case TEAM.WHITE:
-							winner = strings.whiteTeam;
-							break;
+				} else if (teamQueue.length === 0) {
+					if (
+						!newState.status.part2.steps[newState.status.part2.steps.length - 1]
+							.isFinished
+					) {
+						const currentStep =
+							newState.status.part2.steps[
+								newState.status.part2.steps.length - 1
+							];
+						if (
+							currentStep.attacking !== teamKey &&
+							currentStep.defender !== teamKey
+						) {
+							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+							newState.waiting = {
+								title: "",
+								msg: strings.waitingForOthers
+							};
+						} else {
+							newState.gameStep = GAME_STEP.BATTLE_RESULT;
+						}
+					} else if (newState.status.gameWinner) {
+						newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
+						let winner = "";
+						switch (newState.status.gameWinner) {
+							case TEAM.BLUE:
+								winner = strings.blueTeam;
+								break;
+							case TEAM.RED:
+								winner = strings.redTeam;
+								break;
+							case TEAM.WHITE:
+								winner = strings.whiteTeam;
+								break;
+						}
+						if (newState.status.gameWinner === teamKey) {
+							winner = "Ваша команда";
+						}
+						newState.waiting = {
+							title: winner,
+							msg: `одержала победу!`
+						};
+						newState.gameStep = GAME_STEP.GAME_OVER;
 					}
-					if (newState.status.gameWinner === teamKey) {
-						winner = "Ваша команда";
-					}
-					newState.waiting = {
-						title: "",
-						msg: `${winner} выйграла!`
-					};
-					newState.gameStep = GAME_STEP.GAME_OVER;
+					//  else
+					//  if(newState.status.part2.steps[newState.status.part2.steps.length - 1]
+					// 	.isFinished) {
+
+					// 	}
 				}
 			}
 
 			if (currentPart === 3) {
-				const { part3 } = action.status;
-				if (part3.isStarted && part3.teams.indexOf(teamKey) !== -1) {
-					newState.gameStep = GAME_STEP.QUESTION;
+				if (
+					!newState.status.part2.steps[newState.status.part2.steps.length - 1]
+						.isFinished
+				) {
+					const currentStep =
+						newState.status.part2.steps[newState.status.part2.steps.length - 1];
+
+					switch (teamKey) {
+						case currentStep.attacking:
+						case currentStep.defender:
+							newState.gameStep = GAME_STEP.BATTLE_RESULT;
+							break;
+						default:
+							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+							newState.waiting = {
+								title: "",
+								msg: strings.waitingForOthers
+							};
+					}
+				} else if (
+					newState.status.part2.steps[newState.status.part2.steps.length - 1]
+						.isFinished
+				) {
+					const { part3 } = action.status;
+					if (part3.isStarted && part3.teams.indexOf(teamKey) !== -1) {
+						newState.gameStep = GAME_STEP.QUESTION;
+						if (
+							part3.responses[teamKey] &&
+							part3.responses[teamKey].timer !== null
+						) {
+							newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+							newState.waiting = {
+								title: "",
+								msg: strings.waitingForOthers
+							};
+						}
+					} else if (!part3.isStarted && part3.teams.indexOf(teamKey) !== -1) {
+						newState.gameStep = GAME_STEP.QUESTION_DESC;
+					} else {
+						newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
+						newState.waiting = {
+							title: "",
+							msg: strings.waitingForOthers
+						};
+					}
 					if (
 						newState.status.gameWinner &&
-						part3.teams.indexOf(newState.status.gameWinner) !== -1
+						newState.status.part3.teams.indexOf(newState.status.gameWinner) !==
+							-1
 					) {
 						newState.gameStep = GAME_STEP.WAITING_FOR_ADMIN;
 						let winner = "";
@@ -423,15 +521,11 @@ export default (
 							winner = "Ваша команда";
 						}
 						newState.waiting = {
-							title: "",
-							msg: `${winner} выйграла!`
+							title: winner,
+							msg: `одержала победу!`
 						};
 						newState.gameStep = GAME_STEP.GAME_OVER;
 					}
-				} else if (!part3.isStarted && part3.teams.indexOf(teamKey) !== -1) {
-					newState.gameStep = GAME_STEP.QUESTION_DESC;
-				} else {
-					newState.gameStep = GAME_STEP.WAITING_FOR_OTHERS;
 				}
 			}
 

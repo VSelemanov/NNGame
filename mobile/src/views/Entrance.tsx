@@ -19,8 +19,9 @@ import NNMap from "../components/MapArea/NNMap";
 import MapGrid from "../components/MapGrid";
 import InputText from "../components/InputText";
 import Spinner from "../components/Spinner";
-import { COLORS, GAME_STEP, FONTS } from "../constants/enum";
+import { COLORS, GAME_STEP, FONTS, SCREENS } from "../constants/enum";
 import { HEIGHT, WIDTH, rem } from "../constants/constants";
+import Constants from "expo-constants";
 
 class Entrance extends React.Component<Store> {
 	constructor(props: any) {
@@ -36,6 +37,7 @@ class Entrance extends React.Component<Store> {
 		if (Platform.OS === "android") {
 			BackHandler.addEventListener("hardwareBackPress", this.onBackButton);
 		}
+		this.props.pushScreen(SCREENS.ENTRANCE);
 	}
 
 	public componentWillUnmount() {
@@ -90,7 +92,7 @@ class Entrance extends React.Component<Store> {
 						// backgroundColor: COLORS.DDDD_BROWN,
 						position: "absolute"
 					}}
-					onPress={() => Alert.alert("")}
+					onPress={() => Alert.alert(`${Constants.manifest.version}`)}
 				/>
 			</View>
 		);

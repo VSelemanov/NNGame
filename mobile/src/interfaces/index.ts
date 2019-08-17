@@ -47,6 +47,7 @@ export interface INet {
 
 export interface IIconImgs {
 	shutter: ImageSourcePropType;
+	swordsCommon: ImageSourcePropType;
 	teams: {
 		[key: string]: {
 			choose: ImageSourcePropType;

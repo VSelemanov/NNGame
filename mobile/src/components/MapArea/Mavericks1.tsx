@@ -7,7 +7,6 @@ interface IP {}
 
 export default class Mavericks1 extends React.Component<IP> {
 	public render() {
-		lg("Mavericks1 rendered");
 		return (
 			<Svg
 				width={`${WIDTH / 6}`}

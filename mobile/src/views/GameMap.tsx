@@ -31,7 +31,8 @@ import {
 	ActionTypes,
 	GAME_STEP,
 	TEAM_ACTION_STATE_PART_2,
-	FONTS
+	FONTS,
+	SCREENS
 } from "../constants/enum";
 import Constants from "expo-constants";
 import moment from "moment";
@@ -82,6 +83,7 @@ class GameMap extends React.Component<Store, IS> {
 		if (Platform.OS === "android") {
 			BackHandler.removeEventListener("hardwareBackPress", this.onBackButton);
 		}
+		this.props.pushScreen(SCREENS.ENTRANCE);
 	}
 
 	private onBackButton() {
@@ -145,11 +147,7 @@ class GameMap extends React.Component<Store, IS> {
 				}
 
 				lg(teamKey);
-				const thisTeamStyle = {
-					elevation: teamKey === team ? 5 : 0,
-					backgroundColor: COLORS.D_BROWN,
-					opacity: teamKey === team ? 1 : 0.9
-				};
+
 				switch (team) {
 					case TEAM.RED:
 						gradientColors = [COLORS.D_RED, COLORS.DD_RED];
@@ -169,11 +167,23 @@ class GameMap extends React.Component<Store, IS> {
 					default:
 						return;
 				}
-
+				const thisTeamStyle = {
+					// elevation: teamKey === team ? 5 : 0,
+					backgroundColor:
+						teamKey === team ? borderColors.light : COLORS.D_BROWN,
+					opacity: teamKey === team ? 1 : 0.9,
+					position: "absolute",
+					top: 0,
+					left: 0,
+					width: WIDTH / 4,
+					height: (HEIGHT - Constants.statusBarHeight) / 3,
+					opacity: 0.2
+				};
 				return (
 					<View key={team} style={styles.teamArea}>
+						<View style={thisTeamStyle} />
 						<View style={styles.teamInfoWrapper}>
-							<View style={[styles.teamInfo, thisTeamStyle]}>
+							<View style={[styles.teamInfo]}>
 								<Text style={styles.teamTitle}>{name}</Text>
 								<Text style={styles.teamHaveAllowZones}>
 									{this.props.session.status.currentPart === 1 &&
@@ -238,6 +248,12 @@ class GameMap extends React.Component<Store, IS> {
 				);
 			}
 
+			if (
+				status.currentPart === 3 &&
+				!status.part2.steps[status.part2.steps.length - 1].isFinished
+			) {
+				lastStep = status.part2.steps[status.part2.steps.length - 1];
+			}
 			const { isNumeric, title } = lastStep.question;
 			const {
 				winner,
@@ -278,7 +294,7 @@ class GameMap extends React.Component<Store, IS> {
 							) : null
 						) : gameStep === GAME_STEP.BATTLE_RESULT ? (
 							<QuestionVariantsInput
-								lastStep={lastStep}
+								lastStep={status.part2.steps[status.part2.steps.length - 1]}
 								onSubmit={this.submitBattleQuestion}
 								teams={status.teams}
 								isActive={false}
@@ -352,6 +368,7 @@ class GameMap extends React.Component<Store, IS> {
 						enabledZonesForAttack={enabledZonesForAttack}
 						attackingZone={attack.attackingZone}
 						defenderZone={attack.defenderZone}
+						teamQueue={status.part2.teamQueue}
 					/>
 					{gameStep === GAME_STEP.WAITING_FOR_START_OF_GAME ||
 					gameStep === GAME_STEP.WAITING_FOR_TEAM ||
