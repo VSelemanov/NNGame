@@ -9,7 +9,7 @@ export enum mapZones {
   karpovka = "karpovka",
   lenin = "lenin",
   kremlin = "kremlin",
-  sherbinki = "sherbinki",
+  scherbinki = "scherbinki",
   miza = "miza",
   sport = "sport",
   kuznec = "kuznec",
