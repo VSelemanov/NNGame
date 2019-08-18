@@ -241,6 +241,10 @@ const methods = {
       if (step.variableIsFinished && step.winner !== "draw") {
         step.isFinished = true;
       }
+
+      if (Room.gameStatus.gameWinner !== null) {
+        Room.isActive = false;
+      }
       Room.markModified(`gameStatus.part2.steps`);
 
       await Room.save();
@@ -402,9 +406,9 @@ const methods = {
           part.teamQueue.shift();
           if (part.steps.length === 3 && part.teamQueue.length === 0) {
             await methods.checkGameWinner(Room.gameStatus);
-            if (Room.gameStatus.gameWinner) {
-              Room.isActive = false;
-            }
+            // if (Room.gameStatus.gameWinner) {
+            //   Room.isActive = false;
+            // }
           }
         }
         Room.markModified("gameStatus.part2.teamQueue");
