@@ -1,0 +1,55 @@
+@font-face {
+  font-family: "PT-serif";
+  src: url("./fonts/pt-serif.ttf");
+}
+@font-face {
+  font-family: "Preslav";
+  src: url("./fonts/preslav.otf");
+}
+body {
+  margin: 0;
+  font-family: "PT-serif", sans-serif;
+  background: radial-gradient(
+      981.73px at 57.39% 56.84%,
+      rgba(227, 188, 134, 0.6) 10%,
+      rgba(206, 169, 117, 0.6) 30.37%,
+      rgba(141, 93, 37, 0.6) 60%
+    ),
+    #fde2a3;
+}
+html,
+body,
+#root,
+.main-content,
+.App {
+  height: 100%;
+  width: 100%;
+}
+.ReactTable {
+  .rt-td {
+    text-align: center;
+  }
+  .rt-th {
+    font-size: 18px;
+    border-bottom: 1px solid gray;
+  }
+}
+.react-select {
+  :global .Select-control {
+    height: 30px;
+  }
+  :global .Select-placeholder {
+    line-height: 20px;
+  }
+  :global .Select-value {
+    line-height: 26px;
+  }
+
+  :global .Select-value-label {
+    line-height: 26px;
+  }
+
+  :global .Select-input {
+    height: 26px;
+  }
+}

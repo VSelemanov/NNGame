@@ -1,0 +1,14 @@
+.button {
+	height: 45px;
+	width: 250px;
+	border-radius: 4px;
+	background-color: #e7b777;
+	border: 2px solid #3f3f3f;
+	font-family: 'Preslav', sans-serif;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.button:hover{
+  background-color: #fafafa;
+}

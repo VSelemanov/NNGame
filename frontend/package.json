@@ -1,0 +1,62 @@
+{
+  "name": "games",
+  "version": "0.1.0",
+  "private": true,
+  "config": {
+    "registry": "vselemanov/nngame-front"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "connected-react-router": "^6.4.0",
+    "history": "^4.9.0",
+    "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
+    "nes": "^10.0.2",
+    "node-sass": "^4.12.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1",
+    "react-select": "^3.0.4",
+    "react-table": "^6.10.0",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0",
+    "semver": "^6.1.2",
+    "typescript": "3.4.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && semver -i $(cat version.num) > version.num && sudo docker build -t $npm_package_config_registry:$(cat version.num) . && sudo docker push $npm_package_config_registry:$(cat version.num)",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react-select": "^3.0.0",
+    "@types/react-table": "^6.8.4",
+    "@types/history": "^4.7.2",
+    "@types/jest": "24.0.15",
+    "@types/node": "12.0.10",
+    "@types/react": "16.8.22",
+    "@types/react-dom": "16.8.4",
+    "@types/react-redux": "^7.1.1",
+    "@types/react-router-dom": "^4.3.4"
+  }
+}

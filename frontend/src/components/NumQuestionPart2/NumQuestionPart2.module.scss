@@ -1,0 +1,284 @@
+.modal_back {
+  z-index: 4;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: rgba(41, 31, 16, 0.5);
+  backdrop-filter: blur(40px);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main {
+  font-family: "Preslav", sans-serif;
+  height: 670px;
+  width: 1000px;
+  background: url("../../img/keboard_bg.svg") no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 5%;
+  .question_text {
+    width: 90%;
+    height: 150px;
+    margin-top: 7%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    & p {
+      font-size: 28px;
+      margin: 5px;
+      text-align: center;
+      font-family: "Preslav", sans-serif;
+    }
+  }
+  .answer {
+    border-bottom: 2px solid #c69d61;
+    width: 80%;
+    & p {
+      font-family: "Preslav", sans-serif;
+      margin: 10px;
+      margin-bottom: 0;
+      font-size: 52px;
+      text-align: center;
+    }
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 200px;
+    width: 80%;
+    .button_team1 {
+      height: 70px;
+      width: 240px;
+      position: relative;
+      top: 0;
+      background: url("../../img/result_team1_bg.svg") no-repeat;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      color: black;
+      & span {
+        font-size: 28px;
+        margin-top: 1px;
+      }
+      & p.timer {
+        font-size: 18px;
+        margin: 3px 0;
+        display: flex;
+        align-items: center;
+      }
+      p.timer::before {
+        content: "";
+        background: url("../../img/timer1.svg") no-repeat;
+        display: block;
+        height: 16px;
+        width: 16px;
+        margin-right: 3px;
+      }
+    }
+    .button_team2 {
+      height: 70px;
+      width: 240px;
+      position: relative;
+      top: 0;
+      background: url("../../img/result_team2_bg.svg") no-repeat;
+      background-position: center;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+      & span {
+        font-size: 28px;
+        margin-top: 1px;
+      }
+      & p.timer {
+        font-size: 18px;
+        margin: 3px 0;
+        display: flex;
+        align-items: center;
+      }
+      p.timer::before {
+        content: "";
+        background: url("../../img/timer2.svg") no-repeat;
+        display: block;
+        height: 16px;
+        width: 16px;
+        margin-right: 3px;
+      }
+    }
+    .button_team3 {
+      height: 70px;
+      width: 240px;
+      position: relative;
+      top: 0;
+      background: url("../../img/result_team3_bg.svg") no-repeat;
+      background-position: center;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+      & span {
+        font-size: 28px;
+        margin-top: 1px;
+      }
+      & p.timer {
+        font-size: 18px;
+        margin: 3px 0;
+        display: flex;
+        align-items: center;
+      }
+      p.timer::before {
+        content: "";
+        background: url("../../img/timer2.svg") no-repeat;
+        display: block;
+        height: 16px;
+        width: 16px;
+        margin-right: 3px;
+      }
+    }
+  }
+  .first {
+    animation: first 3s 1 ease;
+    animation-fill-mode: forwards;
+  }
+  .third {
+    animation: third 3s 1 ease;
+    animation-fill-mode: forwards;
+  }
+  .button_wrapper {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    .button {
+      height: 60px;
+      width: 300px;
+      border-radius: 4px;
+      background: #e7b777;
+      border: 2px solid #3f3f3f;
+      font-family: "Preslav", sans-serif;
+      font-size: 30px;
+    }
+    .clock {
+      position: relative;
+      bottom: 30%;
+      width: 100px;
+      animation: rotate 3s infinite linear;
+    }
+  }
+}
+
+//1280*680
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(180deg);
+  }
+  70% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes first {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: -20%;
+  }
+}
+@keyframes third {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 20%;
+  }
+}
+
+// @media screen and (max-width: 1280px) {
+//   .modal_back {
+//     .main {
+//       .question_text {
+//         width: 80%;
+//         height: 10vw;
+//         & p {
+//           font-size: 2.5vw;
+//           margin: 5px;
+//           text-align: center;
+//         }
+//       }
+//       .answer {
+//         & p {
+//           font-size: 3.5vw;
+//         }
+//       }
+//       .footer {
+//         height: 18vw;
+//         .button_team1 {
+//           & span {
+//             font-size: 2.5vw;
+//             margin: 1px;
+//           }
+//           & p.timer {
+//             font-size: 1.5vw;
+//             margin: 1px;
+//           }
+//           p.timer::before {
+//             height: 2vw;
+//             width: 2vw;
+//           }
+//         }
+//         .button_team2 {
+//           & span {
+//             font-size: 2.5vw;
+//             margin: 1px;
+//           }
+//           & p.timer {
+//             font-size: 1.5vw;
+//             margin: 1px;
+//           }
+//           p.timer::before {
+//             height: 2vw;
+//             width: 2vw;
+//           }
+//         }
+//         .button_team3 {
+//           & span {
+//             font-size: 2.5vw;
+//             margin: 1px;
+//           }
+//           & p.timer {
+//             font-size: 1.5vw;
+//             margin: 1px;
+//           }
+//           p.timer::before {
+//             height: 2vw;
+//             width: 2vw;
+//           }
+//         }
+//       }
+//       .button {
+//         height: 5vw;
+//         width: 20vw;
+//         font-size: 2.5vw;
+//       }
+//       .clock {
+//         height: 7vw;
+//         bottom: 4vw;
+//       }
+//     }
+//   }
+// }
