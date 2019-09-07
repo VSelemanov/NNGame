@@ -1,1 +1,3 @@
-export const Authorization = `Bearer ${process.env.APP_TOKEN}`;
+import { dotenvConfig } from "../../../src/constants";
+
+export const Authorization = `Bearer ${dotenvConfig.APP_TOKEN}`;

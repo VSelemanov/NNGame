@@ -1,4 +1,4 @@
-import { ServerRoute } from "hapi";
+import { ServerRoute } from "@hapi/hapi";
 import { APIRoute, HTTPMethods, teams } from "../../../constants";
 import RoomCtrl from "../controllers";
 import { routePath, paths } from "../constants";

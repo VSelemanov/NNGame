@@ -1,6 +1,6 @@
 import { When, Then, Given } from "cucumber";
 import { server } from "../../src/server";
-import { APIRoute, HTTPMethods, teams } from "../../src/constants";
+import { APIRoute, HTTPMethods, teams, dotenvConfig } from "../../src/constants";
 import { routePath, paths } from "../../src/helper/Team/constants";
 import { Authorization } from "./constants";
 import {
@@ -106,7 +106,7 @@ When(
     // const token = await getGameToken(TeamName);
 
     await client.connect({
-      auth: { headers: { Authorization: `Bearer ${process.env.APP_TOKEN}` } }
+      auth: { headers: { Authorization: `Bearer ${dotenvConfig.APP_TOKEN}` } }
     });
     await client.subscribe(subscriptionGameStatuspath, (message, flags) => {
       setSocketResponse(message);

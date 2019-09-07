@@ -462,7 +462,7 @@ const methods = {
           } else {
             if (teamsAnswered === part.teams.length) {
               for (let i = 0; i < resultOfQuestion.length; i++) {
-                let zones = 2 - i;
+                const zones = 2 - i;
                 part.responses[resultOfQuestion[i].teamKey].result = zones;
               }
               Room.gameStatus.gameWinner = resultOfQuestion[0].teamKey;

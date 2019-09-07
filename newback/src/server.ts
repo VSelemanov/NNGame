@@ -16,7 +16,7 @@ import dbConnect from "./database/connect";
 import Routes from "./routes/index";
 // strategies
 import Auth from "./strategies/Auth";
-import { APIRoute } from "./constants";
+import { APIRoute, dotenvConfig } from "./constants";
 import { Connection, Model, Document, MongooseDocument } from "mongoose";
 import { IAdmin } from "./helper/Admin/interfaces";
 import { ITeam } from "./helper/Team/interfaces";
@@ -39,7 +39,7 @@ class Server {
   private swaggerOptions = {
     info: {
       title: "REST API NNGame",
-      version: process.env.VERSION || "v1"
+      version: dotenvConfig.VERSION
     },
 
     jsonPath: `${APIRoute}/swagger.json`,
@@ -201,6 +201,6 @@ class Server {
 }
 
 export const server = new Server({
-  port: parseInt(process.env.PORT || "3000", 10)
+  port: dotenvConfig.PORT
   // dbConnect: dbConnect()
 });

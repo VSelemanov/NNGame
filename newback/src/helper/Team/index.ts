@@ -8,7 +8,7 @@ import {
 } from "../Room/constants";
 import jwt from "jsonwebtoken";
 import utils from "../../../src/utils";
-import { teams } from "../../constants";
+import { teams, dotenvConfig } from "../../constants";
 import RoomMethods from "../Room";
 import { IRoom, IGamePart1Step, IGamePart1 } from "../Room/interfaces";
 
@@ -60,7 +60,7 @@ const methods = {
 
       const token = jwt.sign(
         { _id: Team.id, teamKey, isAdmin: false },
-        process.env.SECRET_KEY || "nngame",
+        dotenvConfig.SECRET_KEY,
         {
           algorithm: "HS256"
         }
