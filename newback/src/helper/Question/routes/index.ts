@@ -1,4 +1,4 @@
-import { ServerRoute } from "hapi";
+import { ServerRoute } from "@hapi/hapi";
 import { APIRoute, HTTPMethods } from "../../../constants";
 import AdminCtrl from "../controllers";
 import { routePath, paths } from "../constants";

@@ -7,6 +7,7 @@ import RoomMethods from "../Room";
 import jwt from "jsonwebtoken";
 import { subscriptionGameStatuspath } from "../Room/constants";
 import { IRoom } from "../Room/interfaces";
+import { dotenvConfig } from "../../constants";
 
 const methods = {
   create: trycatcher(
@@ -27,7 +28,7 @@ const methods = {
       }
       return jwt.sign(
         { _id: Admin._id, isAdmin: true },
-        process.env.ADMIN_KEY || "nngame",
+        dotenvConfig.ADMIN_KEY,
         {
           algorithm: "HS256"
         }

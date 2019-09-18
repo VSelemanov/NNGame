@@ -1,10 +1,11 @@
 import { connection } from "mongoose";
 import mongoose from "mongoose";
 import Logger from "../utils/Logger";
+import { dotenvConfig } from "../constants";
 const db = connection;
 
 export default async function() {
-  mongoose.connect(process.env.DB_HOST || "mongodb://localhost:27017", {
+  mongoose.connect(dotenvConfig.DB_HOST, {
     useNewUrlParser: true,
     dbName: "nngame"
   });

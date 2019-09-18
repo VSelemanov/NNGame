@@ -1,6 +1,15 @@
 import { SchemaDefinition, SchemaOptions } from "mongoose";
 import uuid = require("uuid");
 
+export const dotenvConfig = {
+  APP_TOKEN: process.env.APP_TOKEN || "",
+  DB_HOST: process.env.DB_HOST || "mongodb://localhost:27017",
+  ADMIN_KEY: process.env.ADMIN_KEY || "nngame",
+  SECRET_KEY: process.env.SECRET_KEY || "nngame",
+  VERSION: process.env.VERSION || "v1",
+  PORT: Number(process.env.PORT || "3000")
+};
+
 export const APIRoute = `/api`;
 
 export const adminPath = `admin`;
