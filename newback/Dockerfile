@@ -10,6 +10,7 @@ RUN npm install --production
 FROM gcr.io/distroless/nodejs
 COPY --from=build-env /usr/src/app /app
 WORKDIR /app
+CMD npm build
 ADD ./dist ./dist
 ENV NODE_PATH ./dist
 CMD [ "./dist/src/index.js"]
