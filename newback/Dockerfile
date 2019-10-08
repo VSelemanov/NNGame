@@ -1,12 +1,13 @@
 FROM node:8 AS build-env
 
+CMD ["npm run build"]
+
 ARG SSH_KEY
 
 WORKDIR /usr/src/app
 COPY package.json ./
 
 RUN npm install --production
-CMD ["npm", "run", "build"]
 
 FROM gcr.io/distroless/nodejs
 COPY --from=build-env /usr/src/app /app
