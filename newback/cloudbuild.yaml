@@ -5,4 +5,3 @@ steps:
   args: ['run', 'build']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/myimage', '.']
-  images: ['gcr.io/$PROJECT_ID/myimage']
