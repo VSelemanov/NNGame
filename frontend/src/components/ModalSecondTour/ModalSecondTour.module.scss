@@ -5,7 +5,6 @@
   top: 0;
   left: 0;
   background: rgba(41, 31, 16, 0.5);
-  backdrop-filter: blur(10px);
   position: fixed;
   display: flex;
   justify-content: center;
@@ -22,13 +21,16 @@
     .question_text {
       width: 90%;
       height: 190px;
+      max-height: 190px;
       margin-top: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow-y: auto;
+      padding-bottom: 10px;
       & p {
+        max-height: 190px;
         font-size: 28px;
-        margin: 5px;
         text-align: center;
         font-family: "Preslav", sans-serif;
       }
@@ -46,6 +48,11 @@
         align-items: center;
         width: 200px;
         height: 100%;
+        border-top: 10px solid transparent;
+
+        &.winner {
+          border-color: #63a647;
+        }
         .flag {
           background: url("../../img/white_flag.svg") no-repeat;
           display: flex;
@@ -54,6 +61,7 @@
           align-items: center;
           height: 100%;
           width: 100%;
+          border-top: 10px solid transparent;
           img {
             height: 72px;
             width: 72px;
@@ -100,6 +108,7 @@
           line-height: 130%;
           color: #7b6442;
           padding: 4px;
+          text-align: center;
         }
         .team1 {
           background: #efeae1;
@@ -112,22 +121,37 @@
           background: #b01d1d;
           color: #fff;
         }
-        .team1_team2, .team2_team1 {
-          background: url("../../img/white-blue_flag.svg") no-repeat top;
+        .team1_team2 {
+          background: url("../../img/team1-team2.svg") no-repeat top;
           background-size: cover;
           color: #fff;
         }
-        .team1_team3, .team3_team1 {
-          background: url("../../img/white-red_flag.svg") no-repeat top;
+        .team2_team1 {
+          background: url("../../img/team2-team1.svg") no-repeat top;
           background-size: cover;
           color: #fff;
         }
-        .team2_team3, .team3_team2 {
-          background: url("../../img/red-blue_flag.svg") no-repeat top;
+        .team1_team3 {
+          background: url("../../img/team1-team3.svg") no-repeat top;
           background-size: cover;
           color: #fff;
         }
-        .isRight{
+        .team3_team1 {
+          background: url("../../img/team3-team1.svg") no-repeat top;
+          background-size: cover;
+          color: #fff;
+        }
+        .team2_team3 {
+          background: url("../../img/team2-team3.svg") no-repeat top;
+          background-size: cover;
+          color: #fff;
+        }
+        .team3_team2 {
+          background: url("../../img/team3-team2.svg") no-repeat top;
+          background-size: cover;
+          color: #fff;
+        }
+        .isRight {
           border: 4px solid #63a647;
           padding: 0;
         }
@@ -139,6 +163,11 @@
         align-items: center;
         height: 100%;
         width: 200px;
+        border-top: 10px solid transparent;
+
+        &.winner {
+          border-color: #63a647;
+        }
 
         .flag {
           background: url("../../img/white_flag.svg") no-repeat;
@@ -148,6 +177,7 @@
           align-items: center;
           height: 100%;
           width: 100%;
+          border-top: 10px solid transparent;
           span {
             color: black;
           }
@@ -193,7 +223,7 @@
       }
       .clock {
         position: relative;
-        bottom: 15%;
+        bottom: 25%;
         width: 60px;
         animation: rotate 3s infinite linear;
       }

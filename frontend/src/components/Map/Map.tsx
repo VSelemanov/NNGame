@@ -1,7 +1,7 @@
 import * as React from "react";
 import style from "./Map.module.scss";
 import MapVector from "./MapVector";
-import { startGame, getQuestion } from "../../toServer/requests";
+import { startGame, getQuestion, stopStep } from "../../toServer/requests";
 import { connect } from "react-redux";
 import { mapStateToProps, mapDispatchToProps } from "../../exports";
 import NumQuestionPart1 from "../NumQuestionPart1/NumQuestionPart1";
@@ -9,7 +9,43 @@ import store from "../../store";
 import { Link } from "react-router-dom";
 import ModalSecondTour from "../ModalSecondTour/ModalSecondTour";
 import NumQuestionPart2 from "../NumQuestionPart2/NumQuestionPart2";
-
+import Modal3Part from "../Modal3Part/Modal3Part";
+// const fake = {
+//   isStarted: true,
+//   question: {
+//     answers: [],
+//     isNumeric: true,
+//     numericAnswer: 822000,
+//     title: "Сколько жителей Горьковской области сражалось на фронтах Великой Отечественной войны?"
+//   },
+//   responses: {
+//     team1: { response: 2, timer: 8675, result: 1, _id: "e37fc852-07b2-4c6e-a242-57f9640087ec" },
+//     team2: { response: 3, timer: 18531, result: 2, _id: "a1b1eb1f-ee32-48b6-9232-9bed9c27e0e7" },
+//     team3: { response: 1, timer: 15698, result: 0, _id: "88d253a5-3ae4-4cbc-b941-bc3485b1f0d2" }
+//   },
+//   teams: ["team1", "team2", "team3"]
+// };
+// const fake = {
+//   isStarted: true,
+//   question:{
+//     answers: [],
+//     cAt: "2019-08-09T14:56:31.749Z",
+//     count: 2,
+//     isNumeric: true,
+//     numericAnswer: 15,
+//     title: "Через сколько субъектов федерации протекает река Волга?",
+//     uAt: "2019-08-15T15:37:11.786Z",
+//     _id: "d73da344-5096-42b7-ad2d-6f4d57a5c167",
+//   },
+// responses: {
+//   team1: {response: 523, timer: 18885, result: 2, _id: "31cda453-299d-4548-8716-14db03c49a50"},
+//   team2: {response: 525, timer: 21512, result: 1},
+//   team3: {response: null, timer: null, result: null, _id: "7b238f2b-24f4-4745-baf3-118e8bdb37a2"},
+//   _id: "a36fa2c2-bd86-429a-b0a8-c637ab95245c"
+// },
+// teams:  ["team1", "team2"],
+// _id: "4ccf5d25-7a81-4248-a3a5-ab727878cfef"
+// }
 class Map extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -26,52 +62,41 @@ class Map extends React.Component<any, any> {
       numResponses: [],
       numAllowZones: {},
       // второй тур не цифровой вопрос
+      part2: null,
       isPart2QuestionModal: false,
-      isPart2Started: false,
-      attackingResponse: null,
-      defenderResponse: null,
-      attack: null,
-      
-      defend: null,
-      defenderZone: null,
       // второй тур цифровой вопрос
-      numQuestionPart2: {},
       isNumPart2QuestionModal: false,
-      isNumPart2Started: false,
-      attackingNumericResponse: null,
-      defenderNumericResponse: null,
-      winner: null
+      gameWinner: null,
+      part3: null,
+      isPart3Modal: false
     };
   }
 
-  public closeFunc = (param: string) => {
-    this.setState({
-      [param]: false
-    });
-  };
-
   public closeFuncNumPart2 = () => {
     this.setState({
-      numQuestionPart2: {},
       isNumPart2QuestionModal: false,
-      isNumPart2Started: false,
-      attackingNumericResponse: null,
-      defenderNumericResponse: null,
-      winner: null,
-      attackingResponse: null,
-      defenderResponse: null
+      part2: null
     });
+    stopStep();
   };
 
-  public closeFuncSecondTourModal = () => {
+  public closeFuncPart3 = () => {
     this.setState({
-      isPart2QuestionModal: false,
-      isPart2Started: false,
-      attackingResponse: null,
-      defenderResponse: null,
-      attack: null,
-      defend: null
+      isPart3Modal: false,
+      part3: null
     });
+    stopStep();
+  };
+  public closeFuncSecondTourModal = () => {
+    this.state.part2.numericQuestion
+      ? this.setState({
+          isPart2QuestionModal: false
+        })
+      : this.setState({
+          isPart2QuestionModal: false,
+          part2: null
+        });
+    stopStep();
   };
 
   public closeFuncNumModal = () => {
@@ -81,36 +106,46 @@ class Map extends React.Component<any, any> {
     });
   };
 
-  public parseJwt = (token: string) => {
-    try {
-      return JSON.parse(atob(token.split(".")[1]));
-    } catch (e) {
-      return null;
-    }
-  };
-
   public getTeamStatus = (team: string) => {
-    const {currentPart} = this.state;
+    const { currentPart } = this.state;
     const curTeam = this.state.teamQueue.length > 0 ? this.state.teamQueue[0] : null;
-    return (curTeam && curTeam === team) ? <div className={style[`${curTeam}_${currentPart}`]} /> : <div />;
+    return curTeam && curTeam === team ? (
+      <div className={style[`${curTeam}_${currentPart}`]} />
+    ) : (
+      <div />
+    );
   };
 
   public getGameStatus = () => {
     let zones = 0;
     Object.keys(this.state.teams).forEach(team => (zones += this.state.teams[team].zones));
-    switch (this.state.currentPart) {
-      case 0:
-        return "Ожидание старта игры";
-      case 1:
-        return zones >= 3 ? "Первый тур" : "Выбор стартовых зон";
-      case 2:
-        return "Второй тур";
-      case 3:
-        return "Третий тур";
+
+    if (this.state.gameWinner === null) {
+      switch (this.state.currentPart) {
+        case 0:
+          return "Ожидание старта игры";
+        case 1:
+          return zones >= 3 ? "Первый тур" : "Выбор стартовых зон";
+        case 2:
+          return "Второй тур";
+        case 3:
+          return "Третий тур";
+        default:
+          return "";
+      }
+    }
+    switch (this.state.gameWinner) {
+      case 'team1':
+        return "Победа Белых";
+      case 'team2':
+        return 'Победа Синих';
+      case 'team3':
+        return "Победа Красных";
       default:
         return "";
     }
   };
+
   public componentDidMount() {
     const Nes = require("nes");
     const client = new Nes.Client("ws://188.68.210.120:3000");
@@ -142,6 +177,12 @@ class Map extends React.Component<any, any> {
           Object.keys(gameMap).includes("_id") && delete gameMap["_id"];
           this.setState({
             gameMap
+          });
+        }
+
+        if (message.gameWinner !== null && message.gameWinner !== undefined) {
+          this.setState({
+            gameWinner: message.gameWinner
           });
         }
 
@@ -180,109 +221,63 @@ class Map extends React.Component<any, any> {
               isNumQuestionModal: true
             });
           }
-          if(step.teamQueue !== undefined){
+          if (step.teamQueue !== undefined) {
             this.setState({
               teamQueue: step.teamQueue
-            })
+            });
           }
         }
 
         // ВТОРОЙ ТУР
         if (message.currentPart && message.currentPart === 2 && message.part2) {
-          console.log("Начинаем второй тур");
           const length = message.part2.steps ? message.part2.steps.length : 0;
-          // const step = length !== 0 ? message.part2.steps[length - 1] : [];
           const step = length !== 0 ? message.part2.steps[length - 1] : [];
           // запись данных о вопросе второго тура
-          if (
-            step.question &&
-            step.attacking &&
-            step.defender &&
-            !step.attackingResponse &&
-            !step.defenderResponse
-          ) {
-            console.log("записываем инфу о втором вопросе");
-            console.log(step);
-            const question = step.question;
-            Object.keys(question).includes("_id") && delete question["_id"];
-            this.setState({
-              part2Question: question,
-              attackingZone: step.attackingZone,
-              attack: step.attacking,
-              defenderZone: step.defenderZone,
-              defend: step.defender,
-              isPart2QuestionModal: true,
-              attackingResponse: null,
-              defenderResponse: null
-            });
-          }
-          // ищем активный вопрос
-          // if (
-          //   length !== 0 &&
-          //   !step.winner &&
-          //   step.attackingResponse &&
-          //   step.defenderResponse
-          // ) {
-          //   this.setState({
-          //     isPart2QuestionModal: true,
-          //     attackingResponse: null,
-          //     defenderResponse: null
-          //   });
-          // }
-          if(message.part2.teamQueue !== undefined){
+          this.setState({
+            part2: step
+          });
+
+          if (message.part2.teamQueue !== undefined) {
             this.setState({
               teamQueue: message.part2.teamQueue
-            })
-          }
-          if (step.attackingResponse !== undefined) {
-            this.setState({
-              attackingResponse: step.attackingResponse
             });
           }
-          if (step.defenderResponse !== undefined) {
+
+          if (step.question && !step.isFinished && !step.variableIsFinished) {
+            console.log("Стартуем модалку второго тура");
             this.setState({
-              defenderResponse: step.defenderResponse
+              isPart2QuestionModal: true
             });
           }
-          if (step.isStarted) {
+
+          // part2модал кончился и нумерик начался
+          if (step.numericQuestion && !step.isFinished && step.variableIsFinished) {
+            console.log("Стартуем НУМЕРИК модалку второго тура");
             this.setState({
-              isPart2Started: true
-            });
-          }
-          if (step.numericQuestion) {
-            console.log("второй тур - цифровой вопрос");
-            console.log(step);
-            this.setState({
-              numQuestionPart2: step.numericQuestion,
-              isNumPart2QuestionModal: step.winner === "draw" && true,
-              isNumPart2Started: step.numericIsStarted,
-              attackingNumericResponse: step.attackingNumericResponse
-                ? step.attackingNumericResponse
-                : null,
-              defenderNumericResponse: step.defenderNumericResponse
-                ? step.defenderNumericResponse
-                : null,
-              winner: step.winner ? step.winner : null,
-              attack: step.attacking,
-              defend: step.defender
+              isNumPart2QuestionModal: true
             });
           }
         }
         if (message.currentPart && message.currentPart === 3 && message.part2) {
           const length = message.part2.steps ? message.part2.steps.length : 0;
           const step = length !== 0 ? message.part2.steps[length - 1] : [];
-          if (this.state.attackingResponse === null || this.state.defenderResponse) {
+          if (!step.isFinished) {
             this.setState({
-              attackingResponse: step.attackingResponse,
-              defenderResponse: step.defenderResponse
+              part2: step
             });
           }
         }
         // ТРЕТИЙ ТУР
-        if (message.currentPart && message.currentPart === 3 ) {
+        if (message.currentPart && message.currentPart === 3) {
           const length = message.part2.steps ? message.part2.steps.length : 0;
-          if(length && message.part2.steps[length - 1].isFinished){
-            alert("Третий тур начался");
+          if (length && message.part2.steps[length - 1].isFinished) {
+            console.log("третий тур");
+            const part3 = message.part3;
+            Object.keys(part3).includes("_id") && delete part3["_id"];
+            this.setState({
+              part3,
+              isPart3Modal: true
+            });
           }
         }
       };
@@ -292,7 +287,8 @@ class Map extends React.Component<any, any> {
   }
 
   render() {
-    const teams = this.state.teams;
+    // const { teams} = this.state;
+    const { teams, part3 } = this.state;
     return (
       <div className={style.main}>
         <div className={style.left_panel}>
@@ -302,7 +298,7 @@ class Map extends React.Component<any, any> {
                 {teams.team1 && teams.team1.isLoggedIn ? teams.team1.name : "Ожидание команды"}
               </span>
               <div className={style.team_status}>
-                <p>Областей: {teams.team1 ? teams.team1.zones : "-"}</p>{" "}
+                <p>Областей: {teams.team1 ? teams.team1.zones : "-"}</p>
                 {this.getTeamStatus("team1")}
               </div>
               <span>{teams.team1 ? teams.team1.inviteCode : "-"}</span>
@@ -379,36 +375,17 @@ class Map extends React.Component<any, any> {
             />
           )}
 
-          {/* нужно без воскл знака! убери не забудь */}
           {this.state.isPart2QuestionModal && (
-            <ModalSecondTour
-              teams={this.state.teams}
-              question={this.state.part2Question}
-              isStarted={this.state.isPart2Started}
-              attack={this.state.attack}
-              defend={this.state.defend}
-              attackingResponse={this.state.attackingResponse}
-              defenderResponse={this.state.defenderResponse}
-              closeFunc={this.closeFuncSecondTourModal}
-            />
+            <ModalSecondTour part2={this.state.part2} closeFunc={this.closeFuncSecondTourModal} />
           )}
 
           {this.state.isNumPart2QuestionModal && (
-            <NumQuestionPart2
-              question={this.state.numQuestionPart2}
-              attack={this.state.attack}
-              defend={this.state.defend}
-              isStarted={this.state.isNumPart2Started}
-              attackResponse={this.state.attackingNumericResponse}
-              defendResponse={this.state.defenderNumericResponse}
-              winner={this.state.winner}
-              closeFunc={this.closeFuncNumPart2}
-            />
+            <NumQuestionPart2 part2={this.state.part2} closeFunc={this.closeFuncNumPart2} />
           )}
 
-          {this.state.currentPart === 3 && !this.state.isPart2QuestionModal && !this.state.isNumPart2QuestionModal && 
-            <NumQuestionPart1 />
-          }
+          {part3 && this.state.isPart3Modal && (
+            <Modal3Part closeFunc={this.closeFuncPart3} part3={part3} />
+          )}
           <div className={style.map_wrapper}>
             <MapVector
               teams={this.state.teams}

@@ -39,7 +39,7 @@ export const getAllTeams = async () => {
 //
 export const stopStep = async () => {
   try {
-    return axios.post(STOP_STOP_URL, config);
+    return axios.post(STOP_STOP_URL,{}, config);
   } catch (e) {
     return e;
   }
