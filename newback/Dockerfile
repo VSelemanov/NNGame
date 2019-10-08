@@ -1,7 +1,5 @@
 FROM node:8 AS build-env
 
-CMD ["npm run build"]
-
 ARG SSH_KEY
 
 WORKDIR /usr/src/app
