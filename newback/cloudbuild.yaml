@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/npm'
-  args: ['run', 'gcp-build'],
+  args: ['run', 'gcp-build']
 - name: 'gcr.io/cloud-builders/npm'
   args: ['run', 'deployGApp']
