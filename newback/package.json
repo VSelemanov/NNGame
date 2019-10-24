@@ -18,7 +18,8 @@
     "buildContainer": "semver -i $(cat version.num) > version.num && docker build -t $npm_package_config_registry:$(cat version.num) .",
     "pushContainer": "docker push $npm_package_config_registry:$(cat version.num)",
     "deploy": "npm run buildContainer && npm run pushContainer",
-    "comp-ts": "tsc -w front/ts/*.ts"
+    "comp-ts": "tsc -w front/ts/*.ts",
+    "gcp-build": "tsc -p ."
   },
   "author": "Vladislav Selemanov",
   "license": "ISC",
