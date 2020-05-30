@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routing } from './Routing';
+import MapStream from './components/MapStream/MapStream';
 
 class App extends React.Component {
   // public componentWillMount() {
@@ -14,7 +14,7 @@ render(){
   
   return (
     <div className="App">
-      <Routing />
+      <MapStream />
     </div>
   );
 }
