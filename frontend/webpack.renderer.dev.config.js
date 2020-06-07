@@ -1,5 +1,6 @@
 const merge = require('webpack-merge');
 const spawn = require('child_process').spawn;
+const path = require('path');
 
 const baseConfig = require('./webpack.renderer.config');
 
@@ -21,6 +22,7 @@ module.exports = merge.smart(baseConfig, {
             verbose: true,
             disableDotRule: false
         },
+        contentBase: path.resolve(__dirname, 'dist'),
         before() {
             if (process.env.START_HOT) {
                 console.log('Starting main process');

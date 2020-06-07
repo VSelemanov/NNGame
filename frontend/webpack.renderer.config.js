@@ -7,9 +7,7 @@ const baseConfig = require('./webpack.base.config');
 
 module.exports = merge.smart(baseConfig, {
     target: 'electron-renderer',
-    entry: {
-        app: ['@babel/polyfill', './src/app.tsx']
-    },
+    entry: './src/index.tsx',
     module: {
         rules: [
             {
@@ -51,6 +49,10 @@ module.exports = merge.smart(baseConfig, {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.(ttf|eot|woff|woff2|otf)$/,
+                use: [{ loader: 'file-loader' }],
             },
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             {

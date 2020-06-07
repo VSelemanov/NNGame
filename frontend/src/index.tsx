@@ -7,6 +7,9 @@ import { Provider } from "react-redux";
 import { ConnectedRouter } from "connected-react-router";
 import store, { history } from "./store";
 
+const root = document.createElement('div');
+root.id = 'root';
+document.body.appendChild(root);
 
 ReactDOM.render(
   <Provider store={store}>
