@@ -5,8 +5,12 @@
   "config": {
     "registry": "vselemanov/nngame-front"
   },
+  "author": {
+    "name": "Vladislav Selemanov & Co"
+  },
+  "description": "Битва за Нижний",
   "scripts": {
-    "depstart": "react-scripts start",
+    "depstart": "BROWSER=none react-scripts start",
     "dep-build": "react-scripts build && semver -i $(cat version.num) > version.num && sudo docker build -t $npm_package_config_registry:$(cat version.num) . && sudo docker push $npm_package_config_registry:$(cat version.num)",
     "dep-test": "react-scripts test",
     "dep-eject": "react-scripts eject",
@@ -30,26 +34,27 @@
     "extends": "react-app"
   },
   "build": {
-    "productName": "ProductName",
-    "appId": "org.your.productname",
-    "mac": {
-      "category": "your.app.category.type"
-    },
+    "productName": "BattleNN",
+    "appId": "battle.nn",
     "directories": {
       "output": "release"
     },
     "extends": null,
     "files": [
       "dist/**/*",
-      "node_modules/",
+      "node_modules/**/*",
       "package.json",
-      "main.js"
+      "./dist/main.js"
     ],
+    "mac": {
+      "target": "dmg",
+      "category": "game"
+    },
     "linux": {
       "target": "deb"
     },
     "win": {
-      "target": "nsis"
+      "target": "portable"
     }
   },
   "browserslist": {
@@ -67,6 +72,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.1",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
@@ -85,6 +91,8 @@
     "electron": "^9.0.0",
     "electron-builder": "^22.7.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-webpack": "^2.8.2",
+    "electron-webpack-ts": "^4.0.1",
     "html-webpack-plugin": "^3.2.0",
     "image-webpack-loader": "^6.0.0",
     "source-map-loader": "^1.0.0",

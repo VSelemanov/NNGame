@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const path = require('path');
 
 const baseConfig = require('./webpack.base.config');
 
@@ -26,13 +27,21 @@ module.exports = merge.smart(baseConfig, {
                         '@babel/preset-react'
                     ],
                     plugins: [
-                        ['@babel/plugin-proposal-class-properties', { loose: true }]
+                        ['@babel/plugin-proposal-class-properties', { loose: true }],
                     ]
                 }
             },
             {
                 test: /\.scss$/,
-                loaders: ['style-loader', 'css-loader', 'sass-loader']
+                loaders: [
+                    'style-loader', {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true
+                        },
+                    },
+                    'sass-loader'
+                ]
             },
             {
                 test: /\.css$/,
@@ -62,12 +71,18 @@ module.exports = merge.smart(baseConfig, {
             }
         ]
     },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'renderer.js'
+    },
     plugins: [
         new ForkTsCheckerWebpackPlugin({
             reportFiles: ['src/**/*']
         }),
         new webpack.NamedModulesPlugin(),
-        new HtmlWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: "Битва за Нижний"
+        }),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
         })

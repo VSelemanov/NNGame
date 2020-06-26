@@ -20,7 +20,14 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  win = new BrowserWindow({ width: 800, height: 600, webPreferences: { nodeIntegration: true } });
+  win = new BrowserWindow({
+    width: 1024,
+    height: 768,
+    // icon: __dirname + "../icon.png",
+    webPreferences: { nodeIntegration: true },
+  });
+
+  win.setFullScreen(true);
 
   if (process.env.NODE_ENV !== "production") {
     process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates

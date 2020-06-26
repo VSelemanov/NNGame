@@ -1,5 +1,6 @@
-import React from 'react';
-import MapStream from './components/MapStream/MapStream';
+import React from "react";
+import MapStream from "./components/MapStream/MapStream";
+import style from "./global_style.module.scss";
 
 class App extends React.Component {
   // public componentWillMount() {
@@ -10,14 +11,13 @@ class App extends React.Component {
   //     store.dispatch(push("/map"));
   //   }
   // }
-render(){
-  
-  return (
-    <div className="App">
-      <MapStream />
-    </div>
-  );
-}
+  render() {
+    return (
+      <div className={style.App}>
+        <MapStream />
+      </div>
+    );
+  }
 }
 
 export default App;

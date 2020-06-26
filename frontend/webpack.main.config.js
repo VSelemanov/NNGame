@@ -33,6 +33,10 @@ module.exports = merge.smart(baseConfig, {
             }
         ]
     },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'main.js'
+    },
     plugins: [
         new ForkTsCheckerWebpackPlugin({
             reportFiles: ['src/main/**/*']

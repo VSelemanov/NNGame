@@ -6,6 +6,7 @@
   font-family: "Preslav";
   src: url("./fonts/preslav.otf");
 }
+
 body {
   margin: 0;
   font-family: "PT-serif", sans-serif;
@@ -24,6 +25,9 @@ body,
 .App {
   height: 100%;
   width: 100%;
+}
+#root {
+  height: 100vh;
 }
 .ReactTable {
   .rt-td {

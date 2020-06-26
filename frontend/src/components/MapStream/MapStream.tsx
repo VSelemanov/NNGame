@@ -1,26 +1,26 @@
-import * as React from 'react';
-import style from './MapStream.module.scss';
-import MapVector from './MapVector';
-import { connect } from 'react-redux';
-import { mapStateToProps, mapDispatchToProps } from '../../exports';
-import TeamModal from '../TeamModal/TeamModal';
+import * as React from "react";
+import style from "./MapStream.module.scss";
+import MapVector from "./MapVector";
+import { connect } from "react-redux";
+import { mapStateToProps, mapDispatchToProps } from "../../exports";
+import TeamModal from "../TeamModal/TeamModal";
 
 const initMap = {
-  pecheri: '',
-  moscowroad: '',
-  moscow: '',
-  yarmarka: '',
-  kremlin: '',
-  karpovka: '',
-  scherbinki: '',
-  lenin: '',
-  kuznec: '',
-  miza: '',
-  varya: '',
-  sort: '',
-  sormovo: '',
-  sport: '',
-  avtoz: '',
+  pecheri: "",
+  moscowroad: "",
+  moscow: "",
+  yarmarka: "",
+  kremlin: "",
+  karpovka: "",
+  scherbinki: "",
+  lenin: "",
+  kuznec: "",
+  miza: "",
+  varya: "",
+  sort: "",
+  sormovo: "",
+  sport: "",
+  avtoz: "",
 };
 
 class MapStream extends React.Component<any, any> {
@@ -36,16 +36,16 @@ class MapStream extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    const cachedState = localStorage.getItem('gameState');
+    const cachedState = localStorage.getItem("gameState");
     if (cachedState) {
       this.setState({
-        ...JSON.parse(cachedState)
-      })
-    } 
+        ...JSON.parse(cachedState),
+      });
+    }
   }
 
   componentDidUpdate() {
-    localStorage.setItem('gameState', JSON.stringify({...this.state}))
+    localStorage.setItem("gameState", JSON.stringify({ ...this.state }));
   }
 
   initTeams = (team1: string, team2: string, team3: string) => {
@@ -96,7 +96,7 @@ class MapStream extends React.Component<any, any> {
     return Object.values(gameMap).filter((item) => item === team).length;
   };
 
-  public getGameStatus = () => 'Битва за Нижний';
+  public getGameStatus = () => "Битва за Нижний";
 
   render() {
     const { teams, gameMap, isFirstRun } = this.state;
@@ -106,10 +106,14 @@ class MapStream extends React.Component<any, any> {
           <div className={style.command_info}>
             <div className={style.team_wrapper}>
               <span>
-                {teams.team1 && teams.team1.isLoggedIn ? teams.team1.name : 'Ожидание команды'}
+                {teams.team1 && teams.team1.isLoggedIn
+                  ? teams.team1.name
+                  : "Ожидание команды"}
               </span>
               <div className={style.team_status}>
-                <p>Областей: {teams.team1 ? this.getTeamZoneCount('team1') : '-'}</p>
+                <p>
+                  Областей: {teams.team1 ? this.getTeamZoneCount("team1") : "-"}
+                </p>
               </div>
             </div>
           </div>
@@ -117,10 +121,14 @@ class MapStream extends React.Component<any, any> {
           <div className={style.command_info}>
             <div className={style.team_wrapper}>
               <span>
-                {teams.team2 && teams.team2.isLoggedIn ? teams.team2.name : 'Ожидание команды'}
+                {teams.team2 && teams.team2.isLoggedIn
+                  ? teams.team2.name
+                  : "Ожидание команды"}
               </span>
               <div className={style.team_status}>
-                <p>Областей: {teams.team2 ? this.getTeamZoneCount('team2') : '-'}</p>
+                <p>
+                  Областей: {teams.team2 ? this.getTeamZoneCount("team2") : "-"}
+                </p>
               </div>
             </div>
           </div>
@@ -128,10 +136,14 @@ class MapStream extends React.Component<any, any> {
           <div className={style.command_info}>
             <div className={style.team_wrapper}>
               <span>
-                {teams.team3 && teams.team3.isLoggedIn ? teams.team3.name : 'Ожидание команды'}
+                {teams.team3 && teams.team3.isLoggedIn
+                  ? teams.team3.name
+                  : "Ожидание команды"}
               </span>
               <div className={style.team_status}>
-                <p>Областей: {teams.team3 ? this.getTeamZoneCount('team3') : '-'}</p>
+                <p>
+                  Областей: {teams.team3 ? this.getTeamZoneCount("team3") : "-"}
+                </p>
               </div>
             </div>
           </div>
@@ -146,7 +158,10 @@ class MapStream extends React.Component<any, any> {
             <div className={style.game_status}>
               <p>{this.getGameStatus()}</p>
             </div>
-            <button className={style.next_question} onClick={() => this.resetGame()}>
+            <button
+              className={style.next_question}
+              onClick={() => this.resetGame()}
+            >
               Новая игра
             </button>
           </div>
@@ -161,7 +176,11 @@ class MapStream extends React.Component<any, any> {
           )}
 
           <div className={style.map_wrapper}>
-            <MapVector teams={teams} gameMap={gameMap} func={this.changeZoneColor} />
+            <MapVector
+              teams={teams}
+              gameMap={gameMap}
+              func={this.changeZoneColor}
+            />
           </div>
         </div>
       </div>
